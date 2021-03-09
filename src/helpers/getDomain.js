@@ -7,7 +7,7 @@ import { isProduction } from './isProduction';
  * @returns {string}
  */
 export const getDomain = () => {
-  const prodUrl = 'https://https://dashboard.heroku.com/apps/sopra-fs21-giesch-simon-server'; // TODO: insert your groups heroku prod url for server (once deployed)
+  const prodUrl = 'https://dashboard.heroku.com/apps/sopra-fs21-giesch-simon-server'; // TODO: insert your groups heroku prod url for server (once deployed)
   const devUrl = 'http://localhost:8080';
 
   return isProduction() ? prodUrl : devUrl;
