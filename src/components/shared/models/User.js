@@ -1,6 +1,9 @@
 /**
  * User model
  */
+
+
+
 class User {
   constructor(data = {}) {
     this.id = null;
@@ -10,5 +13,7 @@ class User {
     this.status = null;
     Object.assign(this, data);
   }
+
+
 }
 export default User;

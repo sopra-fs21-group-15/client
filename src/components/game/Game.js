@@ -65,7 +65,7 @@ class Game extends React.Component {
   render() {
     return (
       <Container>
-        <h2>Happy Coding! </h2>
+        <h2>Welcome & Happy Coding! </h2>
         <p>Get all users from secure end point:</p>
         {!this.state.users ? (
           <Spinner />
