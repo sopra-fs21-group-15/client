@@ -66,7 +66,7 @@ const Profile = ({ user }) => {
         <Name> Creation Date: {user.creation_date}</Name>
       </Ingrid>
       <Ingrid>
-        <Name>Birth Date: {user.brith_date ? user.birth_date: "Not yet added"} </Name>
+        <Name>Birth Date: {user.birth_date ? user.birth_date: "Not yet added"} </Name>
       </Ingrid>
     </Gridcontainer>
   );

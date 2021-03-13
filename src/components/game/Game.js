@@ -16,6 +16,7 @@ const Container = styled(BaseContainer)`
 const Users = styled.ul`
   list-style: none;
   padding-left: 0;
+
 `;
 
 const PlayerContainer = styled.li`
@@ -35,14 +36,19 @@ class Game extends React.Component {
   }
 
   async logout() {
-//  try {
-   //     const response = await api.put("/logout", this.state.loginId);
-        localStorage.removeItem('token');
-        this.props.history.push('/login');
-//  } catch (error) {
-  //      alert(`Something went wrong during the logout: \n${handleError(error)}`);
-    //    this.props.history.push(`/game`); //redirect user to game page
- // }
+  try {
+    const url = '/logout/' + this.state.loginId;
+    await api.put(url);
+
+    localStorage.removeItem('token');
+    localStorage.removeItem('loginId');
+    this.props.history.push('/login');
+  }
+  catch (error) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('loginId');
+    this.props.history.push(`/login`); //redirect user to game page
+  }
   }
 
   async componentDidMount() {
@@ -77,7 +83,9 @@ class Game extends React.Component {
         <p>Get all users from secure end point:</p>
         {!this.state.users ? (
           <Spinner />
-        ) : (
+        )
+        :
+        (
           <div>
             <Users>
               {this.state.users.map(user => {

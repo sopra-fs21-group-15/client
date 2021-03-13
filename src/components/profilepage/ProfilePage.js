@@ -57,7 +57,8 @@ class ProfilePage extends React.Component {
     super();
     this.state = {
         user: null,
-        userId: localStorage.getItem("visited User")
+        userId: localStorage.getItem("visited User"),
+        loggedInUser: localStorage.getItem("loginId"),
     };
     this.getUser();
   }
@@ -69,12 +70,33 @@ class ProfilePage extends React.Component {
     this.setState({user : user})
   }
 
-  update_info(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps, prevState, snapshot) {
     this.getUser()
   }
 
     render() {
         return (
+            (this.state.userId !== this.state.loggedInUser) ?
+            <BaseContainer>
+                <FormContainer>
+                    <Form>
+                        <h2>Profile Page:</h2>
+                        {this.state.user?
+                        (<Profile user={this.state.user}/>): (<h1>Null</h1>)}
+                        <ButtonContainer>
+                            <Button
+                                width="100%"
+                                onClick={() => {
+                                    this.props.history.push("/game/dashboard");
+                                }}
+                            >
+                                Go back
+                            </Button>
+                        </ButtonContainer>
+                    </Form>
+                </FormContainer>
+            </BaseContainer>
+            :
             <BaseContainer>
                 <FormContainer>
                     <Form>

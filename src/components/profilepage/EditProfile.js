@@ -76,10 +76,9 @@ class EditProfile extends React.Component {
   constructor() {
     super();
     this.state = {
-        birthdate: null,
+        birth_date: null,
         userId: localStorage.getItem("visited User"),
         loggedInUser: localStorage.getItem("loginId"),
-        log:localStorage.getItem("log")
     };
     this.getUser();
   }
@@ -103,12 +102,12 @@ class EditProfile extends React.Component {
     try{
         const requestBody_2 = JSON.stringify({
             username: this.state.username,
-            birthdate: this.state.birth_date
+            birth_date: this.state.birth_date
         });
 
         const url = '/users/' + this.state.userId;
 
-        await api.put('/users/{id}', requestBody_2);
+        await api.put(url, requestBody_2);
     }
     catch (error) {
           alert(`Something went wrong during the login: \n${handleError(error)}`);
@@ -120,22 +119,6 @@ class EditProfile extends React.Component {
 
     render() {
         return (
-            (this.state.userId !== this.state.loggedInUser) ?
-            <Container>
-                <h2> NO ACCESS TO THIS PROFILE! </h2>
-                <p> You are only allowed to edit the profile, with which you logged in! </p>
-                    <ButtonContainer>
-                        <Button
-                            width="50%"
-                            onClick={() => {
-                                this.props.history.push("/game/dashboard/profilepage");
-                            }}
-                        >
-                        Go back
-                        </Button>
-                    </ButtonContainer>
-            </Container>
-        :
         <BaseContainer>
            <FormContainer>
                 <Form>
@@ -154,13 +137,13 @@ class EditProfile extends React.Component {
                     <InputField
                       placeholder="Please enter new Birth Date here.."
                       onChange={e => {
-                        this.handleInputChange('birthdate', e.target.value);
+                        this.handleInputChange('birth_date', e.target.value);
                       }}
                     />
 
                     <ButtonContainer>
                       <Button
-                        disabled={((this.state.username == null) && (this.state.birthdate == null))}
+                        disabled={((this.state.username == null) && (this.state.birth_date == null))}
                         width="100%"
                         onClick={() => {
                           this.edit();
