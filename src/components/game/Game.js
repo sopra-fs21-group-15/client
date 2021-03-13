@@ -5,6 +5,7 @@ import { api, handleError } from '../../helpers/api';
 import Player from '../../views/Player';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
+import { Profilebutton } from '../../views/design/Profilebutton';
 import { withRouter } from 'react-router-dom';
 
 const Container = styled(BaseContainer)`
@@ -28,13 +29,20 @@ class Game extends React.Component {
   constructor() {
     super();
     this.state = {
-      users: null
+      users: null,
+      loginId: localStorage.getItem('loginId')
     };
   }
 
-  logout() {
-    localStorage.removeItem('token');
-    this.props.history.push('/login');
+  async logout() {
+//  try {
+   //     const response = await api.put("/logout", this.state.loginId);
+        localStorage.removeItem('token');
+        this.props.history.push('/login');
+//  } catch (error) {
+  //      alert(`Something went wrong during the logout: \n${handleError(error)}`);
+    //    this.props.history.push(`/game`); //redirect user to game page
+ // }
   }
 
   async componentDidMount() {
@@ -75,7 +83,16 @@ class Game extends React.Component {
               {this.state.users.map(user => {
                 return (
                   <PlayerContainer key={user.id}>
-                    <Player user={user} />
+                    <Profilebutton
+                      width="100%"
+                      onClick={() => {
+                      localStorage.setItem("visited User", user.id);
+                      this.props.history.push("/game/dashboard/profilepage");
+                      }}
+                      >
+                      <Player user={user} />
+                    </Profilebutton>
+                    <p> </p>
                   </PlayerContainer>
                 );
               })}

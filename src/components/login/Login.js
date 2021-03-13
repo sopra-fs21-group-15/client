@@ -95,7 +95,8 @@ class Login extends React.Component {
       // Get the returned user and update a new object.
       const user = new User(response.data);
 
-
+      // Save the log-in Id
+      localStorage.setItem('loginId', user.id)
 
       // Store the token into the local storage.
       localStorage.setItem('token', user.token);
@@ -148,7 +149,7 @@ class Login extends React.Component {
               onChange={e => {
                 this.handleInputChange('password', e.target.value);
               }}
-              type="password" /* Hide the password! Hoho, but only in the login. */
+              type="password" /* Hide the password! But only in the login. */
             />
             <ButtonContainer>
               <Button
