@@ -77,14 +77,15 @@ class EditProfile extends React.Component {
     super();
     this.state = {
         birth_date: null,
-        userId: localStorage.getItem("visited User"),
-        loggedInUser: localStorage.getItem("loginId"),
+        userId: localStorage.getItem("visited User"), /** get the ID of the profile --> unnecessary **/
+        loggedInUser: localStorage.getItem("loginId"), /** get the ID of the logged in user **/
     };
     this.getUser();
   }
 
   async getUser() {
     const url = '/users/' + this.state.userId;
+    /** await the profile informations **/
     const response = await api.get(url);
     const user =new User(response.data);
     this.setState({user : user})
@@ -106,7 +107,7 @@ class EditProfile extends React.Component {
         });
 
         const url = '/users/' + this.state.userId;
-
+        /** give the changes to the backend **/
         await api.put(url, requestBody_2);
     }
     catch (error) {
@@ -130,6 +131,7 @@ class EditProfile extends React.Component {
                       placeholder="Please enter new Username here.."
                       onChange={e => {
                         this.handleInputChange('username', e.target.value);
+                        /** change username **/
                       }}
                     />
 
@@ -138,6 +140,7 @@ class EditProfile extends React.Component {
                       placeholder="Please enter new Birth Date here.."
                       onChange={e => {
                         this.handleInputChange('birth_date', e.target.value);
+                        /** change birth date **/
                       }}
                     />
 
@@ -148,6 +151,7 @@ class EditProfile extends React.Component {
                         onClick={() => {
                           this.edit();
                           this.props.history.push(`/game/dashboard/profilepage`);
+                          /** save button **/
                         }}
                       >
                         Save

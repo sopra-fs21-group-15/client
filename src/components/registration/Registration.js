@@ -90,6 +90,8 @@ class Registration extends React.Component {
         username: this.state.username,
         password: this.state.password
       });
+
+      //wait for making a new user
       const response = await api.post('/users', requestBody);
 
       // Get the returned user and update a new object.

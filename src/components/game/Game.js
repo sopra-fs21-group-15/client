@@ -31,10 +31,11 @@ class Game extends React.Component {
     super();
     this.state = {
       users: null,
-      loginId: localStorage.getItem('loginId')
+      loginId: localStorage.getItem('loginId') //added the login Id
     };
   }
 
+// changed logout to put player on OFFLINE
   async logout() {
   try {
     const url = '/logout/' + this.state.loginId;
@@ -44,6 +45,7 @@ class Game extends React.Component {
     localStorage.removeItem('loginId');
     this.props.history.push('/login');
   }
+  //If you have not logout push the user to login page
   catch (error) {
     localStorage.removeItem('token');
     localStorage.removeItem('loginId');
@@ -95,7 +97,9 @@ class Game extends React.Component {
                       width="100%"
                       onClick={() => {
                       localStorage.setItem("visited User", user.id);
+                      /**set the id for the profile the user is visiting**/
                       this.props.history.push("/game/dashboard/profilepage");
+                      /** go to profile page **/
                       }}
                       >
                       <Player user={user} />
@@ -109,6 +113,7 @@ class Game extends React.Component {
               width="100%"
               onClick={() => {
                 this.logout();
+                /** log out **/
               }}
             >
               Logout

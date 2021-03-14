@@ -52,7 +52,7 @@ const Id = styled.div`
  * @FunctionalComponent
  */
 
- // Correct Layout
+ // Correct Profile Layout
 const Profile = ({ user }) => {
   return (
     <Gridcontainer>

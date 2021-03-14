@@ -57,14 +57,15 @@ class ProfilePage extends React.Component {
     super();
     this.state = {
         user: null,
-        userId: localStorage.getItem("visited User"),
-        loggedInUser: localStorage.getItem("loginId"),
+        userId: localStorage.getItem("visited User"), /** get the ID of the visited profile **/
+        loggedInUser: localStorage.getItem("loginId"), /** get the ID of the logged in user **/
     };
     this.getUser();
   }
 
   async getUser() {
     const url = '/users/' + this.state.userId;
+    // wait for the user information
     const response = await api.get(url);
     const user =new User(response.data);
     this.setState({user : user})
@@ -77,6 +78,7 @@ class ProfilePage extends React.Component {
     render() {
         return (
             (this.state.userId !== this.state.loggedInUser) ?
+            /** If the profile Id and the visitor Id are not the same you can only go back! **/
             <BaseContainer>
                 <FormContainer>
                     <Form>
@@ -97,6 +99,7 @@ class ProfilePage extends React.Component {
                 </FormContainer>
             </BaseContainer>
             :
+            /** If they are the same, you can edit the page **/
             <BaseContainer>
                 <FormContainer>
                     <Form>

@@ -90,6 +90,7 @@ class Login extends React.Component {
         username: this.state.username,
         password: this.state.password
       });
+      /** await the confirmation of the backend **/
       const response = await api.put('/login', requestBody);
 
       // Get the returned user and update a new object.
@@ -170,6 +171,7 @@ class Login extends React.Component {
                width="50%"
                onClick={() => {
                this.props.history.push("/registration");
+               /** go to the registration page **/
                }}
              >
              Register

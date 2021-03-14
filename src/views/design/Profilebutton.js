@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+// created a new profile button
 export const Profilebutton = styled.button`
   &:hover {
     transform: translateY(-5px);
