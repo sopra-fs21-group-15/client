@@ -105,7 +105,7 @@ class ProfilePage extends React.Component {
                     <Form>
                         <h2>Profile Page:</h2>
                         {this.state.user?
-                        (<Profile user={this.state.user}/>): (<h1>Null</h1>)}
+                        (<Profile user={this.state.user}/>): (<h1></h1>)}
                         <ButtonContainer/>
                             <Profilebutton
                                 width="100%"

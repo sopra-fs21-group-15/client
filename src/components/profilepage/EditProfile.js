@@ -84,11 +84,17 @@ class EditProfile extends React.Component {
   }
 
   async getUser() {
+    try {
     const url = '/users/' + this.state.userId;
     /** await the profile informations **/
     const response = await api.get(url);
     const user =new User(response.data);
     this.setState({user : user})
+  }
+  catch (error) {
+        alert(`Something went wrong during the edit: \n${handleError(error)}`);
+        this.props.history.push(`/game/dashboard/profilepage/editprofile`); //redirect user to edit page
+      }
   }
 
   handleInputChange(key, value) {
