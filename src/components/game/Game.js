@@ -5,6 +5,7 @@ import { api, handleError } from '../../helpers/api';
 import Player from '../../views/Player';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
+import { Profilebutton } from '../../views/design/Profilebutton';
 import { withRouter } from 'react-router-dom';
 
 const Container = styled(BaseContainer)`
@@ -15,6 +16,7 @@ const Container = styled(BaseContainer)`
 const Users = styled.ul`
   list-style: none;
   padding-left: 0;
+
 `;
 
 const PlayerContainer = styled.li`
@@ -28,13 +30,27 @@ class Game extends React.Component {
   constructor() {
     super();
     this.state = {
-      users: null
+      users: null,
+      loginId: localStorage.getItem('loginId') //added the login Id
     };
   }
 
-  logout() {
+// changed logout to put player on OFFLINE
+  async logout() {
+  try {
+    const url = '/logout/' + this.state.loginId;
+    await api.put(url);
+
     localStorage.removeItem('token');
+    localStorage.removeItem('loginId');
     this.props.history.push('/login');
+  }
+  //If you have not logout push the user to login page
+  catch (error) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('loginId');
+    this.props.history.push(`/login`); //redirect user to game page
+  }
   }
 
   async componentDidMount() {
@@ -65,17 +81,30 @@ class Game extends React.Component {
   render() {
     return (
       <Container>
-        <h2>Happy Coding! </h2>
+        <h2>Welcome & Happy Coding! </h2>
         <p>Get all users from secure end point:</p>
         {!this.state.users ? (
           <Spinner />
-        ) : (
+        )
+        :
+        (
           <div>
             <Users>
               {this.state.users.map(user => {
                 return (
                   <PlayerContainer key={user.id}>
-                    <Player user={user} />
+                    <Profilebutton
+                      width="100%"
+                      onClick={() => {
+                      localStorage.setItem("visited User", user.id);
+                      /**set the id for the profile the user is visiting**/
+                      this.props.history.push("/game/dashboard/profilepage");
+                      /** go to profile page **/
+                      }}
+                      >
+                      <Player user={user} />
+                    </Profilebutton>
+                    <p> </p>
                   </PlayerContainer>
                 );
               })}
@@ -84,6 +113,7 @@ class Game extends React.Component {
               width="100%"
               onClick={() => {
                 this.logout();
+                /** log out **/
               }}
             >
               Logout
