@@ -26,7 +26,7 @@ const PlayerContainer = styled.li`
   justify-content: center;
 `;
 
-class Game extends React.Component {
+class MainScreen extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -125,4 +125,4 @@ class Game extends React.Component {
   }
 }
 
-export default withRouter(Game);
+export default withRouter(MainScreen);

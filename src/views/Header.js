@@ -20,6 +20,8 @@ const Title = styled.h1`
   font-weight: bold;
   color: white;
   text-align: center;
+  font-family: Skribble;
+  font-size: 50px;
 `;
 /**
  * This is an example of a Functional and stateless component (View) in React. Functional components are not classes and thus don't handle internal state changes.
@@ -32,8 +34,7 @@ const Title = styled.h1`
 const Header = props => {
   return (
     <Container height={props.height}>
-      <Title>SoPra FS21 rocks with React!</Title>
-      <ReactLogo width={60} height={60} />
+      <Title>Pictionary.uzh</Title>
     </Container>
   );
 };
