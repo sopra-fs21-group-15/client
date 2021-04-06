@@ -5,7 +5,6 @@ import { api, handleError } from '../../helpers/api';
 import Player from '../../views/Player';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
-import { Profilebutton } from '../../views/design/Profilebutton';
 import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
 import Profile from "../../views/Profile";

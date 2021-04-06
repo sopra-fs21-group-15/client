@@ -5,7 +5,6 @@ import { api, handleError } from '../../helpers/api';
 import Player from '../../views/Player';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
-import { Profilebutton } from '../../views/design/Profilebutton';
 import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
 import Profile from "../../views/Profile";
@@ -77,28 +76,6 @@ class ProfilePage extends React.Component {
 
     render() {
         return (
-            (this.state.userId !== this.state.loggedInUser) ?
-            /** If the profile Id and the visitor Id are not the same you can only go back! **/
-            <BaseContainer>
-                <FormContainer>
-                    <Form>
-                        <h2>Profile Page:</h2>
-                        {this.state.user?
-                        (<Profile user={this.state.user}/>): (<h1>Null</h1>)}
-                        <ButtonContainer>
-                            <Button
-                                width="100%"
-                                onClick={() => {
-                                    this.props.history.push("/game/dashboard");
-                                }}
-                            >
-                                Go back
-                            </Button>
-                        </ButtonContainer>
-                    </Form>
-                </FormContainer>
-            </BaseContainer>
-            :
             /** If they are the same, you can edit the page **/
             <BaseContainer>
                 <FormContainer>
@@ -106,8 +83,8 @@ class ProfilePage extends React.Component {
                         <h2>Profile Page:</h2>
                         {this.state.user?
                         (<Profile user={this.state.user}/>): (<h1></h1>)}
-                        <ButtonContainer/>
-                            <Profilebutton
+                        <ButtonContainer>
+                            <Button
                                 width="100%"
                                 onClick={() => {
                                     localStorage.setItem("chosenUserEdit", this.state.userId);
@@ -115,9 +92,10 @@ class ProfilePage extends React.Component {
                                 }}
                             >
                                 Edit Profile
-                            </Profilebutton>
-                        <ButtonContainer/>
+                            </Button>
+                        </ButtonContainer>
 
+                        <ButtonContainer>
                         <Button
                             width="100%"
                             onClick={() => {
@@ -126,10 +104,16 @@ class ProfilePage extends React.Component {
                         >
                             Go back
                         </Button>
+                        </ButtonContainer>
                     </Form>
                 </FormContainer>
             </BaseContainer>
             );
+            (this.state.userId !== this.state.loggedInUser) ?
+            /** If the profile Id and the visitor Id are not the same you can only go back! **/
+						<p>bla</p>
+            :
+						<p>test</p>
     }
 }
 
