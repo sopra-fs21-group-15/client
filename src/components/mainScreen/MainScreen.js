@@ -3,14 +3,25 @@ import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
 import Player from '../../views/Player';
+import Lobby from '../../views/Lobby';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
-import { Profilebutton } from '../../views/design/Profilebutton';
 import { withRouter } from 'react-router-dom';
 
 const Container = styled(BaseContainer)`
   color: white;
   text-align: center;
+	background: rgba(50, 50, 50, 0.9);
+	border-radius: 10px;
+	padding: 50px;
+`;
+
+const UserlistContainer = styled.div`
+	float: right;
+`;
+
+const LobbylistContainer = styled.div`
+	float: left;
 `;
 
 const Users = styled.ul`
@@ -26,11 +37,17 @@ const PlayerContainer = styled.li`
   justify-content: center;
 `;
 
+const LobbyContainer = styled.li`
+  align-items: center;
+  justify-content: center;
+`;
+
 class MainScreen extends React.Component {
   constructor() {
     super();
     this.state = {
       users: null,
+			lobbies: null,
       loginId: localStorage.getItem('loginId') //added the login Id
     };
   }
@@ -54,73 +71,93 @@ class MainScreen extends React.Component {
   }
 
   async componentDidMount() {
+    // Get users
     try {
       const response = await api.get('/users');
-      // delays continuous execution of an async operation for 1 second.
-      // This is just a fake async call, so that the spinner can be displayed
-      // feel free to remove it :)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Get the returned users and update the state.
       this.setState({ users: response.data });
-
-      // This is just some data for you to see what is available.
-      // Feel free to remove it.
-      console.log('request to:', response.request.responseURL);
-      console.log('status code:', response.status);
-      console.log('status text:', response.statusText);
-      console.log('requested data:', response.data);
-
-      // See here to get more data.
-      console.log(response);
     } catch (error) {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
     }
+
+		// Get lobbies
+    try {
+      const response = await api.get('/lobbies');
+      this.setState({ lobbies: response.data });
+    } catch (error) {
+      alert(`Something went wrong while fetching the lobbies: \n${handleError(error)}`);
+
+			// TODO remove
+			// Set lobbies to fake data, since backend is not implemented yet
+			this.setState({ lobbies: [{"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"}] });
+
+    }
   }
+
+	join_lobby(lobby) {
+		localStorage.setItem("visited lobby", lobby.id);
+    /**set the id for the profile the user is visiting**/
+    this.props.history.push("/game/dashboard/profilepage"); // TODO: go to right page
+    /** go to profile page **/
+	}
+
+	go_to_profile(user) {
+    // set the id for the profile the user is visiting
+		localStorage.setItem("visited User", user.id);
+    // go to profile page
+    this.props.history.push("/game/dashboard/profilepage");
+
+	}
 
   render() {
     return (
+			// Lobby list
       <Container>
-        <h2>Welcome & Happy Coding! </h2>
-        <p>Get all users from secure end point:</p>
-        {!this.state.users ? (
+        {!this.state.lobbies ? (
           <Spinner />
         )
         :
         (
-          <div>
+					<LobbylistContainer>
+						<h2>Lobbies</h2>
             <Users>
-              {this.state.users.map(user => {
+              {this.state.lobbies.map(lobby => {
                 return (
-                  <PlayerContainer key={user.id}>
-                    <Profilebutton
-                      width="100%"
-                      onClick={() => {
-                      localStorage.setItem("visited User", user.id);
-                      /**set the id for the profile the user is visiting**/
-                      this.props.history.push("/game/dashboard/profilepage");
-                      /** go to profile page **/
-                      }}
-                      >
-                      <Player user={user} />
-                    </Profilebutton>
-                    <p> </p>
-                  </PlayerContainer>
+                  <LobbyContainer key={lobby.id}>
+                  	<Lobby lobby={lobby} f_onClick={() => this.join_lobby(lobby)} />
+                  </LobbyContainer>
                 );
               })}
             </Users>
-            <Button
-              width="100%"
-              onClick={() => {
-                this.logout();
-                /** log out **/
-              }}
-            >
-              Logout
-            </Button>
-          </div>
+					</LobbylistContainer>
         )}
+        	{!this.state.users ? (
+        	  <Spinner />
+        	)
+        	:
+        	(
+					<UserlistContainer>
+						<h2>Users</h2>
+        	    <Users>
+        	      {this.state.users.map(user => {
+        	        return (
+        	          <PlayerContainer key={user.id}>
+        	            <Player user={user} f_onClick={() => this.go_to_profile(user)} />
+        	          </PlayerContainer>
+        	        );
+        	      })}
+        	    </Users>
+						</UserlistContainer>
+        	)}
+        	<Button
+						onClick={() => {
+							this.logout();
+							/** log out **/
+						}}
+					>
+						Logout
+					</Button>
       </Container>
+
     );
   }
 }

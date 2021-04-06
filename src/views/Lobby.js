@@ -12,7 +12,7 @@ const Container = styled.div`
   border: 1px solid #ffffff26;
 `;
 
-const UserName = styled.div`
+const LobbyName = styled.div`
   font-weight: lighter;
   margin-left: 5px;
 `;
@@ -32,14 +32,14 @@ const Id = styled.div`
  * @FunctionalComponent
  */
 
-const Player = ({ user, f_onClick }) => {
+const Lobby = ({ lobby, f_onClick }) => {
   return (
-    <Container>
-    	<UserName>{user.username}</UserName>
-      <Id>Id: {user.id}</Id>
-			{ f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
+    <Container onClick="f_onClick">
+      <LobbyName>{lobby.name}</LobbyName>
+      <Id>Id: {lobby.id}</Id>
+			{ f_onClick ? <Button onClick={f_onClick}>Join Lobby</Button> : "" }
     </Container>
   );
 };
 
-export default Player;
+export default Lobby;
