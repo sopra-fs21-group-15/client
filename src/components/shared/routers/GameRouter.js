@@ -4,6 +4,7 @@ import { Redirect, Route } from "react-router-dom";
 import Game from "../../mainScreen/MainScreen";
 import ProfilePage from "../../profilepage/ProfilePage";
 import EditProfile from "../../profilepage/EditProfile";
+import CreateLobby from "../../createLobby/CreateLobby";
 
 const Container = styled.div`
   display: flex;
@@ -41,6 +42,12 @@ class GameRouter extends React.Component {
           path={`${this.props.base}/dashboard/profilepage/editprofile`}
           render={() => <EditProfile/>}
         />
+
+				<Route
+					exact
+          path={`${this.props.base}/createLobby`}
+          render={() => <createLobby/>}
+				/>
 
       </Container>
     );

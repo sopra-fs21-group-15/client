@@ -18,10 +18,21 @@ const Container = styled(BaseContainer)`
 
 const UserlistContainer = styled.div`
 	float: right;
+	padding-left: 35px;
 `;
 
 const LobbylistContainer = styled.div`
 	float: left;
+	padding-right: 35px;
+`;
+
+const ListsContainer = styled.div`
+`;
+
+const ButtonsContainer = styled.div`
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
 `;
 
 const Users = styled.ul`
@@ -54,21 +65,25 @@ class MainScreen extends React.Component {
 
 // changed logout to put player on OFFLINE
   async logout() {
-  try {
-    const url = '/logout/' + this.state.loginId;
-    await api.put(url);
+  	try {
+  	  const url = '/logout/' + this.state.loginId;
+  	  await api.put(url);
 
-    localStorage.removeItem('token');
-    localStorage.removeItem('loginId');
-    this.props.history.push('/login');
+  	  localStorage.removeItem('token');
+  	  localStorage.removeItem('loginId');
+  	  this.props.history.push('/login');
+  	}
+  	//If you have not logout push the user to login page
+  	catch (error) {
+  	  localStorage.removeItem('token');
+  	  localStorage.removeItem('loginId');
+  	  this.props.history.push(`/login`); //redirect user to game page
+  	}
   }
-  //If you have not logout push the user to login page
-  catch (error) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('loginId');
-    this.props.history.push(`/login`); //redirect user to game page
-  }
-  }
+
+	createLobby() {
+		this.props.history.push(`/createLobby`);
+	}
 
   async componentDidMount() {
     // Get users
@@ -112,6 +127,7 @@ class MainScreen extends React.Component {
     return (
 			// Lobby list
       <Container>
+					<ListsContainer>
         {!this.state.lobbies ? (
           <Spinner />
         )
@@ -148,14 +164,24 @@ class MainScreen extends React.Component {
         	    </Users>
 						</UserlistContainer>
         	)}
-        	<Button
-						onClick={() => {
-							this.logout();
-							/** log out **/
-						}}
-					>
-						Logout
-					</Button>
+					</ListsContainer>
+					<ButtonsContainer>
+        		<Button
+							onClick={() => {
+								this.logout();
+							}}
+						>
+							Logout
+						</Button>
+						<br/><br/>
+        		<Button
+							onClick={() => {
+								this.createLobby();
+							}}
+						>
+							Create Lobby
+						</Button>
+					</ButtonsContainer>
       </Container>
 
     );
