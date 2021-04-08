@@ -43,11 +43,11 @@ class GameRouter extends React.Component {
           render={() => <EditProfile/>}
         />
 
-				<Route
-					exact
+        <Route
+          exact
           path={`${this.props.base}/createLobby`}
           render={() => <createLobby/>}
-				/>
+        />
 
       </Container>
     );

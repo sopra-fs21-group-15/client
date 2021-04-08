@@ -37,7 +37,7 @@ const Lobby = ({ lobby, f_onClick }) => {
     <Container onClick="f_onClick">
       <LobbyName>{lobby.name}</LobbyName>
       <Id>Id: {lobby.id}</Id>
-			{ f_onClick ? <Button onClick={f_onClick}>Join Lobby</Button> : "" }
+      { f_onClick ? <Button onClick={f_onClick}>Join Lobby</Button> : "" }
     </Container>
   );
 };
