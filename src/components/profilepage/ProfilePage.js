@@ -111,9 +111,9 @@ class ProfilePage extends React.Component {
             );
             (this.state.userId !== this.state.loggedInUser) ?
             /** If the profile Id and the visitor Id are not the same you can only go back! **/
-						<p>bla</p>
+            <p>bla</p>
             :
-						<p>test</p>
+            <p>test</p>
     }
 }
 

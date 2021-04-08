@@ -11,9 +11,9 @@ import { withRouter } from 'react-router-dom';
 const Container = styled(BaseContainer)`
   color: white;
   text-align: center;
-	background: rgba(50, 50, 50, 0.9);
-	border-radius: 10px;
-	padding: 50px;
+  background: rgba(50, 50, 50, 0.9);
+  border-radius: 10px;
+  padding: 50px;
 `;
 
 const FormContainer = styled.div`
@@ -78,7 +78,7 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 20px;
-	width: 100%;
+  width: 100%;
 `;
 
 class CreateLobby extends React.Component {
@@ -86,55 +86,56 @@ class CreateLobby extends React.Component {
     super();
     this.state = {
       users: null,
-			lobbies: null,
+      lobbies: null,
       loginId: localStorage.getItem('loginId') //added the login Id
     };
   }
 
   async componentDidMount() {
-		return;
+    return;
   }
 
-	async createLobby() {
-		return;
-	}
+  async createLobby() {
+    return;
+  }
 
-	goback() {
-  	this.props.history.push(`/game`);
-	}
+  goback() {
+    this.props.history.push(`/game`);
+  }
 
   render() {
     return (
-			// Lobby list
+      // Lobby list
       <Container>
-				<FormContainer>
-					<h2>Create a Lobby</h2>
+        <FormContainer>
+          <h2>Create a Lobby</h2>
 
-					<Label>Lobbyname</Label>
-					<InputField id="form_name" />
-					<Label>Gamemode</Label>
-					<SelectField id="form_gamemode">
-						<option value="classic">Classic</option>
-						<option value="pokemon">Pokemon</option>
-					</SelectField>
+          <Label>Lobbyname</Label>
+          <InputField id="form_name" />
 
-					<Label>Max. Players</Label>
-					<InputField id="form_max_players" type="range" min="3" max="10" value="7" />
+          <Label>Gamemode</Label>
+          <SelectField id="form_gamemode">
+            <option value="classic">Classic</option>
+            <option value="pokemon">Pokemon</option>
+          </SelectField>
 
-					<Label>Rounds</Label>
-					<InputField id="form_rounds" type="range" min="1" max="10" value="7" />
+          <Label>Max. Players</Label>
+          <InputField id="form_max_players" type="range" min="3" max="10" value="7" />
 
-					<Label>Private</Label>
-					<InputField id="form_priv" type="checkbox" />
+          <Label>Rounds</Label>
+          <InputField id="form_rounds" type="range" min="1" max="10" value="7" />
 
-					<ButtonContainer>
-          	<Button width="25%" onClick={() => {this.login();}}>Create Lobby</Button>
-					</ButtonContainer>
-					<ButtonContainer>
-          	<Button width="25%" onClick={() => {this.goback();}}>Back</Button>
-					</ButtonContainer>
+          <Label>Private</Label>
+          <InputField id="form_priv" type="checkbox" />
 
-				</FormContainer>
+          <ButtonContainer>
+            <Button width="25%" onClick={() => {this.login();}}>Create Lobby</Button>
+          </ButtonContainer>
+          <ButtonContainer>
+            <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
+          </ButtonContainer>
+
+        </FormContainer>
       </Container>
     );
   }

@@ -35,9 +35,9 @@ const Id = styled.div`
 const Player = ({ user, f_onClick }) => {
   return (
     <Container>
-    	<UserName>{user.username}</UserName>
+      <UserName>{user.username}</UserName>
       <Id>Id: {user.id}</Id>
-			{ f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
+      { f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
     </Container>
   );
 };
