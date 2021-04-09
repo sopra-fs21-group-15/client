@@ -25,6 +25,12 @@ const FormContainer = styled.div`
   justify-content: center;
 `;
 
+const OneLineBlock = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 const Form = styled.div`
   display: flex;
   flex-direction: column;
@@ -46,7 +52,7 @@ const InputField = styled.input`
   }
   height: 35px;
   padding-left: 15px;
-  margin-left: -4px;
+  margin: 12px;
   border: none;
   border-radius: 20px;
   margin-bottom: 20px;
@@ -87,12 +93,14 @@ class CreateLobby extends React.Component {
     this.state = {
       users: null,
       lobbies: null,
-      loginId: localStorage.getItem('loginId') //added the login Id
+      loginId: localStorage.getItem('loginId'),
+      max_players: 7,
+      rounds: 3,
+      private: false
     };
   }
 
   async componentDidMount() {
-    return;
   }
 
   async createLobby() {
@@ -103,12 +111,19 @@ class CreateLobby extends React.Component {
     this.props.history.push(`/game`);
   }
 
+  handleInputChange(key, value) {
+    // Example: if the key is username, this statement is the equivalent to the following one:
+    // this.setState({'username': value});
+    this.setState({ [key]: value });
+  }
+
   render() {
     return (
       // Lobby list
       <Container>
         <FormContainer>
           <h2>Create a Lobby</h2>
+          <hr width="100%" />
 
           <Label>Lobbyname</Label>
           <InputField id="form_name" />
@@ -120,14 +135,24 @@ class CreateLobby extends React.Component {
           </SelectField>
 
           <Label>Max. Players</Label>
-          <InputField id="form_max_players" type="range" min="3" max="10" value="7" />
+          <OneLineBlock>
+            <InputField value={this.state.max_players} onChange={e => {this.handleInputChange('max_players', e.target.value);}} id="form_max_players" type="range" min="3" max="10" />
+            <InputField type="text" id="form_max_players_display" value={this.state.max_players} />
+          </OneLineBlock>
+
 
           <Label>Rounds</Label>
-          <InputField id="form_rounds" type="range" min="1" max="10" value="7" />
+          <OneLineBlock>
+            <InputField value={this.state.rounds} onChange={e => {this.handleInputChange('rounds', e.target.value);}} id="form_rounds" type="range" min="1" max="10" />
+            <InputField type="text" id="form_rounds_display" value={this.state.rounds} />
+          </OneLineBlock>
 
           <Label>Private</Label>
-          <InputField id="form_priv" type="checkbox" />
-
+          <OneLineBlock>
+            <InputField id="form_private" type="checkbox" onChange={e => {this.handleInputChange('private', e.target.checked);}} />
+            {this.state.private == true ? <InputField id="form_password" placeholder="Password" /> : "" }
+          </OneLineBlock>
+          <hr width="100%" />
           <ButtonContainer>
             <Button width="25%" onClick={() => {this.login();}}>Create Lobby</Button>
           </ButtonContainer>
