@@ -173,6 +173,7 @@ class MainScreen extends React.Component {
             </Button>
             <br/><br/>
             <Button
+                width = "50%"
               onClick={() => {
                 this.createLobby();
               }}
