@@ -35,9 +35,11 @@ const Form = styled.div`
   padding-left: 37px;
   padding-right: 37px;
   border-radius: 5px;
-  background: linear-gradient(rgb(27, 124, 186), rgb(2, 46, 101));
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  background: linear-gradient(rgb(255,255,255), rgb(180, 190, 200));
+  color: black;
 `;
+
+
 
 const Container = styled(BaseContainer)`
   color: white;
@@ -80,7 +82,7 @@ class ProfilePage extends React.Component {
             <BaseContainer>
                 <FormContainer>
                     <Form>
-                        <h2>Profile Page:</h2>
+                        <center><h1>Profile Page</h1></center>
                         {this.state.user?
                         (<Profile user={this.state.user}/>): (<h1></h1>)}
                         <ButtonContainer>

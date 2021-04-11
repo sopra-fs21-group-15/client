@@ -28,19 +28,19 @@ const Ingrid = styled.div`
 const UserName = styled.div`
   font-weight: lighter;
   margin-left: 5px;
-  color: #ffffcc;
+  color: black;
 `;
 
 const Name = styled.div`
   font-weight: bold;
-  color: #ffffcc;
+  color: black;
 `;
 
 const Id = styled.div`
   margin-left: auto;
   margin-right: 10px;
   font-weight: bold;
-  color: #ffffcc;
+  color: black;
 `;
 
 /**

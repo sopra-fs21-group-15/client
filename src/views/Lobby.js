@@ -15,6 +15,9 @@ const Container = styled.div`
 const LobbyName = styled.div`
   font-weight: lighter;
   margin-left: 5px;
+  font-size: 17px;
+  padding-right: 60px;
+  
 `;
 
 const Id = styled.div`
@@ -36,7 +39,6 @@ const Lobby = ({ lobby, f_onClick }) => {
   return (
     <Container onClick="f_onClick">
       <LobbyName>{lobby.name}</LobbyName>
-      <Id>Id: {lobby.id}</Id>
       { f_onClick ? <Button onClick={f_onClick}>Join Lobby</Button> : "" }
     </Container>
   );

@@ -5,6 +5,8 @@ export const Button = styled.button`
     transform: translateY(-2px);
   }
   padding: 6px;
+  padding-left: 30px;
+  padding-right: 30px;
   font-weight: 700;
   text-transform: uppercase;
   font-size: 13px;
