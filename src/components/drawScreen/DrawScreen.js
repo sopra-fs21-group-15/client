@@ -141,6 +141,15 @@ class DrawScreen extends React.Component {
     ctx.fillRect(0, 0, this.state.canvas_width, this.state.canvas_height);
   }
 
+  fillCanvas() {
+    this.mainCanvas.current.width = this.state.canvas_width;
+    this.mainCanvas.current.height = this.state.canvas_height;
+    let ctx = this.mainCanvas.current.getContext('2d');
+
+    ctx.fillStyle = this.state.draw_colour;
+    ctx.fillRect(0, 0, this.state.canvas_width, this.state.canvas_height);
+  }
+
   updateBrushPreview() {
     this.brushPreview.current.style.width = this.state.draw_size + "px";
     this.brushPreview.current.style.height = this.state.draw_size + "px";
@@ -178,7 +187,8 @@ class DrawScreen extends React.Component {
         <Label>Size</Label>
         <InputField value={this.state.draw_size} onChange={e => {this.handleInputChange('draw_size', e.target.value);}} id="input_size" type="range" min="1" max="100" />
         <HR/>
-        <Button onClick={() => {this.resetCanvas()}}>Clear</Button>
+        <Button width="40%" onClick={() => {this.fillCanvas()}}>Fill</Button>
+        <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>
         <HR />
         <BrushPreview ref={this.brushPreview}></BrushPreview>
       </Sidebar>
