@@ -68,7 +68,7 @@ class ProfilePage extends React.Component {
     const url = '/users/' + this.state.userId;
     // wait for the user information
     const response = await api.get(url);
-    const user =new User(response.data);
+    const user = new User(response.data);
     this.setState({user : user})
   }
 

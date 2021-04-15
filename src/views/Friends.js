@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { Button } from './design/Button';
 
-
 const Container = styled.div`
   margin: 6px 0;
   width: 280px;
@@ -13,34 +12,12 @@ const Container = styled.div`
   border: 1px solid #ffffff26;
 `;
 
-const LobbyName = styled.div`
+const FriendsName = styled.div`
   font-weight: lighter;
   margin-left: 5px;
   font-size: 17px;
   padding-right: 60px;
   
-`;
-
-export const ButtonLobbies = styled.button`
-  &:hover {
-    transform: translateY(-2px);
-  }
-  padding: 6px;
-  padding-left:30px;
-  padding-right: 30px;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 13px;
-  text-align: center;
-  color: black;
-  width: ${props => props.width || null};
-  height: 35px;
-  border: none;
-  border-radius: 20px;
-  cursor: ${props => (props.disabled ? "default" : "pointer")};
-  opacity: ${props => (props.disabled ? 0.4 : 1)};
-  background: rgb(230, 238, 235);
-  transition: all 0.3s ease;
 `;
 
 
@@ -53,13 +30,13 @@ export const ButtonLobbies = styled.button`
  * @FunctionalComponent
  */
 
-const Lobby = ({ lobby, f_onClick }) => {
-  return (
-    <Container onClick="f_onClick">
-      <LobbyName>{lobby.name}</LobbyName>
-      { f_onClick ? <ButtonLobbies onClick={f_onClick}>Join Lobby</ButtonLobbies> : "" }
-    </Container>
-  );
+const Friends = ({ friends, f_onClick }) => {
+    return (
+        <Container onClick="f_onClick">
+            <FriendsName>{friends.name}</FriendsName>
+            { f_onClick ? <Button onClick={f_onClick}>View Profile</Button> : "" }
+        </Container>
+    );
 };
 
-export default Lobby;
+export default Friends;

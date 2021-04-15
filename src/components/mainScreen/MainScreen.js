@@ -8,6 +8,8 @@ import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import User from "../shared/models/User";
+import Friends from "../../views/Friends";
 
 const Container = styled(BaseContainer)`
   color: white;
@@ -29,58 +31,47 @@ const LobbylistContainer = styled.div`
 `;
 
 const ListsContainer = styled.div`
+  height: 300px;
+  max-height: 300px;
 `;
-
-const ButtonsContainerLeft = styled.div`
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  float: left;
-`;
-const ButtonsContainerRight = styled.div`
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  float: right;
-`;
+const FriendsContainer = styled.div`
+  height: 300px;
+  max-height: 300px;
+  padding-top: 20px;
+`
 
 const Users = styled.ul`
   list-style: none;
   padding-left: 0;
   padding-bottom: 1px;
-
 `;
 
-const Friends = styled.ul`
+const Friends2 = styled.ul`
   list-style: none;
-  padding-left: 0;
+  padding-right: 0;
   padding-bottom: 1px;
+`
 
-`;
-
-const PlayerContainer = styled.li`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-`;
-
-const LobbyContainer = styled.li`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
 
 class MainScreen extends React.Component {
   constructor() {
     super();
     this.state = {
+      user: null,
+      userId: localStorage.getItem("visited User"),
       users: null,
+      friends: null,
       lobbies: null,
       loginId: localStorage.getItem('loginId') //added the login Id
     };
+  }
+
+  async getUser() {
+    const url = '/users/' + this.state.userId;
+    // wait for the user information
+    const response = await api.get(url);
+    const user = new User(response.data);
+    this.setState({user : user})
   }
 
 // changed logout to put player on OFFLINE
@@ -111,6 +102,7 @@ class MainScreen extends React.Component {
       const response = await api.get('/users');
       this.setState({ users: response.data });
       //TODO: Fake data for the lobbies Need to remove it Later
+      this.setState({ friends: [{"id":31,"password":"123","name":"John"},{"id":42,"password":"123","name":"Tommy"}] });
       this.setState({ lobbies: [{"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"}] });
     } catch (error) {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
@@ -125,8 +117,6 @@ class MainScreen extends React.Component {
     }*/
   }
 
-
-
   join_lobby(lobby) {
     localStorage.setItem("visited lobby", lobby.id);
     /**set the id for the profile the user is visiting**/
@@ -139,9 +129,6 @@ class MainScreen extends React.Component {
     localStorage.setItem("visited User", user.id);
     // go to profile page
     this.props.history.push("/game/dashboard/profilepage");
-  }
-  getUser(){
-    return this.state.username
   }
 
   render() {
@@ -159,9 +146,7 @@ class MainScreen extends React.Component {
             <Users>
               {this.state.lobbies.map(lobby => {
                 return (
-                  <LobbyContainer key={lobby.id}>
                     <Lobby lobby={lobby} f_onClick={() => this.join_lobby(lobby)} />
-                  </LobbyContainer>
                 );
               })}
             </Users>
@@ -197,6 +182,10 @@ class MainScreen extends React.Component {
             >
               Logout
             </Button>
+            <FriendsContainer>
+              <h2>Friends</h2>
+
+            </FriendsContainer>
             </FriendsListContainer>
           )}
           </ListsContainer>
