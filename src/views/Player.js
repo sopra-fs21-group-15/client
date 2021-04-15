@@ -16,6 +16,7 @@ const UserName = styled.div`
   font-weight: lighter;
   margin-left: 5px;
   font-size: 17px;
+  margin-right: 120px;
 `;
 
 const Id = styled.div`
@@ -37,7 +38,6 @@ const Player = ({ user, f_onClick }) => {
   return (
     <Container>
       <UserName>{user.username}</UserName>
-      <Id>Id: {user.id}</Id>
       { f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
     </Container>
   );

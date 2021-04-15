@@ -7,6 +7,7 @@ import Lobby from '../../views/Lobby';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 
 const Container = styled(BaseContainer)`
   color: white;
@@ -14,9 +15,10 @@ const Container = styled(BaseContainer)`
   background: rgba(50, 50, 50, 0.9);
   border-radius: 10px;
   padding: 50px;
+  margin-top: 50px;
 `;
 
-const UserlistContainer = styled.div`
+const FriendsListContainer = styled.div`
   float: right;
   padding-left: 35px;
 `;
@@ -45,6 +47,14 @@ const ButtonsContainerRight = styled.div`
 const Users = styled.ul`
   list-style: none;
   padding-left: 0;
+  padding-bottom: 1px;
+
+`;
+
+const Friends = styled.ul`
+  list-style: none;
+  padding-left: 0;
+  padding-bottom: 1px;
 
 `;
 
@@ -53,9 +63,12 @@ const PlayerContainer = styled.li`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
 `;
 
 const LobbyContainer = styled.li`
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
@@ -97,21 +110,22 @@ class MainScreen extends React.Component {
     try {
       const response = await api.get('/users');
       this.setState({ users: response.data });
+      //TODO: Fake data for the lobbies Need to remove it Later
+      this.setState({ lobbies: [{"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"}] });
     } catch (error) {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
     }
 
     // Get lobbies
-    try {
+    /**try {
       const response = await api.get('/lobbies');
       this.setState({ lobbies: response.data });
     } catch (error) {
       alert(`Something went wrong while fetching the lobbies: \n${handleError(error)}`);
-      // TODO remove
-      // Set lobbies to fake data, since backend is not implemented yet
-      this.setState({ lobbies: [{"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"}] });
-    }
+    }*/
   }
+
+
 
   join_lobby(lobby) {
     localStorage.setItem("visited lobby", lobby.id);
@@ -125,7 +139,9 @@ class MainScreen extends React.Component {
     localStorage.setItem("visited User", user.id);
     // go to profile page
     this.props.history.push("/game/dashboard/profilepage");
-
+  }
+  getUser(){
+    return this.state.username
   }
 
   render() {
@@ -164,14 +180,12 @@ class MainScreen extends React.Component {
           )
           :
           (
-          <UserlistContainer>
-            <h2>Hello</h2>
+          <FriendsListContainer>
+            <h2>User</h2>
               <Users>
                 {this.state.users.map(user => {
                   return (
-                    <PlayerContainer key={user.id}>
                       <Player user={user} f_onClick={() => this.go_to_profile(user)} />
-                    </PlayerContainer>
                   );
                 })}
               </Users>
@@ -183,10 +197,9 @@ class MainScreen extends React.Component {
             >
               Logout
             </Button>
-            </UserlistContainer>
+            </FriendsListContainer>
           )}
           </ListsContainer>
-
       </Container>
 
     );
