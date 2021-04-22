@@ -17,7 +17,7 @@ const LobbyName = styled.div`
   font-weight: lighter;
   margin-left: 5px;
   font-size: 17px;
-  padding-right: 60px;
+  margin-right: auto;
   
 `;
 
@@ -34,8 +34,8 @@ export const ButtonLobbies = styled.button`
   text-align: center;
   color: black;
   width: ${props => props.width || null};
-  height: 35px;
   border: none;
+  height: 35px;
   border-radius: 20px;
   cursor: ${props => (props.disabled ? "default" : "pointer")};
   opacity: ${props => (props.disabled ? 0.4 : 1)};

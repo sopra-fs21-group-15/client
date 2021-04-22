@@ -41,18 +41,6 @@ const Form = styled.div`
 
 
 
-const Container = styled(BaseContainer)`
-  color: white;
-  text-align: center;
-`;
-
-const PlayerContainer = styled.li`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
 class ProfilePage extends React.Component {
   constructor() {
     super();

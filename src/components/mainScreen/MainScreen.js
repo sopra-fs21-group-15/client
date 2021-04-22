@@ -28,6 +28,8 @@ const FriendsListContainer = styled.div`
 const LobbylistContainer = styled.div`
   float: left;
   padding-right: 35px;
+  max-height 550px;
+  overflow: hidden;
 `;
 
 const ListsContainer = styled.div`
@@ -46,11 +48,15 @@ const Users = styled.ul`
   padding-bottom: 1px;
 `;
 
-const Friends2 = styled.ul`
+
+const Lobbies = styled.ul`
   list-style: none;
-  padding-right: 0;
+  padding-left: 0;
   padding-bottom: 1px;
-`
+  max-height: 380px;
+  overflow-y: auto;
+`;
+
 
 
 class MainScreen extends React.Component {
@@ -67,11 +73,16 @@ class MainScreen extends React.Component {
   }
 
   async getUser() {
-    const url = '/users/' + this.state.userId;
-    // wait for the user information
-    const response = await api.get(url);
-    const user = new User(response.data);
-    this.setState({user : user})
+    try {
+      const url = '/users/' + this.state.userId;
+      // wait for the user information
+      const response = await api.get(url);
+      const user = new User(response.data);
+      this.setState({user: user})
+    }
+    catch (error) {
+      alert(`Something went wrong while fetching the user: \n${handleError(error)}`);
+    }
   }
 
 // changed logout to put player on OFFLINE
@@ -97,18 +108,23 @@ class MainScreen extends React.Component {
   }
 
   async componentDidMount() {
+    this.getUser()
     // Get users
     try {
       const response = await api.get('/users');
       this.setState({ users: response.data });
-      //TODO: Fake data for the lobbies Need to remove it Later
+      //TODO: Fake data for the lobbies and Friends Need to remove it Later
       this.setState({ friends: [{"id":31,"password":"123","name":"John"},{"id":42,"password":"123","name":"Tommy"}] });
-      this.setState({ lobbies: [{"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"}] });
+      this.setState({ lobbies: [{"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
+          {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
+          {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
+          {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
+          {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"}] });
     } catch (error) {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
     }
 
-    // Get lobbies
+    //TODO get this method to work after the backend is done with their implementations
     /**try {
       const response = await api.get('/lobbies');
       this.setState({ lobbies: response.data });
@@ -143,13 +159,13 @@ class MainScreen extends React.Component {
         (
           <LobbylistContainer>
             <h2>Lobbies</h2>
-            <Users>
+            <Lobbies>
               {this.state.lobbies.map(lobby => {
                 return (
                     <Lobby lobby={lobby} f_onClick={() => this.join_lobby(lobby)} />
                 );
               })}
-            </Users>
+            </Lobbies>
             <Button
                 width = "70%"
                 onClick={() => {
@@ -160,20 +176,14 @@ class MainScreen extends React.Component {
             </Button>
           </LobbylistContainer>
         )}
-          {!this.state.users ? (
+          {!this.state.users || !this.state.user || !this.state.friends? (
             <Spinner />
           )
           :
           (
           <FriendsListContainer>
-            <h2>User</h2>
-              <Users>
-                {this.state.users.map(user => {
-                  return (
-                      <Player user={user} f_onClick={() => this.go_to_profile(user)} />
-                  );
-                })}
-              </Users>
+            <h2>Hello {this.state.user.username}</h2>
+
             <Button
                 width="70%"
                 onClick={() => {
@@ -182,10 +192,16 @@ class MainScreen extends React.Component {
             >
               Logout
             </Button>
-            <FriendsContainer>
-              <h2>Friends</h2>
 
-            </FriendsContainer>
+
+            <h2>Friends List</h2>
+            <Users>
+              {this.state.friends.map(lobby => {
+                return (
+                    <Lobby lobby={lobby} f_onClick={() => this.go_to_profile(lobby)} />
+                    );
+              })}
+            </Users>
             </FriendsListContainer>
           )}
           </ListsContainer>
