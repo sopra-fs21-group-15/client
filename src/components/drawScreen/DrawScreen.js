@@ -304,16 +304,6 @@ class DrawScreen extends React.Component {
       let time_left = Math.round((this.state.timeout - date_now) / 1000);
       this.setState({ time_left });
     }, 1000);
-
-    // this.countdown();
-
-    // const [seconds, setSeconds] = useState(0);
-    //useEffect(() => {
-    //  const interval = setInterval(() => {
-    //    setSeconds(seconds => seconds + 1);
-    //  }, 1000);
-    //  return () => clearInterval(interval);
-    //}, []);
   }
 
   componentDidUnmount() {
