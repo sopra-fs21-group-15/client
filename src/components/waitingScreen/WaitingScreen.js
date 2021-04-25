@@ -15,15 +15,26 @@ const Container = styled(BaseContainer)`
   border-radius: 10px;
   padding: 50px;
 `;
-
+const Layout = styled.div`
+    display:flex;
+    flex-direction:row;
+  `;
 const UserlistContainer = styled.div`
   float: left;
-  padding-left: 35px;
+  padding-right: 50%;
+  display:flex;
+  flex-direction: column;
 `;
-
+const PlayerContainer = styled.li`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
 const LobbyinformationContainer = styled.div`
   float: right;
   padding-right: 15px;
+  padding-right: 50%;
 `;
 const Lobbyinformation = styled.li`
     display: flex;
@@ -36,9 +47,9 @@ const FormContainer = styled.div`
   margin-top: 2em;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: right;
   min-height: 300px;
-  justify-content: center;
+  justify-content: right;
 `;
 
 const OneLineBlock = styled.div`
@@ -121,6 +132,7 @@ class waitingScreen extends React.Component {
 
   async startgame() {
     this.props.history.push(`/playingfield`)
+
     return;
   }
 
@@ -141,15 +153,24 @@ class waitingScreen extends React.Component {
         <FormContainer>
           <h2>Chill Area</h2>
           <hr width="100%" />
+          <Layout>
           <UserlistContainer>
-
+          {this.state.users.map(user => {
+            return (
+            <PlayerContainer key={user.id}>
+               <Player user={user} f_onClick={() => this.go_to_profile(user)} />
+               <Button>
+               
+               </Button>
+            </PlayerContainer>
+            );
+              })}
 
           </UserlistContainer>
           <LobbyinformationContainer>
           <Lobbyinformation>
             <Label>Lobbyname</Label>
-            <InputField id="form_name" />
-
+            <h2>Name of the Lobby</h2>
             <Label>Gamemode</Label>
             <SelectField id="form_gamemode">
                 <option value="classic">Classic</option>
@@ -188,6 +209,7 @@ class waitingScreen extends React.Component {
             </OneLineBlock>
             </Lobbyinformation>
             </LobbyinformationContainer>
+            </Layout>
             <hr width="100%" />
             <ButtonContainer>
                 <Button width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
