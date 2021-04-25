@@ -128,10 +128,40 @@ class waitingScreen extends React.Component {
   }
 
   async componentDidMount() {
+   try {
+        const response = await api.get('/users');
+        this.setState({ users: response.data });
+      } catch (error) {
+        alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
+      }
+    try {
+        const response = await api.get('lobby');
+        this.setState({ users: response.data });
+        } catch (error) {
+            alert(`Something went wrong while fetching the lobby data: \n${handleError(error)}`);
+      }
+
   }
 
   async startgame() {
-    this.props.history.push(`/playingfield`)
+     try{
+        const requestBody_2 = JSON.stringify({
+            gamemode: this.state.form_gamemode,
+            max_players: this.state.from_player,
+            rounds: this.state.from_rounds,
+            private: this.state.form_private,
+            password: this.state.form_password,
+
+        });
+
+        const url = '/lobby/';
+        /** give the changes to the backend **/
+        await api.put(url, requestBody_2);
+        }
+        catch (error) {
+            alert(`Something went wrong during the login: \n${handleError(error)}`);
+        this.props.history.push(`/draw`)
+        }
 
     return;
   }
@@ -160,7 +190,7 @@ class waitingScreen extends React.Component {
             <PlayerContainer key={user.id}>
                <Player user={user} f_onClick={() => this.go_to_profile(user)} />
                <Button>
-               
+               kick out
                </Button>
             </PlayerContainer>
             );
