@@ -17,7 +17,7 @@ const Container = styled(BaseContainer)`
 `;
 
 const FormContainer = styled.div`
-  margin-top: 2em;
+  margin-top: 0.5em;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -134,6 +134,7 @@ class CreateLobby extends React.Component {
           <SelectField id="form_gamemode">
             <option value="classic">Classic</option>
             <option value="pokemon">Pokemon</option>
+            <option value="heros">Hero's</option>
           </SelectField>
 
           <Label>Max. Players</Label>

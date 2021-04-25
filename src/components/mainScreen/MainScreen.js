@@ -29,10 +29,17 @@ const LobbylistContainer = styled.div`
 const ListsContainer = styled.div`
 `;
 
-const ButtonsContainer = styled.div`
+const ButtonsContainerLeft = styled.div`
   display: block;
   margin-left: auto;
   margin-right: auto;
+  float: left;
+`;
+const ButtonsContainerRight = styled.div`
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  float: right;
 `;
 
 const Users = styled.ul`
@@ -142,6 +149,14 @@ class MainScreen extends React.Component {
                 );
               })}
             </Users>
+            <Button
+                width = "70%"
+                onClick={() => {
+                  this.createLobby();
+                }}
+            >
+              Create Lobby
+            </Button>
           </LobbylistContainer>
         )}
           {!this.state.users ? (
@@ -150,7 +165,7 @@ class MainScreen extends React.Component {
           :
           (
           <UserlistContainer>
-            <h2>Users</h2>
+            <h2>Hello</h2>
               <Users>
                 {this.state.users.map(user => {
                   return (
@@ -160,26 +175,18 @@ class MainScreen extends React.Component {
                   );
                 })}
               </Users>
-            </UserlistContainer>
-          )}
-          </ListsContainer>
-          <ButtonsContainer>
             <Button
-              onClick={() => {
-                this.logout();
-              }}
+                width="70%"
+                onClick={() => {
+                  this.logout();
+                }}
             >
               Logout
             </Button>
-            <br/><br/>
-            <Button
-              onClick={() => {
-                this.createLobby();
-              }}
-            >
-              Create Lobby
-            </Button>
-          </ButtonsContainer>
+            </UserlistContainer>
+          )}
+          </ListsContainer>
+
       </Container>
 
     );
