@@ -103,6 +103,49 @@ const InputField = styled.input`
   color: black;
 `;
 
+const Timer = styled.div`
+  position: absolute;
+  //min-width: 100px;
+  background: rgba(50, 50, 50, 0.9);;
+  color: white;
+  text-align: center;
+  font-size: 48px;
+  font-variant: small-caps;
+  font-weight: 900;
+  padding: 10px;
+
+  // Place not in the middle of the whole screen but in middle of what is left
+  // when you substract the sidebar-width.
+  left: calc(80% - 256px / 2);
+  bottom: 100px;
+  transform: translateX(-50%);
+
+  box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+`;
+
+const Hint = styled.div`
+  position: absolute;
+  //min-width: 100px;
+  background: rgba(50, 50, 50, 0.9);;
+  color: white;
+  text-align: center;
+  font-size: 48px;
+  font-variant: small-caps;
+  font-weight: 900;
+  padding: 10px;
+  letter-spacing: 7px;
+
+  // Place not in the middle of the whole screen but in middle of what is left
+  // when you substract the sidebar-width.
+  left: calc(20% - 256px / 2);
+  bottom: 100px;
+  transform: translateX(-50%);
+
+  box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+`;
+
 
 
 class DrawScreen extends React.Component {
@@ -140,6 +183,9 @@ class DrawScreen extends React.Component {
 
     this.state = {
       game_id: 7, // TODO get actual id
+      timeout: new Date(), // Timestamp when the time is over
+      time_left: Infinity, // in seconds
+      hint: "A__b_c_", // Will contain some letters and underscores
       canvas_width: 854,
       canvas_height: 480,
       draw_colour: "#ffffff",
@@ -150,6 +196,7 @@ class DrawScreen extends React.Component {
       messages // JSON of all chat messages
     };
   }
+
 
   handleInputChange(key, value) {
     this.setState({ [key]: value });
@@ -248,6 +295,29 @@ class DrawScreen extends React.Component {
   componentDidMount() {
     this.resetCanvas();
     this.updateBrushPreview();
+    //setInterval(this.countdown, 1000)
+
+
+    // Regularly update the time left
+    setInterval(() => {
+      let date_now = new Date();
+      let time_left = Math.round((this.state.timeout - date_now) / 1000);
+      this.setState({ time_left });
+    }, 1000);
+
+    // this.countdown();
+
+    // const [seconds, setSeconds] = useState(0);
+    //useEffect(() => {
+    //  const interval = setInterval(() => {
+    //    setSeconds(seconds => seconds + 1);
+    //  }, 1000);
+    //  return () => clearInterval(interval);
+    //}, []);
+  }
+
+  componentDidUnmount() {
+    clearInterval();
   }
 
   async send_message() {
@@ -276,6 +346,8 @@ class DrawScreen extends React.Component {
       // Lobby list
       <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
         onMouseDown={(e) => {this.canvas_onMouseDown(e.button)}} onMouseUp={(e) => {this.canvas_onMouseUp(e.button)}}></Canvas>,
+      <Timer>{this.state.time_left}</Timer>,
+      <Hint>{this.state.hint}</Hint>,
       <Sidebar>
         <H1 onClick={this.changeColour}>Tools</H1>
         <HR />
