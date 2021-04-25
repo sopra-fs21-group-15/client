@@ -8,6 +8,7 @@ import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import Colour from '../../views/Colour';
+import Message from '../../views/Message';
 
 const Canvas = styled.canvas`
   position: absolute;
@@ -35,6 +36,21 @@ const Sidebar = styled.div`
 
   padding: 0px 5px;
   text-align: center;
+`;
+
+const Chatbox = styled.div`
+`;
+
+const Messages = styled.ul`
+  background: white;
+  height: 250px;
+  list-style-type: none;
+  list-style-position: outside;
+  padding: 0px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border-radius: 8px;
+
 `;
 
 const HR = styled.hr`
@@ -119,13 +135,18 @@ class DrawScreen extends React.Component {
       "#ffffff"
       ];
 
+    let messages = [ {"sender": "niklassc", "timestamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"sender": "example_user", "timestamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"sender": "niklassc", "timestamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
+
     this.state = {
+      game_id: 7, // TODO get actual id
       canvas_width: 854,
       canvas_height: 480,
       draw_colour: "#ffffff",
       draw_size: 5,
       mouse_down: false, // stores whether the LEFT mouse button is down
-      loginId: localStorage.getItem('loginId') //added the login Id
+      loginId: localStorage.getItem('loginId'), //added the login Id
+      chat_message: "", // Value of the chat input field
+      messages // JSON of all chat messages
     };
   }
 
@@ -208,11 +229,9 @@ class DrawScreen extends React.Component {
     } catch (error) {
       alert(`Something went wrong while sending the drawing instruction: \n${handleError(error)}`);
     }
-
   }
 
   canvas_onMouseDown(button) {
-    console.log("Down");
     if(button == 0) {
       let ctx = this.mainCanvas.current.getContext('2d');
       this.setState({ mouse_down: true });
@@ -221,7 +240,6 @@ class DrawScreen extends React.Component {
   }
 
   canvas_onMouseUp(button) {
-    console.log("Up");
     if(button == 0)
       this.setState({ mouse_down: false });
   }
@@ -229,6 +247,20 @@ class DrawScreen extends React.Component {
   componentDidMount() {
     this.resetCanvas();
     this.updateBrushPreview();
+  }
+
+  async send_message() {
+    try {
+      const requestBody = JSON.stringify({
+        user_id: this.state.loginId,
+        message: this.state.chat_message
+      });
+      /** await the confirmation of the backend **/
+      const response = await api.put('/chat', requestBody);
+      this.setState({ chat_message: "" });
+    } catch (error) {
+      alert(`Something went wrong while sending the chat message: \n${handleError(error)}`);
+    }
   }
 
   render() {
@@ -254,6 +286,22 @@ class DrawScreen extends React.Component {
         <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>
         <HR />
         <BrushPreview ref={this.brushPreview}></BrushPreview>
+        <Chatbox>
+          <Messages>
+            {this.state.messages.map(message => {
+              return (
+                <Message message={message} />
+              );
+            })}
+          </Messages>
+          <InputField placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+          { this.state.chat_message == "" ?
+            <Button disabled width="40%" onClick={() => {this.send_message()}} >Send</Button>
+            :
+            <Button width="40%" onClick={() => {this.send_message()}} >Send</Button>
+          }
+
+        </Chatbox>
       </Sidebar>
     ]);
   }
