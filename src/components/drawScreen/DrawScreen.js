@@ -36,6 +36,7 @@ const Sidebar = styled.div`
 
   padding: 0px 5px;
   text-align: center;
+  overflow-y: auto;
 `;
 
 const Chatbox = styled.div`
@@ -77,7 +78,7 @@ const ColoursContainer = styled.div`
   // display: inline-block;
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: repeat(auto-fill, 64px);
+  grid-template-columns: repeat(auto-fill, 32px);
 
   // background: rgba(255, 0, 0, 0.3);
 `;
@@ -263,6 +264,13 @@ class DrawScreen extends React.Component {
     }
   }
 
+  download_image() {
+    let link = document.createElement("a");
+    link.download = "canvas.png";
+    link.href = this.mainCanvas.current.toDataURL("image/png");
+    link.click();
+  }
+
   render() {
     return ([
       // Lobby list
@@ -284,7 +292,9 @@ class DrawScreen extends React.Component {
         <HR/>
         <Button width="40%" onClick={() => {this.fillCanvas()}}>Fill</Button>
         <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>
-        <HR />
+        <HR/>
+        <Button width="80%" onClick={() => {this.download_image()}}>Download image</Button>
+        <HR/>
         <BrushPreview ref={this.brushPreview}></BrushPreview>
         <Chatbox>
           <Messages>
