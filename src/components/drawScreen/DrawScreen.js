@@ -202,6 +202,7 @@ class DrawScreen extends React.Component {
         y: y,
         size: size,
         colour: colour
+      });
       /** await the confirmation of the backend **/
       const response = await api.put('/drawing', requestBody);
     } catch (error) {
