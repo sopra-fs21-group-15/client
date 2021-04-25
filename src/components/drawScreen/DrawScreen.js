@@ -123,13 +123,14 @@ class DrawScreen extends React.Component {
       canvas_width: 854,
       canvas_height: 480,
       draw_colour: "#ffffff",
-      draw_size: 5
+      draw_size: 5,
+      mouse_down: false, // stores whether the LEFT mouse button is down
+      loginId: localStorage.getItem('loginId') //added the login Id
     };
   }
 
   handleInputChange(key, value) {
     this.setState({ [key]: value });
-    this.updateBrushPreview();
   }
 
   resetCanvas() {
@@ -157,11 +158,71 @@ class DrawScreen extends React.Component {
   }
 
   changeColour(colour) {
-    this.handleInputChange('draw_colour', colour);
+    this.setState({ ['draw_colour']: colour });
+
+    let ctx = this.mainCanvas.current.getContext('2d');
+    ctx.strokeStyle = colour;
+
+    this.updateBrushPreview();
   }
 
-  draw() {
-    let mousePos = 0;
+  changeSize(size) {
+    this.setState({ ['draw_size']: size });
+
+    let ctx = this.mainCanvas.current.getContext('2d');
+    ctx.lineWidth = size;
+
+    this.updateBrushPreview();
+  }
+
+  // Draws a line at the position x,y
+  canvas_onMouseMove(x, y) {
+    if(!this.state.mouse_down)
+      return;
+
+    let ctx = this.mainCanvas.current.getContext('2d');
+
+    // Calculate mouse position relative to canvas
+    let rect = this.mainCanvas.current.getBoundingClientRect();
+    x -= rect.left;
+    y -= rect.top;
+
+    // Send draw instruction to the backend
+    this.sendDrawInstruction(x, y, ctx.lineWidth, ctx.strokeStyle);
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  }
+
+  async sendDrawInstruction(x, y, size, colour) {
+    try {
+      const requestBody = JSON.stringify({
+        user_id: this.state.loginId,
+        x: x,
+        y: y,
+        size: size,
+        colour: colour
+      /** await the confirmation of the backend **/
+      const response = await api.put('/drawing', requestBody);
+    } catch (error) {
+      alert(`Something went wrong while sending the drawing instruction: \n${handleError(error)}`);
+    }
+
+  }
+
+  canvas_onMouseDown(button) {
+    console.log("Down");
+    if(button == 0) {
+      let ctx = this.mainCanvas.current.getContext('2d');
+      this.setState({ mouse_down: true });
+      ctx.beginPath();
+    }
+  }
+
+  canvas_onMouseUp(button) {
+    console.log("Up");
+    if(button == 0)
+      this.setState({ mouse_down: false });
   }
 
   componentDidMount() {
@@ -172,7 +233,8 @@ class DrawScreen extends React.Component {
   render() {
     return ([
       // Lobby list
-      <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={() => this.draw()}></Canvas>,
+      <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
+        onMouseDown={(e) => {this.canvas_onMouseDown(e.button)}} onMouseUp={(e) => {this.canvas_onMouseUp(e.button)}}></Canvas>,
       <Sidebar>
         <H1 onClick={this.changeColour}>Tools</H1>
         <HR />
@@ -185,7 +247,7 @@ class DrawScreen extends React.Component {
         </ColoursContainer>
         <HR/>
         <Label>Size</Label>
-        <InputField value={this.state.draw_size} onChange={e => {this.handleInputChange('draw_size', e.target.value);}} id="input_size" type="range" min="1" max="100" />
+        <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />
         <HR/>
         <Button width="40%" onClick={() => {this.fillCanvas()}}>Fill</Button>
         <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>
