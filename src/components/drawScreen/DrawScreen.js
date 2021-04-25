@@ -124,7 +124,8 @@ class DrawScreen extends React.Component {
       canvas_height: 480,
       draw_colour: "#ffffff",
       draw_size: 5,
-      mouse_down: false // stores whether the LEFT mouse button is down
+      mouse_down: false, // stores whether the LEFT mouse button is down
+      loginId: localStorage.getItem('loginId') //added the login Id
     };
   }
 
@@ -178,14 +179,35 @@ class DrawScreen extends React.Component {
   canvas_onMouseMove(x, y) {
     if(!this.state.mouse_down)
       return;
+
+    let ctx = this.mainCanvas.current.getContext('2d');
+
     // Calculate mouse position relative to canvas
     let rect = this.mainCanvas.current.getBoundingClientRect();
     x -= rect.left;
     y -= rect.top;
 
-    let ctx = this.mainCanvas.current.getContext('2d');
+    // Send draw instruction to the backend
+    this.sendDrawInstruction(x, y, ctx.lineWidth, ctx.strokeStyle);
+
     ctx.lineTo(x, y);
     ctx.stroke();
+  }
+
+  async sendDrawInstruction(x, y, size, colour) {
+    try {
+      const requestBody = JSON.stringify({
+        user_id: this.state.loginId,
+        x: x,
+        y: y,
+        size: size,
+        colour: colour
+      /** await the confirmation of the backend **/
+      const response = await api.put('/drawing', requestBody);
+    } catch (error) {
+      alert(`Something went wrong while sending the drawing instruction: \n${handleError(error)}`);
+    }
+
   }
 
   canvas_onMouseDown(button) {
