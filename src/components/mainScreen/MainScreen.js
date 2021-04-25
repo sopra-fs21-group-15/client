@@ -183,6 +183,12 @@ class MainScreen extends React.Component {
           (
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
+            <Button
+                width = "70%"
+                onclick={() => {this.go_to_profile(this.state.user)}}
+              >
+              Profile
+              </Button>
 
             <Button
                 width="70%"
