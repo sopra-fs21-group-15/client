@@ -121,6 +121,7 @@ class waitingScreen extends React.Component {
       users: null,
       lobbies: null,
       loginId: localStorage.getItem('loginId'),
+      ownerID: 4,
       max_players: 7,
       rounds: 3,
       private: false
@@ -244,7 +245,7 @@ class waitingScreen extends React.Component {
             <ButtonContainer>
 
                <Button
-               disabled={!this.state.users<2}
+               disabled={!this.state.users<2 && !this.state.loginID == this.state.ownerID }
                width="25%" onClick={() => {this.startgame();}}>
                Start the Game
                </Button>
