@@ -275,7 +275,8 @@ class DrawScreen extends React.Component {
       /** await the confirmation of the backend **/
       const response = await api.put('/drawing', requestBody);
     } catch (error) {
-      alert(`Something went wrong while sending the drawing instruction: \n${handleError(error)}`);
+      //alert(`Something went wrong while sending the drawing instruction: \n${handleError(error)}`);
+      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
     }
   }
 
