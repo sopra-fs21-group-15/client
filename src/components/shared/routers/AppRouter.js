@@ -8,6 +8,7 @@ import Login from "../../login/Login";
 import Registration from "../../registration/Registration";
 import CreateLobby from "../../createLobby/CreateLobby";
 import DrawScreen from "../../drawScreen/DrawScreen";
+import WaitingRoom from "../../waitingRoom/WaitingRoom";
 
 /**
  * Main router of your application.
@@ -62,7 +63,10 @@ class AppRouter extends React.Component {
                   <DrawScreen />
               )}
             />
-            <Route path="/" exact render={() => <Redirect to={"/game"} />} />
+            <Route path="/" exact render={() => <Redirect to={"/game"} />}/>
+
+            <Route path="/waitingRoom" exact render={() => (<WaitingRoom/>)}/>
+
           </div>
         </Switch>
       </BrowserRouter>

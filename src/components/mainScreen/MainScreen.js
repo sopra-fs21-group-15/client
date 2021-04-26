@@ -142,7 +142,7 @@ class MainScreen extends React.Component {
       this.setState({ users: response.data });
       //TODO: Fake data for the lobbies and Friends Need to remove it Later
       this.setState({ friends: [{"id":31,"password":"123","name":"John"},{"id":42,"password":"123","name":"Tommy"}] });
-      this.setState({ lobbies: [{"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
+      this.setState({ lobbies: [{"id":1,"password":"","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
           {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
           {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
           {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
@@ -155,15 +155,18 @@ class MainScreen extends React.Component {
   }
   //TODO We see in the log if the PW is correct
   join_lobby(lobby) {
-    if (lobby.password!==null){
+    if (lobby.password!==""){
       let input = prompt("Please enter the Lobby password")
       if (input === lobby.password){
+        this.props.history.push("/waitingRoom")
         console.log("good")
+        //this.props.history.push("/waitingRoom")
       }
       else (console.log("bad"))
     }
+    else this.props.history.push("/waitingRoom")
+    //else console.log("public Lobby")
   }
-    //this.props.history.push("/waitingRoom"); // TODO: go to right page
 
   go_to_profile(user) {
     // set the id for the profile the user is visiting
@@ -207,20 +210,26 @@ class MainScreen extends React.Component {
           )
           :
           (
+              // User and his FriendsList
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
+            <Button
+                onClick={() => {this.go_to_profile(this.state.user)}}
+            >View Profile</Button>
 
             <Users>
+              <h2>Friends List</h2>
               {this.state.users.map(user => {
                 return (
                     <PlayerContainer key={user.id}>
                       <Player user={user} f_onClick={() => this.go_to_profile(user)}/>
                     </PlayerContainer>
+
                 );
               })}
             </Users>
             <Button
-                width="70%"
+                width="55%"
                 onClick={() => {
                   this.logout();
                 }}
