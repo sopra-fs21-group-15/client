@@ -121,9 +121,9 @@ class waitingScreen extends React.Component {
       users: null,
       lobbies: null,
       loginId: localStorage.getItem('loginId'),
-      ownerID: 4,
-      max_players: 7,
-      rounds: 3,
+      ownerID: null,
+      max_players: null,
+      rounds: null,
       private: false
     };
   }
@@ -136,8 +136,8 @@ class waitingScreen extends React.Component {
         alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
       }
     try {
-        const response = await api.get('lobby');
-        this.setState({ users: response.data });
+        const response = await api.get('/lobbies');
+        this.setState({ lobby: response.data });
         } catch (error) {
             alert(`Something went wrong while fetching the lobby data: \n${handleError(error)}`);
       }
@@ -155,7 +155,7 @@ class waitingScreen extends React.Component {
 
         });
 
-        const url = '/lobby/';
+        const url = '/lobbies';
         /** give the changes to the backend **/
         await api.put(url, requestBody_2);
         }
@@ -203,13 +203,17 @@ class waitingScreen extends React.Component {
             <Label>Lobbyname</Label>
             <h2>Name of the Lobby</h2>
             <Label>Gamemode</Label>
-            <SelectField id="form_gamemode">
+            <SelectField id="form_gamemode"
+            disabled={this.state.ownerID!=this.state.loginID}
+            >
                 <option value="classic">Classic</option>
                 <option value="pokemon">Pokemon</option>
             </SelectField>
 
             <Label>Max. Players</Label>
-            <SelectField id="from_player">
+            <SelectField id="from_player"
+            disabled={this.state.ownerID!=this.state.loginID}
+            >
                 <option value={this.state.max_players}>{this.state.max_players}</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
@@ -222,7 +226,9 @@ class waitingScreen extends React.Component {
 
 
             <Label>Rounds</Label>
-            <SelectField id="from_rounds">
+            <SelectField id="from_rounds"
+            disabled={this.state.ownerID!=this.state.loginID}
+            >
                 <option value={this.state.rounds}>{this.state.rounds}</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -235,7 +241,7 @@ class waitingScreen extends React.Component {
 
             <Label>Private</Label>
             <OneLineBlock>
-                <InputField id="form_private" type="checkbox" onChange={e => {this.handleInputChange('private', e.target.checked);}} />
+                <InputField id="form_private" type="checkbox" disabled={this.state.ownerID!=this.state.loginID} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
                 {this.state.private == true ? <InputField id="form_password" placeholder="Password" /> : "" }
             </OneLineBlock>
             </Lobbyinformation>
