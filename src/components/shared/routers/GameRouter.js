@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { Redirect, Route } from "react-router-dom";
+import Prompt, { Redirect, Route } from "react-router-dom";
 import Game from "../../mainScreen/MainScreen";
 import ProfilePage from "../../profilepage/ProfilePage";
 import EditProfile from "../../profilepage/EditProfile";
 import CreateLobby from "../../createLobby/CreateLobby";
+
 
 const Container = styled.div`
   display: flex;
@@ -35,6 +36,7 @@ class GameRouter extends React.Component {
           exact
           path={`${this.props.base}/dashboard/profilepage`}
           render={() => <ProfilePage />}
+
         />
 
         <Route

@@ -45,9 +45,17 @@ const FriendsContainer = styled.div`
 const Users = styled.ul`
   list-style: none;
   padding-left: 0;
-  padding-bottom: 1px;
+  padding-bottom: 0px;
+  max-height: 380px;
+  overflow-y: auto;
 `;
 
+const PlayerContainer = styled.li`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
 
 const Lobbies = styled.ul`
   list-style: none;
@@ -68,13 +76,31 @@ class MainScreen extends React.Component {
       users: null,
       friends: null,
       lobbies: null,
+      lobby: null,
+      lobbyId: null, //TODO make a localstorage.get()
       loginId: localStorage.getItem('loginId') //added the login Id
     };
   }
 
+  //TODO get this method to work after the backend is done with their implementations
+
+  async getLobby(){
+    try {
+      const url = '/lobbies/' + this.state.lobby;
+      // wait for the user information
+      const response = await api.get(url);
+      const lobby = new User(response.data);
+      this.setState({lobby: lobby})
+    }
+    catch (error) {
+      alert(`Something went wrong while fetching the user: \n${handleError(error)}`);
+    }
+  }
+
+
   async getUser() {
     try {
-      const url = '/users/' + this.state.userId;
+      const url = '/users/' + this.state.loginId;
       // wait for the user information
       const response = await api.get(url);
       const user = new User(response.data);
@@ -93,6 +119,7 @@ class MainScreen extends React.Component {
 
       localStorage.removeItem('token');
       localStorage.removeItem('loginId');
+      localStorage.removeItem('visited user');
       this.props.history.push('/login');
     }
     //If you have not logout push the user to login page
@@ -108,8 +135,8 @@ class MainScreen extends React.Component {
   }
 
   async componentDidMount() {
-    this.getUser()
-    // Get users
+    this.getUser() // Get users
+    // TODO does not work because of Backend this.getLobby() // get lobbies
     try {
       const response = await api.get('/users');
       this.setState({ users: response.data });
@@ -124,21 +151,19 @@ class MainScreen extends React.Component {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
     }
 
-    //TODO get this method to work after the backend is done with their implementations
-    /**try {
-      const response = await api.get('/lobbies');
-      this.setState({ lobbies: response.data });
-    } catch (error) {
-      alert(`Something went wrong while fetching the lobbies: \n${handleError(error)}`);
-    }*/
-  }
 
-  join_lobby(lobby) {
-    localStorage.setItem("visited lobby", lobby.id);
-    /**set the id for the profile the user is visiting**/
-    this.props.history.push("/game/dashboard/profilepage"); // TODO: go to right page
-    /** go to profile page **/
   }
+  //TODO We see in the log if the PW is correct
+  join_lobby(lobby) {
+    if (lobby.password!==null){
+      let input = prompt("Please enter the Lobby password")
+      if (input === lobby.password){
+        console.log("good")
+      }
+      else (console.log("bad"))
+    }
+  }
+    //this.props.history.push("/waitingRoom"); // TODO: go to right page
 
   go_to_profile(user) {
     // set the id for the profile the user is visiting
@@ -146,6 +171,7 @@ class MainScreen extends React.Component {
     // go to profile page
     this.props.history.push("/game/dashboard/profilepage");
   }
+
 
   render() {
     return (
@@ -183,13 +209,16 @@ class MainScreen extends React.Component {
           (
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
-            <Button
-                width = "70%"
-                onclick={() => {this.go_to_profile(this.state.user)}}
-              >
-              Profile
-              </Button>
 
+            <Users>
+              {this.state.users.map(user => {
+                return (
+                    <PlayerContainer key={user.id}>
+                      <Player user={user} f_onClick={() => this.go_to_profile(user)}/>
+                    </PlayerContainer>
+                );
+              })}
+            </Users>
             <Button
                 width="70%"
                 onClick={() => {
@@ -198,16 +227,6 @@ class MainScreen extends React.Component {
             >
               Logout
             </Button>
-
-
-            <h2>Friends List</h2>
-            <Users>
-              {this.state.friends.map(lobby => {
-                return (
-                    <Lobby lobby={lobby} f_onClick={() => this.go_to_profile(lobby)} />
-                    );
-              })}
-            </Users>
             </FriendsListContainer>
           )}
           </ListsContainer>

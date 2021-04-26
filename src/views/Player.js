@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Button } from './design/Button';
 
 const Container = styled.div`
-  margin: 6px 0;
+  margin: 3px 0;
   width: 280px;
   padding: 10px;
   border-radius: 6px;
@@ -33,7 +33,7 @@ const Player = ({ user, f_onClick }) => {
   return (
     <Container>
       <UserName>{user.username}</UserName>
-      { f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
+      {f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
     </Container>
   );
 };

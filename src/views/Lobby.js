@@ -55,9 +55,9 @@ export const ButtonLobbies = styled.button`
 
 const Lobby = ({ lobby, f_onClick }) => {
   return (
-    <Container onClick="f_onClick">
+    <Container>
       <LobbyName>{lobby.name}</LobbyName>
-      { f_onClick ? <ButtonLobbies onClick={f_onClick}>Join Lobby</ButtonLobbies> : "" }
+      {f_onClick ? <ButtonLobbies onClick={f_onClick}>Join Lobby</ButtonLobbies> : "" }
     </Container>
   );
 };
