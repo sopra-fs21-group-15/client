@@ -2,13 +2,19 @@ import styled from 'styled-components';
 import React from 'react';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
-import Player from '../../views/Player';
+import Scores from '../../views/Scores';
 import Lobby from '../../views/Lobby';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import Colour from '../../views/Colour';
 import Message from '../../views/Message';
+
+const Users = styled.ul`
+  list-style: none;
+  padding-left: 0;
+
+`;
 
 const Canvas = styled.canvas`
   position: absolute;
@@ -123,7 +129,34 @@ const Timer = styled.div`
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
 `;
+const Scoreboard = styled.div`
+    position: absolute;
+    width:256px ;
+    background: rgba(50, 50, 50, 0.9);
+    color: white;
+    text-align: center;
+    font-color: white;
+    left: calc(17.5% - 256px / 2);
+    top: 100px;
+    transform: translateX(-50%);
+    box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
 
+`;
+const Scoreboardlabel = styled.label`
+    font-size: 25px;
+    font-variant: small-caps;
+    top: 30px;
+
+`;
+
+
+const PlayerContainer = styled.li`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
 const Hint = styled.div`
   position: absolute;
   //min-width: 100px;
@@ -193,7 +226,9 @@ class DrawScreen extends React.Component {
       mouse_down: false, // stores whether the LEFT mouse button is down
       loginId: localStorage.getItem('loginId'), //added the login Id
       chat_message: "", // Value of the chat input field
+      users: "",
       messages // JSON of all chat messages
+
     };
   }
 
@@ -304,6 +339,7 @@ class DrawScreen extends React.Component {
       let time_left = Math.round((this.state.timeout - date_now) / 1000);
       this.setState({ time_left });
     }, 1000);
+ this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
   }
 
   componentDidUnmount() {
@@ -329,6 +365,19 @@ class DrawScreen extends React.Component {
     link.download = "canvas.png";
     link.href = this.mainCanvas.current.toDataURL("image/png");
     link.click();
+  }
+  async show_leaderboard(){
+    try{
+    const responseusers = await api.get('');
+    this.setState({users: responseusers.data})
+
+
+    }catch(error){
+    alert(`Something went wrong while fetching the points: \n${handleError(error)}`)
+
+    }
+
+
   }
 
   render() {
@@ -374,7 +423,27 @@ class DrawScreen extends React.Component {
           }
 
         </Chatbox>
-      </Sidebar>
+      </Sidebar>,
+      <Scoreboard>
+      <Scoreboardlabel>Scoreboard</Scoreboardlabel>
+      <HR/>
+        {!this.state.users ? (
+                              <Spinner />
+                            )
+                            :
+                            (
+        <Users>
+        {this.state.users.map(user =>{
+        return(
+        <PlayerContainer key={user.id}>
+                <Scores user={user}/>
+        </PlayerContainer>
+                );
+                })}
+
+        </Users>
+        )}
+      </Scoreboard>
     ]);
   }
 }

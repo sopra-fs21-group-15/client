@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
-import Player from '../../views/Player';
+import WaitingPlayers from '../../views/waitinglist';
 import Lobby from '../../views/Lobby';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
@@ -18,13 +18,14 @@ const Container = styled(BaseContainer)`
 const Layout = styled.div`
     display:flex;
     flex-direction:row;
+    position:relative;
   `;
 const UserlistContainer = styled.div`
-  float: left;
-  padding-right: 50%;
-  display:flex;
-  flex-direction: column;
+    list-style: none;
+    padding-left: 40px;
+    padding-right: 340px;
 `;
+
 const PlayerContainer = styled.li`
   display: flex;
   flex-direction: column;
@@ -32,9 +33,9 @@ const PlayerContainer = styled.li`
   justify-content: center;
 `;
 const LobbyinformationContainer = styled.div`
+  position: absolute
   float: right;
-  padding-right: 15px;
-  padding-right: 50%;
+  right:50px;
 `;
 const Lobbyinformation = styled.li`
     display: flex;
@@ -113,13 +114,40 @@ const ButtonContainer = styled.div`
   margin-top: 20px;
   width: 100%;
 `;
+const kickout =  styled.button`
+position: absolut;
+right: 32px;
+top: 32px;
+width: 32px;
+height: 32px;
+opacity: 0.5;
+cursor: ${props => (props.disabled ? "default" : "pointer")};
+opacity: ${props => (props.disabled ? 0.1 : 1)};
+}
+.kickout:hover{
+opacity: 1;
+}
+.kickout:before, .kickout:after {
+  position: absolute;
+  left: 15px;
+  content: ' ';
+  height: 33px;
+  width: 5px;
+  background-color: #FF0000;
+}
+.kickout:before {
+  transform: rotate(45deg);
+}
+.kickout:after {
+  transform: rotate(-45deg);
+}
+`;
 
 class waitingScreen extends React.Component {
   constructor() {
     super();
     this.state = {
       users: null,
-      lobbies: null,
       loginId: localStorage.getItem('loginId'),
       ownerID: null,
       max_players: null,
@@ -129,21 +157,21 @@ class waitingScreen extends React.Component {
   }
 
   async componentDidMount() {
-   try {
-        const response = await api.get('/users');
-        this.setState({ users: response.data });
-      } catch (error) {
-        alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
-      }
     try {
-        const response = await api.get('/lobbies');
-        this.setState({ lobby: response.data });
+          const response = await api.get('/users');
+          this.setState({ users: response.data });
         } catch (error) {
-            alert(`Something went wrong while fetching the lobby data: \n${handleError(error)}`);
-      }
+          alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
+        }
 
-  }
 
+   }
+async componentDidMount() {
+
+        /// Fake Users
+       this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
+
+   }
   async startgame() {
      try{
         const requestBody_2 = JSON.stringify({
@@ -155,7 +183,7 @@ class waitingScreen extends React.Component {
 
         });
 
-        const url = '/lobbies';
+        const url = '/';
         /** give the changes to the backend **/
         await api.put(url, requestBody_2);
         }
@@ -170,7 +198,9 @@ class waitingScreen extends React.Component {
   goback() {
     this.props.history.push(`/game`);
   }
+  kickout(){
 
+  }
   handleInputChange(key, value) {
     // Example: if the key is username, this statement is the equivalent to the following one:
     // this.setState({'username': value});
@@ -185,19 +215,22 @@ class waitingScreen extends React.Component {
           <h2>Chill Area</h2>
           <hr width="100%" />
           <Layout>
+          {!this.state.users ? (
+                      <Spinner />
+                    )
+                    :
+                    (
           <UserlistContainer>
           {this.state.users.map(user => {
             return (
             <PlayerContainer key={user.id}>
-               <Player user={user} f_onClick={() => this.go_to_profile(user)} />
-               <Button>
-               kick out
-               </Button>
+               <WaitingPlayers user={user} f_onClick={() => this.remove_player(user)}/>
             </PlayerContainer>
             );
-              })}
+             })}
 
           </UserlistContainer>
+          )}
           <LobbyinformationContainer>
           <Lobbyinformation>
             <Label>Lobbyname</Label>
