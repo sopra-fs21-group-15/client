@@ -315,11 +315,11 @@ class DrawScreen extends React.Component {
         const response = await api.get('/chat', requestBody);
 
         // Set timestamp_last_message
-        //let timestamp_last_message = response[response.lenght -1].timestamp;
+        let timestamp_last_message = response[response.lenght -1].timestamp;
 
         // Add new messages to our chat
-        //let messages = this.state.messages.concat(response);
-        //this.setState({ timestamp_last_message, messages });
+        let messages = this.state.messages.concat(response);
+        this.setState({ timestamp_last_message, messages });
       } catch (error) {
         this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
       }
