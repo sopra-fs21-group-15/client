@@ -4,7 +4,7 @@ import { Button } from './design/Button';
 
 const Container = styled.div`
   margin: 6px 0;
-  width: 200px;
+  width: 150px;
   padding: 10px;
   border-radius: 6px;
   display: flex;
@@ -37,7 +37,7 @@ const Score = ({ user, f_onClick }) => {
     <Container>
       <UserName>{user.name}</UserName>
       <Points>:  {user.points}</Points>
-      { f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
+
     </Container>
   );
 };

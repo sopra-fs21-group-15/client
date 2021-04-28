@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Button } from './design/Button';
+
 
 const Container = styled.div`
   margin: 6px 0;
@@ -10,6 +10,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   border: 1px solid #ffffff26;
+  position:relative;
 `;
 
 const UserName = styled.div`
@@ -17,36 +18,26 @@ const UserName = styled.div`
 
   font-size: 17px;
   text-align: center;
+
+`;
+const Button = styled.button`
+  &:hover {
+    transform: translateY(-2px);
+    color: rgba(255,0,0,1);
+  }
+    position: absolute;
+    font-family: Arial Black  ;
+    right:20px;
+    font-size: 25px;
+    font-weight: bolder;
+ color: rgb(255,0,0,0.3);
+  background-color: rgba(0,0,0,0);
+    border: 0px;
+
+
+
 `;
 
-const kickout =  styled.button`
-position: absolut;
-right: 32px;
-top: 32px;
-width: 32px;
-height: 32px;
-opacity: 0.5;
-cursor: ${props => (props.disabled ? "default" : "pointer")};
-opacity: ${props => (props.disabled ? 0.1 : 1)};
-}
-.kickout:hover{
-opacity: 1;
-}
-.kickout:before, .kickout:after {
-  position: absolute;
-  left: 15px;
-  content: ' ';
-  height: 33px;
-  width: 5px;
-  background-color: #FF0000;
-}
-.kickout:before {
-  transform: rotate(45deg);
-}
-.kickout:after {
-  transform: rotate(-45deg);
-}
-`;
 
 /**
  * This is an example of a Functional and stateless component (View) in React. Functional components are not classes and thus don't handle internal state changes.
@@ -62,7 +53,7 @@ const Player = ({ user, f_onClick }) => {
     <Container>
       <UserName>{user.name}</UserName>
 
-      { f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
+      { f_onClick ? <Button onClick={f_onClick}>X</Button> : "" }
     </Container>
   );
 };

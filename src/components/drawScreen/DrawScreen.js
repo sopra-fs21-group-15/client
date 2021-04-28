@@ -15,13 +15,36 @@ const Users = styled.ul`
   padding-left: 0;
 
 `;
-
+const Blur = styled.div`
+position: absolute;
+top:0px;
+left: 0px;
+width: 100%;
+height: 100%;
+background: rgba(50, 50, 50, 0.5);
+z-index: 1;
+`;
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 45px;
+  width: 15%;
+`;
+const selection = styled.div`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  top: 50%;
+  width: 15%;
+  left: 500px;
+  align-items: column;
+`;
 const Canvas = styled.canvas`
   position: absolute;
 
   // Place not in the middle of the whole screen but in middle of what is left
   // when you substract the sidebar-width.
-  left: calc(50% - 256px / 2);
+  left: calc(57.5% - 256px / 2);
   transform: translateX(-50%);
 
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
@@ -131,22 +154,23 @@ const Timer = styled.div`
 `;
 const Scoreboard = styled.div`
     position: absolute;
-    width:256px ;
+    width:190px ;
     background: rgba(50, 50, 50, 0.9);
     color: white;
     text-align: center;
     font-color: white;
-    left: calc(17.5% - 256px / 2);
+    left: calc(14% - 190px / 2);
     top: 100px;
     transform: translateX(-50%);
     box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
     border-radius: 8px;
 
+
 `;
 const Scoreboardlabel = styled.label`
     font-size: 25px;
     font-variant: small-caps;
-    top: 30px;
+    padding-top: 15px;
 
 `;
 
@@ -382,6 +406,7 @@ class DrawScreen extends React.Component {
 
   render() {
     return ([
+
       // Lobby list
       <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
         onMouseDown={(e) => {this.canvas_onMouseDown(e.button)}} onMouseUp={(e) => {this.canvas_onMouseUp(e.button)}}></Canvas>,
@@ -444,6 +469,7 @@ class DrawScreen extends React.Component {
         </Users>
         )}
       </Scoreboard>
+
     ]);
   }
 }
