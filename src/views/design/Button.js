@@ -4,6 +4,7 @@ export const Button = styled.button`
   &:hover {
     transform: translateY(-2px);
   }
+
   padding: 6px;
   padding-left: 30px;
   padding-right: 30px;

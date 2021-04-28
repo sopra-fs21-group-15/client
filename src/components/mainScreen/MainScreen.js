@@ -22,13 +22,13 @@ const Container = styled(BaseContainer)`
 
 const FriendsListContainer = styled.div`
   float: right;
-  padding-left: 35px;
+  padding-left: 35px; 
 `;
 
 const LobbylistContainer = styled.div`
   float: left;
   padding-right: 35px;
-  max-height 550px;
+  max-height: 550px;
   overflow: hidden;
 `;
 
@@ -36,18 +36,15 @@ const ListsContainer = styled.div`
   height: 300px;
   max-height: 300px;
 `;
-const FriendsContainer = styled.div`
-  height: 300px;
-  max-height: 300px;
-  padding-top: 20px;
-`
+
 
 const Users = styled.ul`
   list-style: none;
   padding-left: 0;
-  padding-bottom: 0px;
-  max-height: 380px;
+  padding-bottom: 10px;
+  max-height: 250px;
   overflow-y: auto;
+  
 `;
 
 const PlayerContainer = styled.li`
@@ -65,8 +62,6 @@ const Lobbies = styled.ul`
   overflow-y: auto;
 `;
 
-
-
 class MainScreen extends React.Component {
   constructor() {
     super();
@@ -76,6 +71,7 @@ class MainScreen extends React.Component {
       users: null,
       friends: null,
       lobbies: null,
+      fakeLobbies: null,
       lobby: null,
       lobbyId: null, //TODO make a localstorage.get()
       loginId: localStorage.getItem('loginId') //added the login Id
@@ -86,7 +82,7 @@ class MainScreen extends React.Component {
 
   async getLobby(){
     try {
-      const url = '/lobbies/' + this.state.lobby;
+      const url = '/lobbies/' + this.state.lobbyId;
       // wait for the user information
       const response = await api.get(url);
       const lobby = new User(response.data);
@@ -140,13 +136,17 @@ class MainScreen extends React.Component {
     try {
       const response = await api.get('/users');
       this.setState({ users: response.data });
+
+      const responsLobby = await api.get('lobbies');
+      this.setState({lobbies: responsLobby.data});
+
       //TODO: Fake data for the lobbies and Friends Need to remove it Later
       this.setState({ friends: [{"id":31,"password":"123","name":"John"},{"id":42,"password":"123","name":"Tommy"}] });
-      this.setState({ lobbies: [{"id":1,"password":"","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
-          {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
-          {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
-          {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"},
-          {"id":1,"password":"123","name":"lobby1"},{"id":2,"password":"123","name":"lobby2"}] });
+      this.setState({ fakeLobbies: [{"id":1,"private":true,"name":"lobby1","password":"123"},{"id":2,"private":false,"name":"lobby2","password":"123"},
+          {"id":1,"password":"123","name":"lobby1","private":true},{"id":2,"password":"123","name":"lobby2","private":true},
+          {"id":1,"password":"123","name":"lobby1","private":true},{"id":2,"password":"123","name":"lobby2","private":true},
+          {"id":1,"password":"123","name":"lobby1","private":false},{"id":2,"password":"123","name":"lobby2","private":true},
+          {"id":1,"password":"123","name":"lobby1","private":true},{"id":2,"password":"123","name":"lobby2","private":false}] });
     } catch (error) {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
     }
@@ -155,17 +155,17 @@ class MainScreen extends React.Component {
   }
   //TODO We see in the log if the PW is correct
   join_lobby(lobby) {
-    if (lobby.password!==""){
+    if (lobby.private===true){
       let input = prompt("Please enter the Lobby password")
       if (input === lobby.password){
-        this.props.history.push("/waitingRoom")
+        this.props.history.push("/waitingScreen")
         console.log("good")
         //this.props.history.push("/waitingRoom")
       }
       else (console.log("bad"))
     }
-    else this.props.history.push("/waitingRoom")
-    //else console.log("public Lobby")
+    else this.props.history.push("/waitingScreen")
+         console.log("public Lobby")
   }
 
   go_to_profile(user) {
@@ -181,7 +181,7 @@ class MainScreen extends React.Component {
       // Lobby list
       <Container>
           <ListsContainer>
-        {!this.state.lobbies ? (
+        {!this.state.fakeLobbies ? (
           <Spinner />
         )
         :
@@ -189,9 +189,9 @@ class MainScreen extends React.Component {
           <LobbylistContainer>
             <h2>Lobbies</h2>
             <Lobbies>
-              {this.state.lobbies.map(lobby => {
+              {this.state.fakeLobbies.map(lobby => {
                 return (
-                    <Lobby lobby={lobby} f_onClick={() => this.join_lobby(lobby)} />
+                    <Lobby lobby={lobby} f_onClick={() => this.join_lobby(lobby)} password={this.state.fakeLobbies.private}/>
                 );
               })}
             </Lobbies>
@@ -211,14 +211,15 @@ class MainScreen extends React.Component {
           :
           (
               // User and his FriendsList
+              //
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
             <Button
                 onClick={() => {this.go_to_profile(this.state.user)}}
             >View Profile</Button>
 
+            <h2>Friends List</h2>
             <Users>
-              <h2>Friends List</h2>
               {this.state.users.map(user => {
                 return (
                     <PlayerContainer key={user.id}>
@@ -237,6 +238,7 @@ class MainScreen extends React.Component {
               Logout
             </Button>
             </FriendsListContainer>
+
           )}
           </ListsContainer>
       </Container>

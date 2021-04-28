@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Button } from './design/Button';
+import {lock} from "./design/pictureExport";
 
 
 const Container = styled.div`
@@ -53,13 +54,18 @@ export const ButtonLobbies = styled.button`
  * @FunctionalComponent
  */
 
+
+
 const Lobby = ({ lobby, f_onClick }) => {
-  return (
+
+    return (
     <Container>
-      <LobbyName>{lobby.name}</LobbyName>
-      {f_onClick ? <ButtonLobbies onClick={f_onClick}>Join Lobby</ButtonLobbies> : "" }
+      <LobbyName>{lobby.private ? "🔒 " : ""}{lobby.name}</LobbyName>
+      {f_onClick ? <ButtonLobbies onClick={f_onClick}>Join Lobby</ButtonLobbies> : ""}
     </Container>
   );
+    //<img src={"Lock.png"} alt="hello"/> {Password ? <img src={"Lock.png"} alt={"hello"} width={"50px"} height={"50px"}/>:""}
+    //{Password ? <img src={require("Lock.png")} alt={"Logo"}/> : ""
 };
 
 export default Lobby;

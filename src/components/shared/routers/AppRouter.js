@@ -8,7 +8,8 @@ import Login from "../../login/Login";
 import Registration from "../../registration/Registration";
 import CreateLobby from "../../createLobby/CreateLobby";
 import DrawScreen from "../../drawScreen/DrawScreen";
-import WaitingRoom from "../../waitingRoom/WaitingRoom";
+import WaitingRoom from "../../waitingScreen/WaitingScreen";
+import WaitingScreen from "../../waitingScreen/WaitingScreen";
 
 /**
  * Main router of your application.
@@ -65,7 +66,7 @@ class AppRouter extends React.Component {
             />
             <Route path="/" exact render={() => <Redirect to={"/game"} />}/>
 
-            <Route path="/waitingRoom" exact render={() => (<WaitingRoom/>)}/>
+            <Route path="/waitingScreen" exact render={() => (<WaitingScreen/>)}/>
 
           </div>
         </Switch>

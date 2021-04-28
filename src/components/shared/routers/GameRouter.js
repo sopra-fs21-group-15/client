@@ -5,7 +5,8 @@ import Game from "../../mainScreen/MainScreen";
 import ProfilePage from "../../profilepage/ProfilePage";
 import EditProfile from "../../profilepage/EditProfile";
 import CreateLobby from "../../createLobby/CreateLobby";
-import WaitingRoom from "../../waitingRoom/WaitingRoom";
+import WaitingRoom from "../../waitingScreen/WaitingScreen";
+import WaitingScreen from "../../waitingScreen/WaitingScreen";
 
 
 const Container = styled.div`
@@ -54,8 +55,8 @@ class GameRouter extends React.Component {
 
         <Route
             exact
-            path={`${this.props.base}/waitingRoom`}
-            render={() => <WaitingRoom/>}
+            path={`${this.props.base}/waitingScreen`}
+            render={() => <WaitingScreen/>}
         />
 
       </Container>
