@@ -193,7 +193,8 @@ class DrawScreen extends React.Component {
       mouse_down: false, // stores whether the LEFT mouse button is down
       loginId: localStorage.getItem('loginId'), //added the login Id
       chat_message: "", // Value of the chat input field
-      messages // JSON of all chat messages
+      messages, // JSON of all chat messages
+      timestamp_last_message: 0
     };
   }
 
@@ -275,7 +276,6 @@ class DrawScreen extends React.Component {
       /** await the confirmation of the backend **/
       const response = await api.put('/drawing', requestBody);
     } catch (error) {
-      //alert(`Something went wrong while sending the drawing instruction: \n${handleError(error)}`);
       this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
     }
   }
@@ -296,15 +296,40 @@ class DrawScreen extends React.Component {
   componentDidMount() {
     this.resetCanvas();
     this.updateBrushPreview();
-    //setInterval(this.countdown, 1000)
-
 
     // Regularly update the time left
-    setInterval(() => {
+    let intervalID= setInterval(async () => {
+      // Countdown the timer
       let date_now = new Date();
       let time_left = Math.round((this.state.timeout - date_now) / 1000);
       this.setState({ time_left });
+
+      // Poll the chat
+      try {
+        const requestBody = JSON.stringify({
+          user_id: this.state.loginId,
+          timestamp: this.state.timestamp_last_message
+        });
+
+        /** await the confirmation of the backend **/
+        const response = await api.get('/chat', requestBody);
+
+        // Set timestamp_last_message
+        //let timestamp_last_message = response[response.lenght -1].timestamp;
+
+        // Add new messages to our chat
+        //let messages = this.state.messages.concat(response);
+        //this.setState({ timestamp_last_message, messages });
+      } catch (error) {
+        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
+      }
+
     }, 1000);
+    this.setState({ intervalID });
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.intervalID);
   }
 
   componentDidUnmount() {
@@ -321,7 +346,7 @@ class DrawScreen extends React.Component {
       const response = await api.put('/chat', requestBody);
       this.setState({ chat_message: "" });
     } catch (error) {
-      alert(`Something went wrong while sending the chat message: \n${handleError(error)}`);
+      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the chat message: \n${handleError(error)}`});
     }
   }
 
