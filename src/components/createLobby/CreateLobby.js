@@ -95,7 +95,7 @@ class CreateLobby extends React.Component {
       lobbies: null,
       loginId: localStorage.getItem('loginId'),
       max_players: 7,
-      rounds: 3,
+      rounds: 4,
       private: false
     };
   }
@@ -104,6 +104,8 @@ class CreateLobby extends React.Component {
   }
 
   async createLobby() {
+
+    this.props.history.push(`/waitingRoom`)
     return;
   }
 
@@ -155,7 +157,7 @@ class CreateLobby extends React.Component {
           </OneLineBlock>
           <hr width="100%" />
           <ButtonContainer>
-            <Button width="25%" onClick={() => {this.login();}}>Create Lobby</Button>
+            <Button width="25%" onClick={() => {this.createLobby();}}>Create Lobby</Button>
           </ButtonContainer>
           <ButtonContainer>
             <Button width="25%" onClick={() => {this.goback();}}>Back</Button>

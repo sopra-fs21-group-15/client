@@ -2,11 +2,11 @@ import React from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
-  height: 64px;
-  width: 64px;
+  height: 32px;
+  width: 32px;
   border-radius: 100%;
   margin: 0;
-  border: solid white 4px;
+  border: solid white 3px;
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.7);
 `;
 

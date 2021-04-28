@@ -8,6 +8,7 @@ import Login from "../../login/Login";
 import Registration from "../../registration/Registration";
 import CreateLobby from "../../createLobby/CreateLobby";
 import DrawScreen from "../../drawScreen/DrawScreen";
+import WaitingScreen from "../../waitingScreen/WaitingScreen";
 
 /**
  * Main router of your application.
@@ -54,6 +55,13 @@ class AppRouter extends React.Component {
               render={() => (
                   <CreateLobby />
               )}
+            />
+            <Route
+                path="/waitingRoom"
+                exact
+                render={() => (
+                    <WaitingScreen />
+                )}
             />
             <Route
               path="/draw"

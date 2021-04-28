@@ -8,6 +8,7 @@ import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import Colour from '../../views/Colour';
+import Message from '../../views/Message';
 
 const Canvas = styled.canvas`
   position: absolute;
@@ -35,6 +36,22 @@ const Sidebar = styled.div`
 
   padding: 0px 5px;
   text-align: center;
+  overflow-y: auto;
+`;
+
+const Chatbox = styled.div`
+`;
+
+const Messages = styled.ul`
+  background: white;
+  height: 250px;
+  list-style-type: none;
+  list-style-position: outside;
+  padding: 0px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border-radius: 8px;
+
 `;
 
 const HR = styled.hr`
@@ -61,7 +78,7 @@ const ColoursContainer = styled.div`
   // display: inline-block;
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: repeat(auto-fill, 64px);
+  grid-template-columns: repeat(auto-fill, 32px);
 
   // background: rgba(255, 0, 0, 0.3);
 `;
@@ -84,6 +101,49 @@ const InputField = styled.input`
   margin-bottom: 20px;
   background: rgba(255, 255, 255, 1);
   color: black;
+`;
+
+const Timer = styled.div`
+  position: absolute;
+  //min-width: 100px;
+  background: rgba(50, 50, 50, 0.9);;
+  color: white;
+  text-align: center;
+  font-size: 48px;
+  font-variant: small-caps;
+  font-weight: 900;
+  padding: 10px;
+
+  // Place not in the middle of the whole screen but in middle of what is left
+  // when you substract the sidebar-width.
+  left: calc(80% - 256px / 2);
+  bottom: 100px;
+  transform: translateX(-50%);
+
+  box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+`;
+
+const Hint = styled.div`
+  position: absolute;
+  //min-width: 100px;
+  background: rgba(50, 50, 50, 0.9);;
+  color: white;
+  text-align: center;
+  font-size: 48px;
+  font-variant: small-caps;
+  font-weight: 900;
+  padding: 10px;
+  letter-spacing: 7px;
+
+  // Place not in the middle of the whole screen but in middle of what is left
+  // when you substract the sidebar-width.
+  left: calc(20% - 256px / 2);
+  bottom: 100px;
+  transform: translateX(-50%);
+
+  box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
 `;
 
 
@@ -119,17 +179,27 @@ class DrawScreen extends React.Component {
       "#ffffff"
       ];
 
+    let messages = [ {"sender": "niklassc", "timestamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"sender": "example_user", "timestamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"sender": "niklassc", "timestamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
+
     this.state = {
+      game_id: 7, // TODO get actual id
+      timeout: new Date(), // Timestamp when the time is over
+      time_left: Infinity, // in seconds
+      hint: "A__b_c_", // Will contain some letters and underscores
       canvas_width: 854,
       canvas_height: 480,
       draw_colour: "#ffffff",
-      draw_size: 5
+      draw_size: 5,
+      mouse_down: false, // stores whether the LEFT mouse button is down
+      loginId: localStorage.getItem('loginId'), //added the login Id
+      chat_message: "", // Value of the chat input field
+      messages // JSON of all chat messages
     };
   }
 
+
   handleInputChange(key, value) {
     this.setState({ [key]: value });
-    this.updateBrushPreview();
   }
 
   resetCanvas() {
@@ -157,22 +227,118 @@ class DrawScreen extends React.Component {
   }
 
   changeColour(colour) {
-    this.handleInputChange('draw_colour', colour);
+    this.setState({ ['draw_colour']: colour });
+
+    let ctx = this.mainCanvas.current.getContext('2d');
+    ctx.strokeStyle = colour;
+
+    this.updateBrushPreview();
   }
 
-  draw() {
-    let mousePos = 0;
+  changeSize(size) {
+    this.setState({ ['draw_size']: size });
+
+    let ctx = this.mainCanvas.current.getContext('2d');
+    ctx.lineWidth = size;
+
+    this.updateBrushPreview();
+  }
+
+  // Draws a line at the position x,y
+  canvas_onMouseMove(x, y) {
+    if(!this.state.mouse_down)
+      return;
+
+    let ctx = this.mainCanvas.current.getContext('2d');
+
+    // Calculate mouse position relative to canvas
+    let rect = this.mainCanvas.current.getBoundingClientRect();
+    x -= rect.left;
+    y -= rect.top;
+
+    // Send draw instruction to the backend
+    this.sendDrawInstruction(x, y, ctx.lineWidth, ctx.strokeStyle);
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  }
+
+  async sendDrawInstruction(x, y, size, colour) {
+    try {
+      const requestBody = JSON.stringify({
+        user_id: this.state.loginId,
+        x: x,
+        y: y,
+        size: size,
+        colour: colour
+      });
+      /** await the confirmation of the backend **/
+      const response = await api.put('/drawing', requestBody);
+    } catch (error) {
+      //alert(`Something went wrong while sending the drawing instruction: \n${handleError(error)}`);
+      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
+    }
+  }
+
+  canvas_onMouseDown(button) {
+    if(button == 0) {
+      let ctx = this.mainCanvas.current.getContext('2d');
+      this.setState({ mouse_down: true });
+      ctx.beginPath();
+    }
+  }
+
+  canvas_onMouseUp(button) {
+    if(button == 0)
+      this.setState({ mouse_down: false });
   }
 
   componentDidMount() {
     this.resetCanvas();
     this.updateBrushPreview();
+    //setInterval(this.countdown, 1000)
+
+
+    // Regularly update the time left
+    setInterval(() => {
+      let date_now = new Date();
+      let time_left = Math.round((this.state.timeout - date_now) / 1000);
+      this.setState({ time_left });
+    }, 1000);
+  }
+
+  componentDidUnmount() {
+    clearInterval();
+  }
+
+  async send_message() {
+    try {
+      const requestBody = JSON.stringify({
+        user_id: this.state.loginId,
+        message: this.state.chat_message
+      });
+      /** await the confirmation of the backend **/
+      const response = await api.put('/chat', requestBody);
+      this.setState({ chat_message: "" });
+    } catch (error) {
+      alert(`Something went wrong while sending the chat message: \n${handleError(error)}`);
+    }
+  }
+
+  download_image() {
+    let link = document.createElement("a");
+    link.download = "canvas.png";
+    link.href = this.mainCanvas.current.toDataURL("image/png");
+    link.click();
   }
 
   render() {
     return ([
       // Lobby list
-      <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={() => this.draw()}></Canvas>,
+      <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
+        onMouseDown={(e) => {this.canvas_onMouseDown(e.button)}} onMouseUp={(e) => {this.canvas_onMouseUp(e.button)}}></Canvas>,
+      <Timer>{this.state.time_left}</Timer>,
+      <Hint>{this.state.hint}</Hint>,
       <Sidebar>
         <H1 onClick={this.changeColour}>Tools</H1>
         <HR />
@@ -185,12 +351,30 @@ class DrawScreen extends React.Component {
         </ColoursContainer>
         <HR/>
         <Label>Size</Label>
-        <InputField value={this.state.draw_size} onChange={e => {this.handleInputChange('draw_size', e.target.value);}} id="input_size" type="range" min="1" max="100" />
+        <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />
         <HR/>
         <Button width="40%" onClick={() => {this.fillCanvas()}}>Fill</Button>
         <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>
-        <HR />
+        <HR/>
+        <Button width="80%" onClick={() => {this.download_image()}}>Download image</Button>
+        <HR/>
         <BrushPreview ref={this.brushPreview}></BrushPreview>
+        <Chatbox>
+          <Messages>
+            {this.state.messages.map(message => {
+              return (
+                <Message message={message} />
+              );
+            })}
+          </Messages>
+          <InputField placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+          { this.state.chat_message == "" ?
+            <Button disabled width="40%" onClick={() => {this.send_message()}} >Send</Button>
+            :
+            <Button width="40%" onClick={() => {this.send_message()}} >Send</Button>
+          }
+
+        </Chatbox>
       </Sidebar>
     ]);
   }
