@@ -268,6 +268,7 @@ class DrawScreen extends React.Component {
     try {
       const requestBody = JSON.stringify({
         user_id: this.state.loginId,
+        game_id: this.state.game_id,
         x: x,
         y: y,
         size: size,
@@ -308,6 +309,7 @@ class DrawScreen extends React.Component {
       try {
         const requestBody = JSON.stringify({
           user_id: this.state.loginId,
+          game_id: this.state.game_id,
           timestamp: this.state.timestamp_last_message
         });
 
@@ -340,6 +342,7 @@ class DrawScreen extends React.Component {
     try {
       const requestBody = JSON.stringify({
         user_id: this.state.loginId,
+        game_id: this.state.game_id,
         message: this.state.chat_message
       });
       /** await the confirmation of the backend **/
