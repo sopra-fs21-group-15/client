@@ -1,12 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
-import { api, handleError } from '../../helpers/api';
-import Player from '../../views/Player';
-import Lobby from '../../views/Lobby';
-import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
+import {api, handleError} from "../../helpers/api";
+import Lobby from "../shared/models/Lobby";
 
 const Container = styled(BaseContainer)`
   color: white;
@@ -58,6 +56,7 @@ const InputField = styled.input`
   margin-bottom: 20px;
   background: rgba(255, 255, 255, 1);
   color: black;
+  
 `;
 
 const SelectField = styled.select`
@@ -92,11 +91,13 @@ class CreateLobby extends React.Component {
     super();
     this.state = {
       users: null,
-      lobbies: null,
       loginId: localStorage.getItem('loginId'),
-      max_players: 7,
-      rounds: 3,
-      private: false
+      maxPlayers: 7,
+      rounds: 4,
+      private: false,
+      lobbyId: null,
+      lobbyName: null,
+      gameMode: null
     };
   }
 
@@ -104,7 +105,37 @@ class CreateLobby extends React.Component {
   }
 
   async createLobby() {
-    return;
+
+    try {
+      const requestBody = JSON.stringify({
+            lobbyName: this.state.lobbyName,
+            /** not sure if this is necessary or not at the moment*/
+            lobbyId: this.state.lobbyId,
+            rounds: this.state.rounds,
+            privat: this.state.private,
+            maxPlayers: this.state.maxPlayers,
+            gameMode: this.state.gameMode
+          }
+      )
+      // wait for making new Lobby
+      const response = api.post('/lobbies',requestBody);
+
+      // get new lobby and update the new Lobby Object
+      const lobby = new Lobby(response.data);
+
+      // set the lobbyID
+      localStorage.setItem("lobbyId",lobby.lobbyId)
+
+      this.props.history.push(`/waitingRoom`)
+
+    }
+    catch (error){
+      alert(`Something went wrong during the register: \n${handleError(error)}`);
+      this.props.history.push(`/game/dashboard`);
+    }
+
+
+
   }
 
   goback() {
@@ -126,10 +157,13 @@ class CreateLobby extends React.Component {
           <hr width="100%" />
 
           <Label>Lobbyname</Label>
-          <InputField id="form_name" />
+          <InputField id="form_name"
+              onChange={ e => {this.handleInputChange("lobbyName", e.target.value)}}/>
 
           <Label>Gamemode</Label>
-          <SelectField id="form_gamemode">
+          <SelectField id="form_gamemode"
+           onChange={e => this.handleInputChange("gameMode",e.target.value)}>
+
             <option value="classic">Classic</option>
             <option value="pokemon">Pokemon</option>
             <option value="heros">Hero's</option>
@@ -137,8 +171,8 @@ class CreateLobby extends React.Component {
 
           <Label>Max. Players</Label>
           <OneLineBlock>
-            <InputField value={this.state.max_players} onChange={e => {this.handleInputChange('max_players', e.target.value);}} id="form_max_players" type="range" min="3" max="10" />
-            <InputField type="text" id="form_max_players_display" value={this.state.max_players} />
+            <InputField value={this.state.max_players} onChange={e => {this.handleInputChange('maxPlayers', e.target.value);}} id="form_max_players" type="range" min="3" max="10" />
+            <InputField type="text" id="form_max_players_display" value={this.state.maxPlayers} />
           </OneLineBlock>
 
 
@@ -155,7 +189,7 @@ class CreateLobby extends React.Component {
           </OneLineBlock>
           <hr width="100%" />
           <ButtonContainer>
-            <Button width="25%" onClick={() => {this.login();}}>Create Lobby</Button>
+            <Button width="25%" onClick={() => {this.createLobby();}}>Create Lobby</Button>
           </ButtonContainer>
           <ButtonContainer>
             <Button width="25%" onClick={() => {this.goback();}}>Back</Button>

@@ -4,8 +4,6 @@ import Prompt, { Redirect, Route } from "react-router-dom";
 import Game from "../../mainScreen/MainScreen";
 import ProfilePage from "../../profilepage/ProfilePage";
 import EditProfile from "../../profilepage/EditProfile";
-import CreateLobby from "../../createLobby/CreateLobby";
-import WaitingRoom from "../../waitingScreen/WaitingScreen";
 import WaitingScreen from "../../waitingScreen/WaitingScreen";
 
 
@@ -58,6 +56,7 @@ class GameRouter extends React.Component {
             path={`${this.props.base}/waitingScreen`}
             render={() => <WaitingScreen/>}
         />
+
 
       </Container>
     );

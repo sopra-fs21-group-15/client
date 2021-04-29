@@ -143,7 +143,7 @@ class MainScreen extends React.Component {
       //TODO: Fake data for the lobbies and Friends Need to remove it Later
       this.setState({ friends: [{"id":31,"password":"123","name":"John"},{"id":42,"password":"123","name":"Tommy"}] });
       this.setState({ fakeLobbies: [{"id":1,"private":true,"name":"lobby1","password":"123"},{"id":2,"private":false,"name":"lobby2","password":"123"},
-          {"id":1,"password":"123","name":"lobby1","private":true},{"id":2,"password":"123","name":"lobby2","private":true},
+          {"id":1,"password":"123","name":"lobby11111","private":true},{"id":2,"password":"123","name":"lobby2","private":true},
           {"id":1,"password":"123","name":"lobby1","private":true},{"id":2,"password":"123","name":"lobby2","private":true},
           {"id":1,"password":"123","name":"lobby1","private":false},{"id":2,"password":"123","name":"lobby2","private":true},
           {"id":1,"password":"123","name":"lobby1","private":true},{"id":2,"password":"123","name":"lobby2","private":false}] });

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Button } from './design/Button';
-import {lock} from "./design/pictureExport";
+
 
 
 const Container = styled.div`
@@ -60,7 +60,7 @@ const Lobby = ({ lobby, f_onClick }) => {
 
     return (
     <Container>
-      <LobbyName>{lobby.private ? "🔒 " : ""}{lobby.name}</LobbyName>
+      <LobbyName>{lobby.name}{lobby.private ? " 🔒" : ""}</LobbyName>
       {f_onClick ? <ButtonLobbies onClick={f_onClick}>Join Lobby</ButtonLobbies> : ""}
     </Container>
   );

@@ -16,23 +16,14 @@ const Ingrid = styled.div`
   font-size: 20px;
 `;
 
-const UserName = styled.div`
-  font-weight: bold;
-  margin-left: 5px;
-  color: black;
-`;
 
 const Name = styled.div`
   font-weight: bold;
-  margin-left: 5px;
+  margin-right: auto;
   color: black;
 `;
 
-const Id = styled.div`
-  font-weight: bold;
-  margin-left: 5px;
-  color: black;
-`;
+
 
 /**
  * This is an example of a Functional and stateless component (View) in React. Functional components are not classes and thus don't handle internal state changes.
@@ -48,10 +39,10 @@ const Profile = ({ user }) => {
   return (
     <Gridcontainer>
       <Ingrid>
-        <Id> Username: {user.username} </Id>
+          <Name>Username: {user.username} </Name>
       </Ingrid>
       <Ingrid>
-        <UserName> Online Status: {user.status}</UserName>
+        <Name> Online Status: {user.status}</Name>
       </Ingrid>
       <Ingrid>
         <Name> Creation Date: {user.creation_date}</Name>
