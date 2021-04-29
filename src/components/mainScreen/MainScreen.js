@@ -10,6 +10,7 @@ import { withRouter } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import User from "../shared/models/User";
 import Friends from "../../views/Friends";
+import {random} from "nanoid";
 
 const Container = styled(BaseContainer)`
   color: white;
@@ -131,6 +132,14 @@ class MainScreen extends React.Component {
   }
 
   async componentDidMount() {
+
+
+    // Just tried to use an API for words like pokemons It works in the console
+    // TODO make this accessible for the game and not in the mainscreen
+    const getPokemons = require('json-pokemon/getPokemon');
+    const firstPokemon = getPokemons.getPokemonById(5); // See API in the next section.
+    console.log(firstPokemon.name)
+
     this.getUser() // Get users
     // TODO does not work because of Backend this.getLobby() // get lobbies
     try {
@@ -153,6 +162,7 @@ class MainScreen extends React.Component {
 
 
   }
+
   //TODO We see in the log if the PW is correct
   join_lobby(lobby) {
     if (lobby.private===true){
@@ -218,7 +228,7 @@ class MainScreen extends React.Component {
                 onClick={() => {this.go_to_profile(this.state.user)}}
             >View Profile</Button>
 
-            <h2>Friends List</h2>
+            <h2>Registered Users</h2>
             <Users>
               {this.state.users.map(user => {
                 return (
