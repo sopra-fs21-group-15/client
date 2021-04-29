@@ -114,64 +114,50 @@ const ButtonContainer = styled.div`
   margin-top: 20px;
   width: 100%;
 `;
-const kickout =  styled.button`
-position: absolut;
-right: 32px;
-top: 32px;
-width: 32px;
-height: 32px;
-opacity: 0.5;
-cursor: ${props => (props.disabled ? "default" : "pointer")};
-opacity: ${props => (props.disabled ? 0.1 : 1)};
-}
-.kickout:hover{
-opacity: 1;
-}
-.kickout:before, .kickout:after {
-  position: absolute;
-  left: 15px;
-  content: ' ';
-  height: 33px;
-  width: 5px;
-  background-color: #FF0000;
-}
-.kickout:before {
-  transform: rotate(45deg);
-}
-.kickout:after {
-  transform: rotate(-45deg);
-}
-`;
 
 class waitingScreen extends React.Component {
   constructor() {
     super();
     this.state = {
-      users: null,
-      loginId: localStorage.getItem('loginId'),
+     users: [{"id": 5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}],
+      form_gamemode: null,
+      loginId: 5 , //localStorage.getItem('loginId'),
       ownerID: null,
       max_players: null,
       rounds: null,
-      private: false
+      private: false,
+      disabled:true,
     };
   }
 
-  async componentDidMount() {
-    try {
-          const response = await api.get('/users');
-          this.setState({ users: response.data });
-        } catch (error) {
-          alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
-        }
+  //async componentDidMount() {
+    //try {
+      //    const response = await api.get('/users');
+          //this.setState({ users: response.data });
+
+        //} catch (error) {
+          //alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
+        //}
 
 
-   }
+   //}
+
+async componentDidUpdate(){
+
+
+}
 async componentDidMount() {
 
         /// Fake Users
-       this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
+        var a = this.state.users;
+//this.state.users[0].id
+        var b = a[0].id;
+        var c = this.state.loginId;
+        if (c===b){
+        this.setState({disabled: false});
+        }}
 
-   }
+
   async startgame() {
      try{
         const requestBody_2 = JSON.stringify({
@@ -196,11 +182,25 @@ async componentDidMount() {
   }
 
   goback() {
+  var a = this.state.loginId;
+  var users = this.state.users;
+  for (var i=0; i<users.length;i++){
+  if (a===users[i].id){
+    var kick = users[i]; // send this user to the backend
+      // Api-Call to the backend to kick the user
+    }}
     this.props.history.push(`/game`);
   }
-  kickout(){
+  remove_player(user){
+  var a = user.id;
+  var users = this.state.users;
+  for (var i=0; i<users.length;i++){
+  if (a===users[i].id){
+  var kick = users[i]; // send this user to the backend
+  // Api-Call to the backend to kick the user
+  }}}
 
-  }
+
   handleInputChange(key, value) {
     // Example: if the key is username, this statement is the equivalent to the following one:
     // this.setState({'username': value});
@@ -212,11 +212,11 @@ async componentDidMount() {
       // Lobby list
       <Container>
         <FormContainer>
-          <h2>Chill Area</h2>
+          <h2>Chill Area{this.state.users.length}</h2>
           <hr width="100%" />
           <Layout>
           {!this.state.users ? (
-                      <Spinner />
+          <Spinner />
                     )
                     :
                     (
@@ -237,7 +237,7 @@ async componentDidMount() {
             <h2>Name of the Lobby</h2>
             <Label>Gamemode</Label>
             <SelectField id="form_gamemode"
-            disabled={this.state.ownerID!=this.state.loginID}
+            disabled={this.state.disabled}
             >
                 <option value="classic">Classic</option>
                 <option value="pokemon">Pokemon</option>
@@ -245,7 +245,7 @@ async componentDidMount() {
 
             <Label>Max. Players</Label>
             <SelectField id="from_player"
-            disabled={this.state.ownerID!=this.state.loginID}
+            disabled={this.state.disabled}
             >
                 <option value={this.state.max_players}>{this.state.max_players}</option>
                 <option value="4">4</option>
@@ -260,7 +260,7 @@ async componentDidMount() {
 
             <Label>Rounds</Label>
             <SelectField id="from_rounds"
-            disabled={this.state.ownerID!=this.state.loginID}
+            disabled={this.state.disabled}
             >
                 <option value={this.state.rounds}>{this.state.rounds}</option>
                 <option value="2">2</option>
@@ -274,7 +274,7 @@ async componentDidMount() {
 
             <Label>Private</Label>
             <OneLineBlock>
-                <InputField id="form_private" type="checkbox" disabled={this.state.ownerID!=this.state.loginID} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
+                <InputField id="form_private" type="checkbox" disabled={this.state.disabled} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
                 {this.state.private == true ? <InputField id="form_password" placeholder="Password" /> : "" }
             </OneLineBlock>
             </Lobbyinformation>
@@ -284,7 +284,7 @@ async componentDidMount() {
             <ButtonContainer>
 
                <Button
-               disabled={!this.state.users<2 && !this.state.loginID == this.state.ownerID }
+               disabled={ this.state.users.length <= 2 || this.state.disabled }
                width="25%" onClick={() => {this.startgame();}}>
                Start the Game
                </Button>
@@ -293,6 +293,7 @@ async componentDidMount() {
           <ButtonContainer>
             <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
           </ButtonContainer>
+
 
         </FormContainer>
       </Container>
