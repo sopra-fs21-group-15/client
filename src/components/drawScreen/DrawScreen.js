@@ -403,20 +403,24 @@ class DrawScreen extends React.Component {
       <Sidebar>
         <H1 onClick={this.changeColour}>Tools</H1>
         <HR />
-        <ColoursContainer>
-            {this.colours.map(colour => {
-              return (
-                <Colour colour={colour} f_onClick={() => {this.changeColour(colour)}} />
-              );
-            })}
-        </ColoursContainer>
-        <HR/>
-        <Label>Size</Label>
-        <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />
-        <HR/>
-        <Button width="40%" onClick={() => {this.fillCanvas()}}>Fill</Button>
-        <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>
-        <HR/>
+
+        {this.state.drawer ? ([
+          <ColoursContainer>
+              {this.colours.map(colour => {
+                return (
+                  <Colour colour={colour} f_onClick={() => {this.changeColour(colour)}} />
+                );
+              })},
+          </ColoursContainer>,
+          <HR/>,
+          <Label>Size</Label>,
+          <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />,
+          <HR/>,
+          <Button width="40%" onClick={() => {this.fillCanvas()}}>Fill</Button>,
+          <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>,
+          <HR/>
+        ]) : ( "" )}
+
         <Button width="80%" onClick={() => {this.download_image()}}>Download image</Button>
         <HR/>
         <BrushPreview ref={this.brushPreview}></BrushPreview>
