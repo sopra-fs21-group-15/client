@@ -195,7 +195,8 @@ class DrawScreen extends React.Component {
       loginId: localStorage.getItem('loginId'), //added the login Id
       chat_message: "", // Value of the chat input field
       messages, // JSON of all chat messages
-      timestamp_last_message: 0
+      timestamp_last_message: 0,
+      timestamp_last_draw_instruction: 0 // Time of the last draw instruction that was received (guesser mode)
     };
   }
 
@@ -329,6 +330,33 @@ class DrawScreen extends React.Component {
         this.setState({ timestamp_last_message, messages });
       } catch (error) {
         this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
+      }
+
+      // Poll draw instructions (guesser mode)
+      if(this.state.drawer)
+        return;
+      try {
+        const requestBody = JSON.stringify({
+          user_id: this.state.loginId,
+          game_id: this.state.game_id,
+          timestamp: this.state.timestamp_last_draw_instruction
+        });
+        /** await the confirmation of the backend **/
+        const response = await api.get('/draw', requestBody);
+
+        let timestamp_last_draw_instruction;
+        response.forEach(instr => {
+          let ctx = this.mainCanvas.current.getContext('2d');
+          ctx.lineWidth = instr.size;
+          ctx.fillStyle = instr.colour;
+          ctx.lineTo(instr.x, instr.y);
+          ctx.stroke();
+          timestamp_last_draw_instruction = instr.timestamp;
+        });
+        this.setState({ timestamp_last_draw_instruction });
+
+      } catch(error) {
+        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the draw-instructions: \n${handleError(error)}`});
       }
 
     }, 1000);
