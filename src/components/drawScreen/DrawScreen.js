@@ -183,6 +183,7 @@ class DrawScreen extends React.Component {
 
     this.state = {
       game_id: 7, // TODO get actual id
+      drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
       hint: "A__b_c_", // Will contain some letters and underscores
@@ -282,6 +283,10 @@ class DrawScreen extends React.Component {
   }
 
   canvas_onMouseDown(button) {
+    // Return if you're not the drawer
+    if(!this.state.drawer)
+      return;
+
     if(button == 0) {
       let ctx = this.mainCanvas.current.getContext('2d');
       this.setState({ mouse_down: true });
@@ -395,7 +400,7 @@ class DrawScreen extends React.Component {
               );
             })}
           </Messages>
-          <InputField placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+          <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
           { this.state.chat_message == "" ?
             <Button disabled width="40%" onClick={() => {this.send_message()}} >Send</Button>
             :
