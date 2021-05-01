@@ -100,8 +100,9 @@ class Registration extends React.Component {
       // Store the token into the local storage.
       localStorage.setItem('token', user.token);
 
-      // Save the log-in Id
-      localStorage.setItem('loginId', user.id)
+      // Save the log-in Id + username
+      localStorage.setItem('loginId', user.id);
+      localStorage.setItem('username', user.username);
 
 
       // Registration successfully worked --> navigate to the route /game in the GameRouter

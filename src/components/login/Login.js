@@ -116,8 +116,9 @@ class Login extends React.Component {
       // Get the returned user and update a new object.
       const user = new User(response.data);
 
-      // Save the log-in Id
-      localStorage.setItem('loginId', user.id)
+      // Save the log-in Id + username
+      localStorage.setItem('loginId', user.id);
+      localStorage.setItem('username', user.username);
 
       // Store the token into the local storage.
       localStorage.setItem('token', user.token);
