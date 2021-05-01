@@ -134,17 +134,25 @@ class MainScreen extends React.Component {
   }
 
   //TODO We see in the log if the PW is correct
-  join_lobby(lobby) {
-    if (lobby.password!==""){
-      let input = prompt("Please enter the Lobby password")
-      if (input === lobby.password){
-        this.props.history.push("/waitingScreen")
-        console.log("joined private lobby")
-      }
-      else (console.log("bad"))
+  async join_lobby(lobby) {
+    let input_password = "";
+    if (lobby.password !== "")
+      input_password = prompt("Please enter the Lobby password");
+
+    try {
+      const requestBody = JSON.stringify({
+            id: lobby.id,
+            password: input_password,
+            lobbyid: this.state.loginId
+          });
+      const response = await api.put('/lobbies/' + lobby.id + '/joiners', requestBody);
+
+      localStorage.setItem("lobbyId", lobby.id)
+      this.props.history.push("/waitingScreen")
+
+    } catch (error) {
+      alert(`Something went wrong during joining the lobby: \n${handleError(error)}`);
     }
-    else this.props.history.push("/waitingScreen")
-         console.log("public Lobby")
   }
 
   go_to_profile(user) {
