@@ -90,15 +90,13 @@ class CreateLobby extends React.Component {
   constructor() {
     super();
     this.state = {
-      users: null,
       loginId: localStorage.getItem('loginId'),
       maxPlayers: 7,
       rounds: 4,
       private: false,
-      lobbyId: null,
-      lobbyName: null,
-      gameMode: null,
-      password: null
+      lobbyName: "",
+      gameMode: "Classic",
+      password: ""
     };
   }
 
@@ -106,13 +104,13 @@ class CreateLobby extends React.Component {
     try {
       const requestBody = JSON.stringify({
             lobbyName: this.state.lobbyName,
-            lobbyId: this.state.lobbyId,
             rounds: this.state.rounds,
             password: this.state.password,
             maxPlayers: this.state.maxPlayers,
             gameMode: this.state.gameMode
           }
       )
+
       // wait for making new Lobby
       const response = api.post('/lobbies/' + localStorage.getItem("userId"),requestBody);
 
@@ -157,9 +155,7 @@ class CreateLobby extends React.Component {
               onChange={ e => {this.handleInputChange("lobbyName", e.target.value)}}/>
 
           <Label>Gamemode</Label>
-          <SelectField id="form_gamemode"
-           onChange={e => this.handleInputChange("gameMode",e.target.value)}>
-
+          <SelectField id="form_gamemode" value={this.state.gameMode} onChange={e => this.handleInputChange("gameMode",e.target.value)}>
             <option value="classic">Classic</option>
             <option value="pokemon">Pokemon</option>
           </SelectField>
@@ -180,7 +176,7 @@ class CreateLobby extends React.Component {
           <Label>Private</Label>
           <OneLineBlock>
             <InputField id="form_private" type="checkbox" onChange={e => {this.handleInputChange('private', e.target.checked);}} />
-            {this.state.private === true ? <InputField id="form_password" placeholder="Password" /> : "" }
+            {this.state.private === true ? <InputField id="form_password" value={this.state.password} onChange={e => {this.handleInputChange('password', e.target.value);}} placeholder="Password" /> : "" }
           </OneLineBlock>
           <hr width="100%" />
           <ButtonContainer>
