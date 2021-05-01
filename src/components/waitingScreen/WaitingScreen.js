@@ -169,27 +169,18 @@ class waitingScreen extends React.Component {
     }
   }
 
-async sendUser(user){
-  try {
-    const kickuser = JSON.stringify({
-      user: user
-    })
-    const url = '/lobbies/' + this.state.lobbyId +'/leavers'
-    await api.put(url, kickuser)
+  async goback() {
+    try {
+      const requestBody = JSON.stringify({
+        username: localStorage.getItem('username')
+      });
+
+      const url = '/lobbies/' + this.state.lobbyId +'/leavers'
+      await api.put(url, requestBody)
     } catch(error) {
       alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
-  }
-}
-
-  goback() {
-    var a = this.state.loginId;
-    var users = this.state.lobby.members;
-    for (var i=0; i<users.length;i++){
-      if (a===users[i].id){
-        var kick = users[i];
-      }
     }
-    this.sendUser(kick);
+
     this.props.history.push(`/game`);
   }
 
