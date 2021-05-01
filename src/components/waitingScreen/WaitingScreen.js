@@ -132,28 +132,32 @@ class waitingScreen extends React.Component {
     };
     }
 
-  async getLobby(){
-    try {
-      const url = '/lobbies/' + this.state.lobbyId;
-      const response = await api.get(url);
-      let lobby = new Lobby(response.data);
-      this.setState({ lobby });
-    } catch(error) {
-      alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
-    }
+  async componentDidMount() {
+    let intervalID = setInterval(async () => {
+      // get lobby and update local lobby object
+      try {
+        const url = '/lobbies/' + this.state.lobbyId;
+        const response = await api.get(url);
+        let lobby = new Lobby(response.data);
+        this.setState({ lobby });
+      } catch(error) {
+        alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
+      }
 
-    if(this.state.lobby.members[0] === null)
-      alert("Error: Member-list empty");
+      if(this.state.lobby.members[0] === null)
+        alert("Error: Member-list empty");
 
-    /// Find out who is the owner of the Lobby
-    let owner_id = this.state.lobby.members[0];
-    if (owner_id === this.state.loginId)
-      this.setState({ owner: true });
+      /// Find out who is the owner of the Lobby
+      let owner_id = this.state.lobby.members[0];
+      if (owner_id === this.state.loginId)
+        this.setState({ owner: true });
+    }, 3000);
+
+    this.setState({ intervalID });
   }
 
-  async componentDidMount() {
-    this.getLobby(); // Get currenty lobby from backend
-
+  componentWillUnmount() {
+    clearInterval(this.state.intervalID);
   }
 
   async startgame() {

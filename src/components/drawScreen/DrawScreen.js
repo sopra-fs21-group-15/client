@@ -257,7 +257,6 @@ class DrawScreen extends React.Component {
     };
   }
 
-
   handleInputChange(key, value) {
     this.setState({ [key]: value });
   }
@@ -425,10 +424,6 @@ class DrawScreen extends React.Component {
     clearInterval(this.state.intervalID);
   }
 
-  componentDidUnmount() {
-    clearInterval();
-  }
-
   async send_message() {
     try {
       const requestBody = JSON.stringify({
@@ -452,16 +447,11 @@ class DrawScreen extends React.Component {
   }
   async show_leaderboard(){
     try{
-    const responseusers = await api.get('');
-    this.setState({users: responseusers.data})
-
-
+      const responseusers = await api.get('');
+      this.setState({users: responseusers.data})
     }catch(error){
-    alert(`Something went wrong while fetching the points: \n${handleError(error)}`)
-
+      alert(`Something went wrong while fetching the points: \n${handleError(error)}`)
     }
-
-
   }
 
   render() {
