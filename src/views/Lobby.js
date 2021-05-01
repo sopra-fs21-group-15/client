@@ -54,18 +54,13 @@ export const ButtonLobbies = styled.button`
  * @FunctionalComponent
  */
 
-
-
 const Lobby = ({ lobby, f_onClick }) => {
-
     return (
     <Container>
-      <LobbyName>{lobby.name}{lobby.private !== "" ? " 🔒" : ""}</LobbyName>
+      <LobbyName>{lobby.lobbyname}{lobby.password == "" ? "" : " 🔒"}</LobbyName>
       {f_onClick ? <ButtonLobbies onClick={f_onClick}>Join Lobby</ButtonLobbies> : ""}
     </Container>
   );
-    //<img src={"Lock.png"} alt="hello"/> {Password ? <img src={"Lock.png"} alt={"hello"} width={"50px"} height={"50px"}/>:""}
-    //{Password ? <img src={require("Lock.png")} alt={"Logo"}/> : ""
 };
 
 export default Lobby;
