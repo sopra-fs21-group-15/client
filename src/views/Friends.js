@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Button } from './design/Button';
 
 const Container = styled.div`
-  margin: 3px 0;
+  margin: 6px 0;
   width: 280px;
   padding: 10px;
   border-radius: 6px;
@@ -12,12 +12,14 @@ const Container = styled.div`
   border: 1px solid #ffffff26;
 `;
 
-const UserName = styled.div`
+const FriendsName = styled.div`
   font-weight: lighter;
   margin-left: 5px;
   font-size: 17px;
-  margin-right: auto;
+  padding-right: 60px;
+  
 `;
+
 
 
 /**
@@ -29,13 +31,13 @@ const UserName = styled.div`
  * @FunctionalComponent
  */
 
-const Player = ({ user, f_onClick }) => {
-  return (
-    <Container>
-      <UserName>{user.username}</UserName>
-      {f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
-    </Container>
-  );
+const Friends = ({ friends, f_onClick }) => {
+    return (
+        <Container onClick="f_onClick">
+            <FriendsName>{friends.name}</FriendsName>
+            { f_onClick ? <Button onClick={f_onClick}>View Profile</Button> : "" }
+        </Container>
+    );
 };
 
-export default Player;
+export default Friends;

@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import React from 'react';
-import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
 import Scores from '../../views/Scores';
 import Lobby from '../../views/Lobby';
@@ -470,7 +469,11 @@ class DrawScreen extends React.Component {
 
       // Lobby list
       <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
-        onMouseDown={(e) => {this.canvas_onMouseDown(e.button)}} onMouseUp={(e) => {this.canvas_onMouseUp(e.button)}}></Canvas>,
+    onMouseDown={(e) => {
+      this.canvas_onMouseDown(e.button)
+    }} onMouseUp={(e) => {
+  this.canvas_onMouseUp(e.button)
+}}/>,
       <Timer>{this.state.time_left}</Timer>,
       <Hint>{this.state.hint}</Hint>,
       <Sidebar>
@@ -496,7 +499,7 @@ class DrawScreen extends React.Component {
 
         <Button width="80%" onClick={() => {this.download_image()}}>Download image</Button>
         <HR/>
-        <BrushPreview ref={this.brushPreview}></BrushPreview>
+        <BrushPreview ref={this.brushPreview}/>
         <Chatbox>
           <Messages>
             {this.state.messages.map(message => {
@@ -505,8 +508,10 @@ class DrawScreen extends React.Component {
               );
             })}
           </Messages>
+
           <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
           { this.state.chat_message == "" ?
+
             <Button disabled width="40%" onClick={() => {this.send_message()}} >Send</Button>
             :
             <Button width="40%" onClick={() => {this.send_message()}} >Send</Button>

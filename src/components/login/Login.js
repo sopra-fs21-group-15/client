@@ -46,8 +46,7 @@ const InputField = styled.input`
 const Button = styled.button`
   &:hover {
     transform: translateY(-2px);
-    background: green;
-    color: white
+    color: black;
   }
   padding: 6px;
   font-weight: 700;

@@ -29,13 +29,13 @@ const Form = styled.div`
   padding-left: 37px;
   padding-right: 37px;
   border-radius: 5px;
-  background: linear-gradient(rgb(27, 124, 186), rgb(2, 46, 101));
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  background: linear-gradient(rgb(255,255,255), rgb(180, 190, 200));
+  color: black;
 `;
 
 const InputField = styled.input`
-  &::placeholder {
-    color: rgba(255, 255, 255, 1.0);
+   &::placeholder {
+    color: black;
   }
   height: 35px;
   padding-left: 15px;
@@ -43,14 +43,15 @@ const InputField = styled.input`
   border: none;
   border-radius: 20px;
   margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: rgba(255, 255, 255, 1);
+  color: black;
 `;
 
 const Label = styled.label`
-  color: white;
+  color: black;
   margin-bottom: 10px;
   text-transform: uppercase;
+  
 `;
 
 const ButtonContainer = styled.div`
@@ -59,17 +60,6 @@ const ButtonContainer = styled.div`
   margin-top: 20px;
 `;
 
-const Container = styled(BaseContainer)`
-  color: white;
-  text-align: center;
-`;
-
-const PlayerContainer = styled.li`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
 
 class EditProfile extends React.Component {
   constructor() {
@@ -129,7 +119,7 @@ class EditProfile extends React.Component {
            <FormContainer>
                 <Form>
                     <div>
-                    <h2> Edit your Profile! </h2>
+                    <h1> Edit your Profile! </h1>
                     </div>
                     <Label>Change Username</Label>
                     <InputField

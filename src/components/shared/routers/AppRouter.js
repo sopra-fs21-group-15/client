@@ -71,7 +71,10 @@ class AppRouter extends React.Component {
                   <DrawScreen />
               )}
             />
-            <Route path="/" exact render={() => <Redirect to={"/game"} />} />
+            <Route path="/" exact render={() => <Redirect to={"/game"} />}/>
+
+            <Route path="/waitingScreen" exact render={() => (<WaitingScreen/>)}/>
+
           </div>
         </Switch>
       </BrowserRouter>

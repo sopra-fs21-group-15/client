@@ -255,6 +255,7 @@ try{
                     :
                     (
           <UserlistContainer>
+
           {this.state.users.map(user => {
             return (
             <PlayerContainer key={user.id}>
@@ -264,6 +265,7 @@ try{
             </PlayerContainer>
             );
              })}
+
 
           </UserlistContainer>
           )}

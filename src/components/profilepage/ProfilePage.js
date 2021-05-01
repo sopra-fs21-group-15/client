@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
-import Player from '../../views/Player';
-import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
@@ -41,18 +39,6 @@ const Form = styled.div`
 
 
 
-const Container = styled(BaseContainer)`
-  color: white;
-  text-align: center;
-`;
-
-const PlayerContainer = styled.li`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
 class ProfilePage extends React.Component {
   constructor() {
     super();
@@ -68,7 +54,7 @@ class ProfilePage extends React.Component {
     const url = '/users/' + this.state.userId;
     // wait for the user information
     const response = await api.get(url);
-    const user =new User(response.data);
+    const user = new User(response.data);
     this.setState({user : user})
   }
 
@@ -82,9 +68,9 @@ class ProfilePage extends React.Component {
             <BaseContainer>
                 <FormContainer>
                     <Form>
-                        <center><h1>Profile Page</h1></center>
+                        <center><h1><u>Profile Page</u></h1></center>
                         {this.state.user?
-                        (<Profile user={this.state.user}/>): (<h1></h1>)}
+                        (<Profile user={this.state.user}/>): ("")}
                         <ButtonContainer>
                             <Button
                                 width="100%"
@@ -111,11 +97,6 @@ class ProfilePage extends React.Component {
                 </FormContainer>
             </BaseContainer>
             );
-            (this.state.userId !== this.state.loggedInUser) ?
-            /** If the profile Id and the visitor Id are not the same you can only go back! **/
-            <p>bla</p>
-            :
-            <p>test</p>
     }
 }
 
