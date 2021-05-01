@@ -3,15 +3,16 @@
  */
 
 class Lobby{
-    constructor(data= {}) {
-        this.lobbyName = null;
-        this.lobbyId = null;
-        this.rounds = null;
-        this.password = null;
-        this.maxPlayers = null;
-        this.gameMode = null;
-
-    }
+  status;
+  constructor(data= {}) {
+    this.id = data.id;
+    this.password = data.password;
+    this.lobbyname = data.lobbyname;
+    this.size = data.size;
+    this.timer = data.timer;
+    this.members = data.members;
+    this.status = data.status;
+  }
 }
 
 export default Lobby;

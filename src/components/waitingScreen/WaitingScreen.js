@@ -119,7 +119,7 @@ class waitingScreen extends React.Component {
   constructor() {
     super();
     this.state = {
-        lobbyId: null,
+        lobbyId: localStorage.getItem('lobbyId'),
         lobbyName: null,
         users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}],
         gamemode: null,
@@ -129,50 +129,40 @@ class waitingScreen extends React.Component {
         private: false,
         disabled:true,
         password:null,
-
     };
-    //this.getOwner();
-   this.getLobby();
     }
 
-    getOwner(){
- /// Find out who is the owner of the Lobby
-        var a = this.state.users;
-        var b = a[0].id;
-        var c = this.state.loginId;
-        if (c===b){
+  getOwner(){
+    // Find out who is the owner of the Lobby
+      var a = this.state.users;
+      var b = a[0].id;
+      var c = this.state.loginId;
+      if (c===b){
         this.setState({disabled: false});
         console.log("Test")
-        }
-
-}
-   async getLobby(){
-    try{
-    const url =  '/lobbies/' + this.state.lobbyId;
-    const response =await api.get(url) ;
-    this.setState({users: response.data});
-    
-
-  }catch(error){
-  alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
-  }
+      }
   }
 
+  async getLobby(){
+    try {
+      const url = '/lobbies/' + this.state.lobbyId;
+      const response = await api.get(url) ;
+      this.setState({users: response.data});
+    } catch(error) {
+      alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
+    }
+  }
 
-
-
-async componentDidMount() {
-
-        /// Find out who is the owner of the Lobby
-        var a = this.state.users;
-        var b = a[0].id;
-        var c = this.state.loginId;
-        console.log(this.state.loginId , this.state.users[0].id);
-        if (c===b){
-        this.setState({disabled: false});
-
-        }}
-
+  async componentDidMount() {
+    this.getLobby();
+    /// Find out who is the owner of the Lobby
+    var a = this.state.users;
+    var b = a[0].id;
+    var c = this.state.loginId;
+    console.log(this.state.loginId , this.state.users[0].id);
+    if (c===b){
+    this.setState({disabled: false});
+  }}
 
   async startgame() {
      try{
@@ -198,39 +188,38 @@ async componentDidMount() {
   }
 
 async sendUser(user){
-try{
+  try {
     const kickuser = JSON.stringify({
-    user: user
+      user: user
     })
-
     const url = '/lobbies/' + this.state.lobbyId +'/leavers'
     await api.put(url, kickuser)
-
-    }catch(error){
-    alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
-    }
+    } catch(error) {
+      alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
+  }
 }
 
   goback() {
-  var a = this.state.loginId;
-  var users = this.state.users;
-  for (var i=0; i<users.length;i++){
-  if (a===users[i].id){
-    var kick = users[i];
-    }}
+    var a = this.state.loginId;
+    var users = this.state.users;
+    for (var i=0; i<users.length;i++){
+      if (a===users[i].id){
+        var kick = users[i];
+      }
+    }
     this.sendUser(kick);
     this.props.history.push(`/game`);
   }
 
   remove_player(user){
-  var a = user.id;
-  var users = this.state.users;
-  for (var i=0; i<users.length;i++){
-  if (a===users[i].id){
-  var kick = users[i]; // send this user to the backend
-  // Api-Call to the backend to kick the user
-  }}
-    //this.sendUser(kick);
+    var a = user.id;
+    var users = this.state.users;
+    for (var i=0; i<users.length;i++){
+      if (a===users[i].id){
+      var kick = users[i]; // send this user to the backend
+      // Api-Call to the backend to kick the user
+      }
+    }
   }
 
 
@@ -238,7 +227,6 @@ try{
     // Example: if the key is username, this statement is the equivalent to the following one:
     // this.setState({'username': value});
     this.setState({ [key]: value });
-
   }
 
   render() {
