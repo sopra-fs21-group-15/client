@@ -122,7 +122,6 @@ class waitingScreen extends React.Component {
         lobbyId: localStorage.getItem('lobbyId'),
         lobby: null,
         gamemode: null,
-        loginId:1,// localStorage.getItem( 'loginId'),
         max_players: null,
         rounds: null,
         private: false,
