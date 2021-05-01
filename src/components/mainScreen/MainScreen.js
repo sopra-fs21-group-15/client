@@ -79,23 +79,6 @@ class MainScreen extends React.Component {
     };
   }
 
-  //TODO get this method to work after the backend is done with their implementations
-
-  async getLobby(){
-    try {
-      const url = '/lobbies/' + this.state.lobbyId;
-
-      // wait for the lobby information
-      const response = await api.get(url);
-      const lobby = new User(response.data);
-      this.setState({lobby: lobby})
-    }
-    catch (error) {
-      alert(`Something went wrong while fetching the lobbies: \n${handleError(error)}`);
-    }
-  }
-
-
   async getUser() {
     try {
       const url = '/users/' + this.state.loginId;
@@ -145,9 +128,6 @@ class MainScreen extends React.Component {
     for (let i = 0; i<10; i++){
     const randomWord = require("random-words");
     console.log(randomWord({exactly:5}))}
-
-    // get specific lobby
-    this.getLobby()
 
     // Get specific user
     this.getUser()
