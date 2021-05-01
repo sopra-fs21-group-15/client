@@ -240,6 +240,7 @@ class DrawScreen extends React.Component {
 
     this.state = {
       game_id: 7, // TODO get actual id
+      drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
       hint: "A__b_c_", // Will contain some letters and underscores
@@ -251,8 +252,9 @@ class DrawScreen extends React.Component {
       loginId: localStorage.getItem('loginId'), //added the login Id
       chat_message: "", // Value of the chat input field
       users: "",
-      messages // JSON of all chat messages
-
+      messages, // JSON of all chat messages
+      timestamp_last_message: 0,
+      timestamp_last_draw_instruction: 0 // Time of the last draw instruction that was received (guesser mode)
     };
   }
 
@@ -326,6 +328,7 @@ class DrawScreen extends React.Component {
     try {
       const requestBody = JSON.stringify({
         user_id: this.state.loginId,
+        game_id: this.state.game_id,
         x: x,
         y: y,
         size: size,
@@ -334,11 +337,15 @@ class DrawScreen extends React.Component {
       /** await the confirmation of the backend **/
       const response = await api.put('/drawing', requestBody);
     } catch (error) {
-      alert(`Something went wrong while sending the drawing instruction: \n${handleError(error)}`);
+      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
     }
   }
 
   canvas_onMouseDown(button) {
+    // Return if you're not the drawer
+    if(!this.state.drawer)
+      return;
+
     if(button == 0) {
       let ctx = this.mainCanvas.current.getContext('2d');
       this.setState({ mouse_down: true });
@@ -354,16 +361,69 @@ class DrawScreen extends React.Component {
   componentDidMount() {
     this.resetCanvas();
     this.updateBrushPreview();
-    //setInterval(this.countdown, 1000)
-
 
     // Regularly update the time left
-    setInterval(() => {
+    let intervalID= setInterval(async () => {
+      // Countdown the timer
       let date_now = new Date();
       let time_left = Math.round((this.state.timeout - date_now) / 1000);
       this.setState({ time_left });
+
+      // Poll the chat
+      try {
+        const requestBody = JSON.stringify({
+          user_id: this.state.loginId,
+          game_id: this.state.game_id,
+          timestamp: this.state.timestamp_last_message
+        });
+
+        /** await the confirmation of the backend **/
+        const response = await api.get('/chat', requestBody);
+
+        // Set timestamp_last_message
+        let timestamp_last_message = response[response.lenght -1].timestamp;
+
+        // Add new messages to our chat
+        let messages = this.state.messages.concat(response);
+        this.setState({ timestamp_last_message, messages });
+      } catch (error) {
+        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
+      }
+
+      // Poll draw instructions (guesser mode)
+      if(this.state.drawer)
+        return;
+      try {
+        const requestBody = JSON.stringify({
+          user_id: this.state.loginId,
+          game_id: this.state.game_id,
+          timestamp: this.state.timestamp_last_draw_instruction
+        });
+        /** await the confirmation of the backend **/
+        const response = await api.get('/draw', requestBody);
+
+        let timestamp_last_draw_instruction;
+        response.forEach(instr => {
+          let ctx = this.mainCanvas.current.getContext('2d');
+          ctx.lineWidth = instr.size;
+          ctx.fillStyle = instr.colour;
+          ctx.lineTo(instr.x, instr.y);
+          ctx.stroke();
+          timestamp_last_draw_instruction = instr.timestamp;
+        });
+        this.setState({ timestamp_last_draw_instruction });
+
+      } catch(error) {
+        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the draw-instructions: \n${handleError(error)}`});
+      }
+
     }, 1000);
- this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
+    this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
+    this.setState({ intervalID });
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.intervalID);
   }
 
   componentDidUnmount() {
@@ -374,13 +434,14 @@ class DrawScreen extends React.Component {
     try {
       const requestBody = JSON.stringify({
         user_id: this.state.loginId,
+        game_id: this.state.game_id,
         message: this.state.chat_message
       });
       /** await the confirmation of the backend **/
       const response = await api.put('/chat', requestBody);
       this.setState({ chat_message: "" });
     } catch (error) {
-      alert(`Something went wrong while sending the chat message: \n${handleError(error)}`);
+      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the chat message: \n${handleError(error)}`});
     }
   }
 
@@ -415,20 +476,24 @@ class DrawScreen extends React.Component {
       <Sidebar>
         <H1 onClick={this.changeColour}>Tools</H1>
         <HR />
-        <ColoursContainer>
-            {this.colours.map(colour => {
-              return (
-                <Colour colour={colour} f_onClick={() => {this.changeColour(colour)}} />
-              );
-            })}
-        </ColoursContainer>
-        <HR/>
-        <Label>Size</Label>
-        <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />
-        <HR/>
-        <Button width="40%" onClick={() => {this.fillCanvas()}}>Fill</Button>
-        <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>
-        <HR/>
+
+        {this.state.drawer ? ([
+          <ColoursContainer>
+              {this.colours.map(colour => {
+                return (
+                  <Colour colour={colour} f_onClick={() => {this.changeColour(colour)}} />
+                );
+              })},
+          </ColoursContainer>,
+          <HR/>,
+          <Label>Size</Label>,
+          <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />,
+          <HR/>,
+          <Button width="40%" onClick={() => {this.fillCanvas()}}>Fill</Button>,
+          <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>,
+          <HR/>
+        ]) : ( "" )}
+
         <Button width="80%" onClick={() => {this.download_image()}}>Download image</Button>
         <HR/>
         <BrushPreview ref={this.brushPreview}></BrushPreview>
@@ -440,7 +505,7 @@ class DrawScreen extends React.Component {
               );
             })}
           </Messages>
-          <InputField placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+          <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
           { this.state.chat_message == "" ?
             <Button disabled width="40%" onClick={() => {this.send_message()}} >Send</Button>
             :
