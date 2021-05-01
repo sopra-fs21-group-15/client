@@ -120,6 +120,7 @@ class waitingScreen extends React.Component {
     super();
     this.state = {
         lobbyId: localStorage.getItem('lobbyId'),
+        loginId: localStorage.getItem('loginId'),
         lobby: null,
         gamemode: null,
         max_players: null,
@@ -140,18 +141,16 @@ class waitingScreen extends React.Component {
         const response = await api.get(url);
         let lobby = new Lobby(response.data);
         this.setState({ lobby });
-        console.log("Status", lobby.status);
       } catch(error) {
         alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
       }
 
-      if(this.state.lobby.members[0] === null)
-        alert("Error: Member-list empty");
-
       /// Find out who is the owner of the Lobby
       let owner_id = this.state.lobby.members[0];
-      if (owner_id === this.state.loginId)
+      if (owner_id == this.state.loginId)
         this.setState({ owner: true });
+      else
+        this.setState({ owner: false });
     }, 3000);
 
     this.setState({ intervalID });
