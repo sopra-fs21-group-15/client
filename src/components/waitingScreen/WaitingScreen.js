@@ -148,10 +148,10 @@ class waitingScreen extends React.Component {
 }
    async getLobby(){
     try{
-    const url =  '/lobbies/users'+ this.state.loginId;
+    const url =  '/lobbies/' + this.state.lobbyId;
     const response =await api.get(url) ;
     this.setState({users: response.data});
-    console.log("dsfsdf")
+    
 
   }catch(error){
   alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
