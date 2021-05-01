@@ -361,7 +361,7 @@ class DrawScreen extends React.Component {
     this.updateBrushPreview();
 
     // Regularly update the time left
-    let intervalID= setInterval(async () => {
+    let intervalID = setInterval(async () => {
       // Countdown the timer
       let date_now = new Date();
       let time_left = Math.round((this.state.timeout - date_now) / 1000);
