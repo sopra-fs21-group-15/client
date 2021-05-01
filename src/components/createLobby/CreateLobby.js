@@ -103,13 +103,12 @@ class CreateLobby extends React.Component {
   async createLobby() {
     try {
       const requestBody = JSON.stringify({
-            lobbyname: this.state.lobbyName,
-            rounds: this.state.rounds,
-            password: this.state.password,
-            size: this.state.maxPlayers,
-            timer: 60
-          }
-      )
+        lobbyname: this.state.lobbyName,
+        rounds: this.state.rounds,
+        password: this.state.password,
+        size: this.state.maxPlayers,
+        timer: 60
+      });
 
       // wait for making new Lobby
       const response = await api.post('/lobbies/' + this.state.loginId, requestBody);

@@ -141,7 +141,7 @@ class MainScreen extends React.Component {
 
     try {
       const requestBody = JSON.stringify({
-            id: lobby.id,
+            id: this.state.loginId,
             password: input_password,
             lobbyid: this.state.loginId
           });

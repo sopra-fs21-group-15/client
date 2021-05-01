@@ -158,26 +158,22 @@ class waitingScreen extends React.Component {
   }
 
   async startgame() {
-     try{
-        const requestBody_2 = JSON.stringify({
-            gamemode: this.state.gamemode,
-            max_players: this.state.max_players,
-            rounds: this.state.rounds,
-            // private: this.state.private,
-            password: this.state.lobby.password,
-            users: this.state.lobby.members,
-        });
+    try {
+      const requestBody = JSON.stringify({
+        lobbyname: this.state.lobby.lobbyName,
+        rounds: this.state.lobby.rounds,
+        password: this.state.lobby.password,
+        size: this.state.lobby.maxPlayers,
+        users: this.state.lobby.members
+      });
 
-        const url = '/lobbies/'+ this.state.lobbyId;
-        /** give the changes to the backend **/
-        await api.put(url, requestBody_2);
-        }
-        catch (error) {
-            alert(`Something went wrong during the starting the game: \n${handleError(error)}`);
-        this.props.history.push(`/draw`)
-        }
-
-    return;
+      const url = '/lobbies/'+ this.state.lobbyId;
+      /** give the changes to the backend **/
+      await api.put(url, requestBody);
+      this.props.history.push(`/draw`)
+    } catch (error) {
+      alert(`Something went wrong during the starting the game: \n${handleError(error)}`);
+    }
   }
 
 async sendUser(user){
@@ -316,7 +312,7 @@ async sendUser(user){
           <hr width="100%" />
 
           <ButtonContainer>
-            <Button disabled={ this.state.lobby && this.state.lobby.members.length <= 2 || this.state.disabled } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
+            <Button disabled={ this.state.lobby && this.state.lobby.members.length <= 2 } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
           </ButtonContainer>
           <ButtonContainer>
             <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
