@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
 import WaitingPlayers from '../../views/waitinglist';
-import Lobby from '../../views/Lobby';
+import Lobby from "../shared/models/Lobby";
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
@@ -120,8 +120,7 @@ class waitingScreen extends React.Component {
     super();
     this.state = {
         lobbyId: localStorage.getItem('lobbyId'),
-        lobbyName: null,
-        users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}],
+        lobby: null,
         gamemode: null,
         loginId:1,// localStorage.getItem( 'loginId'),
         max_players: null,
@@ -129,40 +128,34 @@ class waitingScreen extends React.Component {
         private: false,
         disabled:true,
         password:null,
+
+        owner: false
     };
     }
-
-  getOwner(){
-    // Find out who is the owner of the Lobby
-      var a = this.state.users;
-      var b = a[0].id;
-      var c = this.state.loginId;
-      if (c===b){
-        this.setState({disabled: false});
-        console.log("Test")
-      }
-  }
 
   async getLobby(){
     try {
       const url = '/lobbies/' + this.state.lobbyId;
-      const response = await api.get(url) ;
-      this.setState({users: response.data.members});
+      const response = await api.get(url);
+      let lobby = new Lobby(response.data);
+      this.setState({ lobby });
     } catch(error) {
       alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
     }
+
+    if(this.state.lobby.members[0] === null)
+      alert("Error: Member-list empty");
+
+    /// Find out who is the owner of the Lobby
+    let owner_id = this.state.lobby.members[0];
+    if (owner_id === this.state.loginId)
+      this.setState({ owner: true });
   }
 
   async componentDidMount() {
-    this.getLobby();
-    /// Find out who is the owner of the Lobby
-    var a = this.state.users;
-    var b = a[0].id;
-    var c = this.state.loginId;
-    console.log(this.state.loginId , this.state.users[0].id);
-    if (c===b){
-    this.setState({disabled: false});
-  }}
+    this.getLobby(); // Get currenty lobby from backend
+
+  }
 
   async startgame() {
      try{
@@ -170,9 +163,9 @@ class waitingScreen extends React.Component {
             gamemode: this.state.gamemode,
             max_players: this.state.max_players,
             rounds: this.state.rounds,
-            private: this.state.private,
-            password: this.state.password,
-            users: this.state.users,
+            // private: this.state.private,
+            password: this.state.lobby.password,
+            users: this.state.lobby.members,
         });
 
         const url = '/lobbies/'+ this.state.lobbyId;
@@ -201,7 +194,7 @@ async sendUser(user){
 
   goback() {
     var a = this.state.loginId;
-    var users = this.state.users;
+    var users = this.state.lobby.members;
     for (var i=0; i<users.length;i++){
       if (a===users[i].id){
         var kick = users[i];
@@ -213,7 +206,7 @@ async sendUser(user){
 
   remove_player(user){
     var a = user.id;
-    var users = this.state.users;
+    var users = this.state.lobby.members;
     for (var i=0; i<users.length;i++){
       if (a===users[i].id){
       var kick = users[i]; // send this user to the backend
@@ -237,19 +230,24 @@ async sendUser(user){
           <h2>Chill Area</h2>
           <hr width="100%" />
           <Layout>
-          {!this.state.users ? (
+          {!this.state.lobby ? (
             <Spinner />
           ):(
             <UserlistContainer>
-            {this.state.users.map(user => {
-              return (
-                <PlayerContainer key={user.id}>
-                {this.state.loginId == this.state.users[0].id ?
-                  <WaitingPlayers user={user} /> //f_onClick={() => this.remove_player(user)} add when necessary
-                :
-                  <WaitingPlayers user={user}/>}
-                  </PlayerContainer>
+            {this.state.lobby.members.map(user => {
+              return(
+                <ul>
+                  <li>{user}</li>
+                </ul>
               );
+              // return (
+              //   <PlayerContainer key={user.id}>
+              //   {this.state.owner ?
+              //     <WaitingPlayers user={user} /> //f_onClick={() => this.remove_player(user)} add when necessary
+              //   :
+              //     <WaitingPlayers user={user}/>}
+              //     </PlayerContainer>
+              // );
             })}
             </UserlistContainer>
           )}
@@ -260,7 +258,7 @@ async sendUser(user){
           <h2>{this.state.lobbyName}</h2>
           <Label>Gamemode</Label>
 
-          {this.state.loginId == this.state.users[0].id ?
+          {this.state.owner ?
             <SelectField id="form_gamemode" disabled={this.state.disabled} onChange={e => {this.handleInputChange("gamemode", e.target.value);}}>
               <option value={this.state.gamemode}>{this.state.gamemode}</option>
               <option value="Classic">Classic</option>
@@ -271,7 +269,7 @@ async sendUser(user){
           }
 
           <Label>Max. Players</Label>
-          {this.state.loginId == this.state.users[0].id ?
+          {this.state.owner ?
             <SelectField id="from_player" disabled={this.state.disabled} onChange={e => {this.handleInputChange("max_players", e.target.value);}}>
               <option value={this.state.max_players}>{this.state.max_players}</option>
               <option value="4">4</option>
@@ -287,7 +285,7 @@ async sendUser(user){
           }
 
           <Label>Rounds</Label>
-          {this.state.loginId == this.state.users[0].id ?
+          {this.state.owner ?
             <SelectField id="from_rounds" disabled={this.state.disabled} onChange={e => {this.handleInputChange("rounds", e.target.value);}}>
               <option value={this.state.rounds}>{this.state.rounds}</option>
               <option value="2">2</option>
@@ -305,7 +303,12 @@ async sendUser(user){
           <Label>Private</Label>
           <OneLineBlock>
           <InputField id="form_private" type="checkbox" disabled={this.state.disabled} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
-          {this.state.private == true ? (this.state.loginId == this.state.users[0].id ? <InputField id="form_password" placeholder="Password"  onChange={e => {this.handleInputChange('password', e.target.value);}}/> : <h2>Password: {this.state.password}</h2> ) : ""  }
+          {this.state.private == true ? (
+            this.state.owner ?
+              <InputField id="form_password" placeholder="Password"  onChange={e => {this.handleInputChange('password', e.target.value);}}/>
+            :
+              <h2>Password: {this.state.password}</h2>
+          ) : ""  }
           </OneLineBlock>
           </Lobbyinformation>
           </LobbyinformationContainer>
@@ -313,7 +316,7 @@ async sendUser(user){
           <hr width="100%" />
 
           <ButtonContainer>
-            <Button disabled={ this.state.users.length <= 2 || this.state.disabled } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
+            <Button disabled={ this.state.lobby && this.state.lobby.members.length <= 2 || this.state.disabled } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
           </ButtonContainer>
           <ButtonContainer>
             <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
