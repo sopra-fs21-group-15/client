@@ -74,7 +74,8 @@ class MainScreen extends React.Component {
       lobbies: null,
       lobby: null,
       lobbyId: localStorage.getItem("lobbyId"),
-      loginId: localStorage.getItem('loginId')
+      loginId: localStorage.getItem('loginId'),
+      username: localStorage.getItem('username')
     };
   }
 
@@ -141,10 +142,10 @@ class MainScreen extends React.Component {
 
     try {
       const requestBody = JSON.stringify({
-            id: this.state.loginId,
-            password: input_password,
-            lobbyid: this.state.loginId
+            lobbyname: this.state.username,
+            password: input_password
           });
+
       const response = await api.put('/lobbies/' + lobby.id + '/joiners', requestBody);
 
       localStorage.setItem("lobbyId", lobby.id)
