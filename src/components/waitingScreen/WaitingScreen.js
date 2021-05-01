@@ -119,18 +119,20 @@ class waitingScreen extends React.Component {
   constructor() {
     super();
     this.state = {
-     users: [{"id": 5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}],
-      gamemode: null,
-      loginId: 5 , //localStorage.getItem('loginId'),
-      max_players: null,
-      rounds: null,
-      private: false,
-      disabled:true,
-      password:null,
-      lobbyId: null,
+        lobbyId: null,
+        lobbyName: null,
+        users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}],
+        gamemode: null,
+        loginId:1,// localStorage.getItem( 'loginId'),
+        max_players: null,
+        rounds: null,
+        private: false,
+        disabled:true,
+        password:null,
+
     };
     //this.getOwner();
-    //this.getLobby();
+   this.getLobby();
     }
 
     getOwner(){
@@ -146,9 +148,10 @@ class waitingScreen extends React.Component {
 }
    async getLobby(){
     try{
-    const url =  '/lobby/'+ this.state.lobbyId;
+    const url =  '/lobbies/users'+ this.state.loginId;
     const response =await api.get(url) ;
     this.setState({users: response.data});
+    console.log("dsfsdf")
 
   }catch(error){
   alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
@@ -157,18 +160,17 @@ class waitingScreen extends React.Component {
 
 
 
-async componentDidUpdate(){
 
-
-}
 async componentDidMount() {
 
         /// Find out who is the owner of the Lobby
         var a = this.state.users;
         var b = a[0].id;
         var c = this.state.loginId;
+        console.log(this.state.loginId , this.state.users[0].id);
         if (c===b){
         this.setState({disabled: false});
+
         }}
 
 
@@ -201,7 +203,7 @@ try{
     user: user
     })
 
-    const url = '/lobby/'+this.state.lobbyId
+    const url = '/lobbies/' + this.state.lobbyId +'/leavers'
     await api.put(url, kickuser)
 
     }catch(error){
@@ -216,7 +218,7 @@ try{
   if (a===users[i].id){
     var kick = users[i];
     }}
-    //this.sendUser(kick);
+    this.sendUser(kick);
     this.props.history.push(`/game`);
   }
 
@@ -268,7 +270,7 @@ try{
           <LobbyinformationContainer>
           <Lobbyinformation>
             <Label>Lobbyname</Label>
-            <h2>Name of the Lobby</h2>
+            <h2>{this.state.lobbyName}</h2>
             <Label>Gamemode</Label>
 
             {this.state.loginId == this.state.users[0].id ?
