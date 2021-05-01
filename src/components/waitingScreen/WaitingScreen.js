@@ -147,7 +147,7 @@ class waitingScreen extends React.Component {
     try {
       const url = '/lobbies/' + this.state.lobbyId;
       const response = await api.get(url) ;
-      this.setState({users: response.data});
+      this.setState({users: response.data.members});
     } catch(error) {
       alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
     }
@@ -238,100 +238,86 @@ async sendUser(user){
           <hr width="100%" />
           <Layout>
           {!this.state.users ? (
-          <Spinner />
-                    )
-                    :
-                    (
-          <UserlistContainer>
-
-          {this.state.users.map(user => {
-            return (
-            <PlayerContainer key={user.id}>
-               {this.state.loginId == this.state.users[0].id ?
-               <WaitingPlayers user={user} /> //f_onClick={() => this.remove_player(user)} add when necessary
-               :<WaitingPlayers user={user}/>}
-            </PlayerContainer>
-            );
-             })}
-
-
-          </UserlistContainer>
+            <Spinner />
+          ):(
+            <UserlistContainer>
+            {this.state.users.map(user => {
+              return (
+                <PlayerContainer key={user.id}>
+                {this.state.loginId == this.state.users[0].id ?
+                  <WaitingPlayers user={user} /> //f_onClick={() => this.remove_player(user)} add when necessary
+                :
+                  <WaitingPlayers user={user}/>}
+                  </PlayerContainer>
+              );
+            })}
+            </UserlistContainer>
           )}
+
           <LobbyinformationContainer>
           <Lobbyinformation>
-            <Label>Lobbyname</Label>
-            <h2>{this.state.lobbyName}</h2>
-            <Label>Gamemode</Label>
+          <Label>Lobbyname</Label>
+          <h2>{this.state.lobbyName}</h2>
+          <Label>Gamemode</Label>
 
-            {this.state.loginId == this.state.users[0].id ?
-            <SelectField id="form_gamemode"
-            disabled={this.state.disabled}
-            onChange={e => {this.handleInputChange("gamemode", e.target.value);}}
-            >
-                <option value={this.state.gamemode}>{this.state.gamemode}</option>
-                <option value="Classic">Classic</option>
-                <option value="Pokemon">Pokemon</option>
+          {this.state.loginId == this.state.users[0].id ?
+            <SelectField id="form_gamemode" disabled={this.state.disabled} onChange={e => {this.handleInputChange("gamemode", e.target.value);}}>
+              <option value={this.state.gamemode}>{this.state.gamemode}</option>
+              <option value="Classic">Classic</option>
+              <option value="Pokemon">Pokemon</option>
             </SelectField>
-            :<h2>{this.state.gamemode}</h2>}
+          :
+            <h2>{this.state.gamemode}</h2>
+          }
 
-
-            <Label>Max. Players</Label>
-            {this.state.loginId == this.state.users[0].id ?
-            <SelectField id="from_player"
-            disabled={this.state.disabled}
-            onChange={e => {this.handleInputChange("max_players", e.target.value);}}
-            >
-                <option value={this.state.max_players}>{this.state.max_players}</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
+          <Label>Max. Players</Label>
+          {this.state.loginId == this.state.users[0].id ?
+            <SelectField id="from_player" disabled={this.state.disabled} onChange={e => {this.handleInputChange("max_players", e.target.value);}}>
+              <option value={this.state.max_players}>{this.state.max_players}</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
             </SelectField>
-            :<h2>{this.state.max_players}</h2>}
+          :
+            <h2>{this.state.max_players}</h2>
+          }
 
-            <Label>Rounds</Label>
-            {this.state.loginId == this.state.users[0].id ?
-            <SelectField id="from_rounds"
-            disabled={this.state.disabled}
-            onChange={e => {this.handleInputChange("rounds", e.target.value);}}
-            >
-                <option value={this.state.rounds}>{this.state.rounds}</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
+          <Label>Rounds</Label>
+          {this.state.loginId == this.state.users[0].id ?
+            <SelectField id="from_rounds" disabled={this.state.disabled} onChange={e => {this.handleInputChange("rounds", e.target.value);}}>
+              <option value={this.state.rounds}>{this.state.rounds}</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
             </SelectField>
-             :<h2>{this.state.rounds}</h2>}
+          :
+            <h2>{this.state.rounds}</h2>
+          }
 
-            <Label>Private</Label>
-            <OneLineBlock>
-                <InputField id="form_private" type="checkbox" disabled={this.state.disabled} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
-                {this.state.private == true ? (this.state.loginId == this.state.users[0].id ? <InputField id="form_password" placeholder="Password"  onChange={e => {this.handleInputChange('password', e.target.value);}}/> : <h2>Password: {this.state.password}</h2> ) : ""  }
-            </OneLineBlock>
-            </Lobbyinformation>
-            </LobbyinformationContainer>
-            </Layout>
-            <hr width="100%" />
-            <ButtonContainer>
+          <Label>Private</Label>
+          <OneLineBlock>
+          <InputField id="form_private" type="checkbox" disabled={this.state.disabled} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
+          {this.state.private == true ? (this.state.loginId == this.state.users[0].id ? <InputField id="form_password" placeholder="Password"  onChange={e => {this.handleInputChange('password', e.target.value);}}/> : <h2>Password: {this.state.password}</h2> ) : ""  }
+          </OneLineBlock>
+          </Lobbyinformation>
+          </LobbyinformationContainer>
+          </Layout>
+          <hr width="100%" />
 
-               <Button
-               disabled={ this.state.users.length <= 2 || this.state.disabled }
-               width="25%" onClick={() => {this.startgame();}}>
-               Start the Game
-               </Button>
-
+          <ButtonContainer>
+            <Button disabled={ this.state.users.length <= 2 || this.state.disabled } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
           </ButtonContainer>
           <ButtonContainer>
             <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
           </ButtonContainer>
-
-
         </FormContainer>
       </Container>
     );
