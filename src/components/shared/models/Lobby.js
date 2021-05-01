@@ -7,9 +7,10 @@ class Lobby{
         this.lobbyName = null;
         this.lobbyId = null;
         this.rounds = null;
-        this.private = null;
+        this.password = null;
         this.maxPlayers = null;
         this.gameMode = null;
+
     }
 }
 

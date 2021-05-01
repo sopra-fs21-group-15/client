@@ -97,28 +97,24 @@ class CreateLobby extends React.Component {
       private: false,
       lobbyId: null,
       lobbyName: null,
-      gameMode: null
+      gameMode: null,
+      password: null
     };
   }
 
-  async componentDidMount() {
-  }
-
   async createLobby() {
-
     try {
       const requestBody = JSON.stringify({
             lobbyName: this.state.lobbyName,
-            /** not sure if this is necessary or not at the moment*/
             lobbyId: this.state.lobbyId,
             rounds: this.state.rounds,
-            privat: this.state.private,
+            password: this.state.password,
             maxPlayers: this.state.maxPlayers,
             gameMode: this.state.gameMode
           }
       )
       // wait for making new Lobby
-      const response = api.post('/lobbies',requestBody);
+      const response = api.post('/lobbies/' + localStorage.getItem("loginId"),requestBody);
 
       // get new lobby and update the new Lobby Object
       const lobby = new Lobby(response.data);
@@ -130,11 +126,9 @@ class CreateLobby extends React.Component {
 
     }
     catch (error){
-      alert(`Something went wrong during the register: \n${handleError(error)}`);
+      alert(`Something went wrong during the lobby creation: \n${handleError(error)}`);
       this.props.history.push(`/game/dashboard`);
     }
-
-
 
   }
 
@@ -147,6 +141,8 @@ class CreateLobby extends React.Component {
     // this.setState({'username': value});
     this.setState({ [key]: value });
   }
+
+  async componentDidMount() {}
 
   render() {
     return (
@@ -166,7 +162,6 @@ class CreateLobby extends React.Component {
 
             <option value="classic">Classic</option>
             <option value="pokemon">Pokemon</option>
-            <option value="heros">Hero's</option>
           </SelectField>
 
           <Label>Max. Players</Label>
@@ -185,7 +180,7 @@ class CreateLobby extends React.Component {
           <Label>Private</Label>
           <OneLineBlock>
             <InputField id="form_private" type="checkbox" onChange={e => {this.handleInputChange('private', e.target.checked);}} />
-            {this.state.private == true ? <InputField id="form_password" placeholder="Password" /> : "" }
+            {this.state.private === true ? <InputField id="form_password" placeholder="Password" /> : "" }
           </OneLineBlock>
           <hr width="100%" />
           <ButtonContainer>

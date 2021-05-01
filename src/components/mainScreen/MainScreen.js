@@ -90,7 +90,7 @@ class MainScreen extends React.Component {
       this.setState({lobby: lobby})
     }
     catch (error) {
-      alert(`Something went wrong while fetching the user: \n${handleError(error)}`);
+      alert(`Something went wrong while fetching the lobbies: \n${handleError(error)}`);
     }
   }
 
@@ -140,22 +140,30 @@ class MainScreen extends React.Component {
     const firstPokemon = getPokemons.getPokemonById(5); // See API in the next section.
     console.log(firstPokemon.name)
 
-    this.getUser() // Get users
-    // TODO does not work because of Backend this.getLobby() // get lobbies
+    for (let i = 0; i<10; i++){
+    const randomWord = require("random-words");
+    console.log(randomWord({exactly:5}))}
+
+    // get specific lobby
+    this.getLobby()
+
+    // Get specific user
+    this.getUser()
+
     try {
       const response = await api.get('/users');
       this.setState({ users: response.data });
 
-      const responsLobby = await api.get('lobbies');
-      this.setState({lobbies: responsLobby.data});
+      const responseLobby = await api.get('/lobbies');
+      this.setState({lobbies: responseLobby.data});
 
       //TODO: Fake data for the lobbies and Friends Need to remove it Later
       this.setState({ friends: [{"id":31,"password":"123","name":"John"},{"id":42,"password":"123","name":"Tommy"}] });
       this.setState({ fakeLobbies: [{"id":1,"private":true,"name":"lobby1","password":"123"},{"id":2,"private":false,"name":"lobby2","password":"123"},
           {"id":1,"password":"123","name":"lobby11111","private":true},{"id":2,"password":"123","name":"lobby2","private":true},
-          {"id":1,"password":"123","name":"lobby1","private":true},{"id":2,"password":"123","name":"lobby2","private":true},
+          {"id":1,"password":"123","name":"lobby1","private":""},{"id":2,"password":"123","name":"lobby2","private":true},
           {"id":1,"password":"123","name":"lobby1","private":false},{"id":2,"password":"123","name":"lobby2","private":true},
-          {"id":1,"password":"123","name":"lobby1","private":true},{"id":2,"password":"123","name":"lobby2","private":false}] });
+          {"id":1,"password":"123","name":"lobby1","private":""},{"id":2,"password":"123","name":"lobby2","private":false}] });
     } catch (error) {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
     }
@@ -165,12 +173,11 @@ class MainScreen extends React.Component {
 
   //TODO We see in the log if the PW is correct
   join_lobby(lobby) {
-    if (lobby.private===true){
+    if (lobby.password!==""){
       let input = prompt("Please enter the Lobby password")
       if (input === lobby.password){
         this.props.history.push("/waitingScreen")
-        console.log("good")
-        //this.props.history.push("/waitingRoom")
+        console.log("joined private lobby")
       }
       else (console.log("bad"))
     }
@@ -199,14 +206,13 @@ class MainScreen extends React.Component {
           <LobbylistContainer>
             <h2>Lobbies</h2>
             <Lobbies>
-              {this.state.fakeLobbies.map(lobby => {
+              {this.state.lobbies.map(lobby => {
                 return (
-                    <Lobby lobby={lobby} f_onClick={() => this.join_lobby(lobby)} password={this.state.fakeLobbies.private}/>
+                    <Lobby lobby={lobby} f_onClick={() => this.join_lobby(lobby)}/>
                 );
               })}
             </Lobbies>
             <Button
-                width = "70%"
                 onClick={() => {
                   this.createLobby();
                 }}
@@ -235,7 +241,6 @@ class MainScreen extends React.Component {
                     <PlayerContainer key={user.id}>
                       <Player user={user} f_onClick={() => this.go_to_profile(user)}/>
                     </PlayerContainer>
-
                 );
               })}
             </Users>

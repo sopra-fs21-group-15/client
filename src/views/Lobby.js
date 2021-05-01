@@ -60,7 +60,7 @@ const Lobby = ({ lobby, f_onClick }) => {
 
     return (
     <Container>
-      <LobbyName>{lobby.name}{lobby.private ? " 🔒" : ""}</LobbyName>
+      <LobbyName>{lobby.name}{lobby.private !== "" ? " 🔒" : ""}</LobbyName>
       {f_onClick ? <ButtonLobbies onClick={f_onClick}>Join Lobby</ButtonLobbies> : ""}
     </Container>
   );
