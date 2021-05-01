@@ -121,6 +121,7 @@ class waitingScreen extends React.Component {
     this.state = {
         lobbyId: localStorage.getItem('lobbyId'),
         loginId: localStorage.getItem('loginId'),
+        username: localStorage.getItem('username'), // own username
         lobby: null,
         gamemode: null,
         max_players: null,
@@ -146,8 +147,8 @@ class waitingScreen extends React.Component {
       }
 
       /// Find out who is the owner of the Lobby
-      let owner_id = this.state.lobby.members[0];
-      if (owner_id == this.state.loginId)
+      let owner_name = this.state.lobby.members[0];
+      if (owner_name == this.state.username)
         this.setState({ owner: true });
       else
         this.setState({ owner: false });
