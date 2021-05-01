@@ -119,7 +119,7 @@ class waitingScreen extends React.Component {
   constructor() {
     super();
     this.state = {
-        lobbyId: null,
+        lobbyId: localStorage.getItem("lobbyId"),
         lobbyName: null,
         users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}],
         gamemode: null,

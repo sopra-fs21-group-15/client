@@ -29,20 +29,6 @@ const OneLineBlock = styled.div`
   align-items: center;
 `;
 
-const Form = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 60%;
-  height: 375px;
-  font-size: 16px;
-  font-weight: 300;
-  padding-left: 37px;
-  padding-right: 37px;
-  border-radius: 5px;
-  background: linear-gradient(rgb(255,255,255), rgb(180, 190, 200));
-  transition: opacity 0.5s ease, transform 0.5s ease;
-`;
 
 const InputField = styled.input`
   &::placeholder {
@@ -91,7 +77,7 @@ class CreateLobby extends React.Component {
     super();
     this.state = {
       loginId: localStorage.getItem('loginId'),
-      maxPlayers: 7,
+      size: 7,
       rounds: 4,
       private: false,
       lobbyName: "",
@@ -103,17 +89,16 @@ class CreateLobby extends React.Component {
   async createLobby() {
     try {
       const requestBody = JSON.stringify({
-            lobbyName: this.state.lobbyName,
+            lobbyname: this.state.lobbyName,
             rounds: this.state.rounds,
             password: this.state.password,
-            maxPlayers: this.state.maxPlayers,
-            gameMode: this.state.gameMode
+            size: this.state.maxPlayers,
+            //timer: this.state.gameMode
           }
       )
 
       // wait for making new Lobby
-      const response = api.post('/lobbies/' + localStorage.getItem("userId"),requestBody);
-
+      const response = await api.post('/lobbies/' + this.state.loginId, requestBody);
       // get new lobby and update the new Lobby Object
       const lobby = new Lobby(response.data);
 
@@ -162,8 +147,8 @@ class CreateLobby extends React.Component {
 
           <Label>Max. Players</Label>
           <OneLineBlock>
-            <InputField value={this.state.max_players} onChange={e => {this.handleInputChange('maxPlayers', e.target.value);}} id="form_max_players" type="range" min="3" max="10" />
-            <InputField type="text" id="form_max_players_display" value={this.state.maxPlayers} />
+            <InputField value={this.state.size} onChange={e => {this.handleInputChange('maxPlayers', e.target.value);}} id="form_max_players" type="range" min="3" max="10" />
+            <InputField type="text" id="form_max_players_display" value={this.state.size} />
           </OneLineBlock>
 
 

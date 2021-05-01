@@ -7,10 +7,8 @@ import Lobby from '../../views/Lobby';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import User from "../shared/models/User";
-import Friends from "../../views/Friends";
-import {random} from "nanoid";
+
 
 const Container = styled(BaseContainer)`
   color: white;
@@ -53,6 +51,7 @@ const PlayerContainer = styled.li`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
 `;
 
 const Lobbies = styled.ul`
@@ -118,17 +117,6 @@ class MainScreen extends React.Component {
 
   async componentDidMount() {
 
-
-    // Just tried to use an API for words like pokemons It works in the console
-    // TODO make this accessible for the game and not in the mainscreen
-    const getPokemons = require('json-pokemon/getPokemon');
-    const firstPokemon = getPokemons.getPokemonById(5); // See API in the next section.
-    console.log(firstPokemon.name)
-
-    for (let i = 0; i<10; i++){
-    const randomWord = require("random-words");
-    console.log(randomWord({exactly:5}))}
-
     // Get specific user
     this.getUser()
 
@@ -139,13 +127,6 @@ class MainScreen extends React.Component {
       const responseLobby = await api.get('/lobbies');
       this.setState({lobbies: responseLobby.data});
 
-      //TODO: Fake data for the lobbies and Friends Need to remove it Later
-      this.setState({ friends: [{"id":31,"password":"123","name":"John"},{"id":42,"password":"123","name":"Tommy"}] });
-      this.setState({ fakeLobbies: [{"id":1,"private":true,"name":"lobby1","password":"123"},{"id":2,"private":false,"name":"lobby2","password":"123"},
-          {"id":1,"password":"123","name":"lobby11111","private":true},{"id":2,"password":"123","name":"lobby2","private":true},
-          {"id":1,"password":"123","name":"lobby1","private":""},{"id":2,"password":"123","name":"lobby2","private":true},
-          {"id":1,"password":"123","name":"lobby1","private":false},{"id":2,"password":"123","name":"lobby2","private":true},
-          {"id":1,"password":"123","name":"lobby1","private":""},{"id":2,"password":"123","name":"lobby2","private":false}] });
     } catch (error) {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
     }
@@ -153,7 +134,6 @@ class MainScreen extends React.Component {
 
   }
 
-  //TODO We see in the log if the PW is correct
   join_lobby(lobby) {
     if (lobby.password!==""){
       let input = prompt("Please enter the Lobby password")
@@ -180,7 +160,7 @@ class MainScreen extends React.Component {
       // Lobby list
       <Container>
           <ListsContainer>
-        {!this.state.fakeLobbies ? (
+        {!this.state.lobbies ? (
           <Spinner />
         )
         :
@@ -203,7 +183,7 @@ class MainScreen extends React.Component {
             </Button>
           </LobbylistContainer>
         )}
-          {!this.state.users || !this.state.user || !this.state.friends? (
+          {!this.state.users || !this.state.user ? (
             <Spinner />
           )
           :
@@ -216,7 +196,7 @@ class MainScreen extends React.Component {
                 onClick={() => {this.go_to_profile(this.state.user)}}
             >View Profile</Button>
 
-            <h2>Registered Users</h2>
+            <h2 style={{marginTop: 41 + 'px'}}>Registered Users</h2>
             <Users>
               {this.state.users.map(user => {
                 return (

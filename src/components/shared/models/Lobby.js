@@ -4,8 +4,8 @@
 
 class Lobby{
     constructor(data= {}) {
-        this.lobbyName = null;
-        this.lobbyId = null;
+        this.lobbyName = data.lobbyName;
+        this.lobbyId = data.lobbyId;
         this.rounds = null;
         this.password = null;
         this.maxPlayers = null;
