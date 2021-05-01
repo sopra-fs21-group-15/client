@@ -74,8 +74,8 @@ class MainScreen extends React.Component {
       lobbies: null,
       fakeLobbies: null,
       lobby: null,
-      lobbyId: null, //TODO make a localstorage.get()
-      loginId: localStorage.getItem('loginId') //added the login Id
+      lobbyId: localStorage.getItem("lobbyId"),
+      loginId: localStorage.getItem('loginId')
     };
   }
 
@@ -84,7 +84,8 @@ class MainScreen extends React.Component {
   async getLobby(){
     try {
       const url = '/lobbies/' + this.state.lobbyId;
-      // wait for the user information
+
+      // wait for the lobby information
       const response = await api.get(url);
       const lobby = new User(response.data);
       this.setState({lobby: lobby})
@@ -98,6 +99,7 @@ class MainScreen extends React.Component {
   async getUser() {
     try {
       const url = '/users/' + this.state.loginId;
+
       // wait for the user information
       const response = await api.get(url);
       const user = new User(response.data);

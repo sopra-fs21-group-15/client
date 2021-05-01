@@ -114,7 +114,7 @@ class CreateLobby extends React.Component {
           }
       )
       // wait for making new Lobby
-      const response = api.post('/lobbies/' + localStorage.getItem("loginId"),requestBody);
+      const response = api.post('/lobbies/' + localStorage.getItem("userId"),requestBody);
 
       // get new lobby and update the new Lobby Object
       const lobby = new Lobby(response.data);
