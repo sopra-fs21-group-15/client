@@ -72,7 +72,6 @@ class MainScreen extends React.Component {
       users: null,
       friends: null,
       lobbies: null,
-      fakeLobbies: null,
       lobby: null,
       lobbyId: localStorage.getItem("lobbyId"),
       loginId: localStorage.getItem('loginId')
@@ -117,18 +116,6 @@ class MainScreen extends React.Component {
   }
 
   async componentDidMount() {
-
-
-    // Just tried to use an API for words like pokemons It works in the console
-    // TODO make this accessible for the game and not in the mainscreen
-    const getPokemons = require('json-pokemon/getPokemon');
-    const firstPokemon = getPokemons.getPokemonById(5); // See API in the next section.
-    console.log(firstPokemon.name)
-
-    for (let i = 0; i<10; i++){
-    const randomWord = require("random-words");
-    console.log(randomWord({exactly:5}))}
-
     // Get specific user
     this.getUser()
 
@@ -141,16 +128,9 @@ class MainScreen extends React.Component {
 
       //TODO: Fake data for the lobbies and Friends Need to remove it Later
       this.setState({ friends: [{"id":31,"password":"123","name":"John"},{"id":42,"password":"123","name":"Tommy"}] });
-      this.setState({ fakeLobbies: [{"id":1,"private":true,"name":"lobby1","password":"123"},{"id":2,"private":false,"name":"lobby2","password":"123"},
-          {"id":1,"password":"123","name":"lobby11111","private":true},{"id":2,"password":"123","name":"lobby2","private":true},
-          {"id":1,"password":"123","name":"lobby1","private":""},{"id":2,"password":"123","name":"lobby2","private":true},
-          {"id":1,"password":"123","name":"lobby1","private":false},{"id":2,"password":"123","name":"lobby2","private":true},
-          {"id":1,"password":"123","name":"lobby1","private":""},{"id":2,"password":"123","name":"lobby2","private":false}] });
     } catch (error) {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
     }
-
-
   }
 
   //TODO We see in the log if the PW is correct
@@ -180,7 +160,7 @@ class MainScreen extends React.Component {
       // Lobby list
       <Container>
           <ListsContainer>
-        {!this.state.fakeLobbies ? (
+        {!this.state.lobbies ? (
           <Spinner />
         )
         :
