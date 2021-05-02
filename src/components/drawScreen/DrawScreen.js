@@ -252,7 +252,7 @@ class DrawScreen extends React.Component {
     let messages = [ {"sender": "niklassc", "timestamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"sender": "example_user", "timestamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"sender": "niklassc", "timestamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
 
     this.state = {
-      game_id: 7, // TODO get actual id
+      game_id: localStorage.getItem('gameId'), // TODO get actual id
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
@@ -349,7 +349,8 @@ class DrawScreen extends React.Component {
         colour: colour
       });
       /** await the confirmation of the backend **/
-      const response = await api.put('/drawing', requestBody);
+      const url = '/game/' + this.state.game_id +'drawing';
+      const response = await api.put(url, requestBody);
     } catch (error) {
       this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
     }
@@ -416,8 +417,8 @@ class DrawScreen extends React.Component {
           game_id: this.state.game_id,
           timestamp: this.state.timestamp_last_draw_instruction
         });
-        /** await the confirmation of the backend **/
-        const response = await api.get('/draw', requestBody);
+        const url = '/game/' + this.state.game_id +'drawing';
+        const response = await api.get(url, requestBody);
 
         let timestamp_last_draw_instruction;
         response.forEach(instr => {
