@@ -8,7 +8,6 @@ import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
-import Friends from "../../views/Friends";
 
 const Container = styled(BaseContainer)`
   color: white;
@@ -124,9 +123,6 @@ class MainScreen extends React.Component {
 
       const responseLobby = await api.get('/lobbies');
       this.setState({lobbies: responseLobby.data});
-
-      //TODO: Fake data for the lobbies and Friends Need to remove it Later
-      this.setState({ friends: [{"id":31,"password":"123","name":"John"},{"id":42,"password":"123","name":"Tommy"}] });
     } catch (error) {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
     }
@@ -143,7 +139,7 @@ class MainScreen extends React.Component {
             password: input_password
           });
 
-      const response = await api.put('/lobbies/' + lobby.id + '/joiners', requestBody);
+      await api.put('/lobbies/' + lobby.id + '/joiners', requestBody);
 
       localStorage.setItem("lobbyId", lobby.id)
       this.props.history.push("/waitingScreen")

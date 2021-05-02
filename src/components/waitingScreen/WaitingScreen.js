@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
-import WaitingPlayers from '../../views/waitinglist';
 import Lobby from "../shared/models/Lobby";
 import Game from "../shared/models/Game";
 import { Spinner } from '../../views/design/Spinner';
@@ -209,8 +208,8 @@ class waitingScreen extends React.Component {
     var users = this.state.lobby.members;
     for (var i=0; i<users.length;i++){
       if (a===users[i].id){
-      var kick = users[i]; // send this user to the backend
-      // Api-Call to the backend to kick the user
+        var kick = users[i]; // send this user to the backend
+        // Api-Call to the backend to kick the user
       }
     }
   }
