@@ -7,6 +7,7 @@ import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import Colour from '../../views/Colour';
 import Message from '../../views/Message';
+import Game from "../shared/models/Game";
 
 const Users = styled.ul`
   list-style: none;
@@ -272,6 +273,7 @@ class DrawScreen extends React.Component {
 
     this.state = {
       game_id: localStorage.getItem('gameId'), // TODO get actual id
+      game: null, // Game object, regularly fetched from backend
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
@@ -281,7 +283,8 @@ class DrawScreen extends React.Component {
       draw_colour: "#ffffff",
       draw_size: 5,
       mouse_down: false, // stores whether the LEFT mouse button is down
-      loginId: localStorage.getItem('loginId'), //added the login Id
+      loginId: localStorage.getItem('loginId'),
+      username: localStorage.getItem('username'),
       chat_message: "", // Value of the chat input field
       users: "",
       messages, // JSON of all chat messages
@@ -401,13 +404,39 @@ class DrawScreen extends React.Component {
     this.setState({ word_options: ["Apfel", "Mond", "Pikachu"] })
 
     // Regularly update the time left
-    let intervalID = setInterval(async () => {
+    let interval_countdown = setInterval(async () => {
       // Countdown the timer
       let date_now = new Date();
       let time_left = Math.round((this.state.timeout - date_now) / 1000);
       this.setState({ time_left });
+    }, 1000);
+    this.setState({ interval_countdown });
 
-      // Poll the chat
+    // Regularly fetch game info
+    let interval_game_info = setInterval(async () => {
+      try {
+        const response = await api.get('/games/' + this.state.game_id);
+        let game = new Game(response.data);
+        this.setState({ game });
+
+        console.log("loginId", this.state.loginId);
+        console.log("gameid", this.state.game_id);
+        console.log("response (game)", response.data);
+        console.log("game", game);
+
+        // Set owner
+        if(this.state.username == this.state.game.members[0])
+          this.setState({ owner: true, drawer: true });
+        else
+          this.setState({ owner: false, drawer: false });
+      } catch (error) {
+        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while fetching the game-info: \n${handleError(error)}`});
+      }
+    }, 5000);
+    this.setState({ interval_game_info });
+
+    // Regularly poll the chat
+    let interval_chat = setInterval(async () => {
       try {
         const requestBody = JSON.stringify({
           user_id: this.state.loginId,
@@ -428,7 +457,11 @@ class DrawScreen extends React.Component {
       } catch (error) {
         this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
       }
+    }, 5000);
+    this.setState({ interval_chat });
 
+    // Regulary pull draw instructions (guesser mode)
+    let interval_draw_instructions = setInterval(async () => {
       // Poll draw instructions (guesser mode)
       if(this.state.drawer)
         return;
@@ -454,19 +487,25 @@ class DrawScreen extends React.Component {
 
       } catch(error) {
         this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the draw-instructions: \n${handleError(error)}`});
-      } //End Scoreboard
-        if (this.state.roundend){
-        var myVar = setTimeout(this.setState({roundend:false}),5000)
-        }
+      }
+      this.setState({ interval_draw_instructions });
 
-    }, 1000);
+      // End scoreboard
+      if (this.state.roundend){
+        var myVar = setTimeout(this.setState({roundend:false}),5000)
+      }
+    }, 5000);
+    this.setState({ interval_draw_instructions });
+
     this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
-    this.setState({ intervalID });
   }
 
-
   componentWillUnmount() {
-    clearInterval(this.state.intervalID);
+    // Clear all intervals
+    clearInterval(this.state.interval_countdown);
+    clearInterval(this.state.interval_game_info);
+    clearInterval(this.state.interval_chat);
+    clearInterval(this.state.interval_draw_instructions);
   }
 
   async send_message() {
@@ -504,19 +543,14 @@ class DrawScreen extends React.Component {
   choose_word(word) {
     this.setState({ word });
     this.setState({ word_options: null });
-    this.setState({roundend: true})
   }
-
 
   render() {
     return ([
       // Lobby list
       <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
-    onMouseDown={(e) => {
-      this.canvas_onMouseDown(e.button)
-    }} onMouseUp={(e) => {
-  this.canvas_onMouseUp(e.button)
-}}/>,
+      onMouseDown={(e) => { this.canvas_onMouseDown(e.button)}} onMouseUp={(e) => { this.canvas_onMouseUp(e.button)}}/>,
+
       <Timer>{this.state.time_left}</Timer>,
       <Hint>{this.state.hint}</Hint>,
       <Sidebar>
@@ -578,7 +612,7 @@ class DrawScreen extends React.Component {
       )}
       </Scoreboard>,
       <div>
-        {this.state.word_options ? (
+        {this.state.drawer && this.state.word_options ? (
           <Wordbox>
             {this.state.word_options.map(word => {
               return (
@@ -590,23 +624,21 @@ class DrawScreen extends React.Component {
       </div>,
       //render the roundend score board
       <div>
-            {this.state.roundend ? (
-                (!this.state.users ? (
-                    <Spinner />
-                    ):(
-                    <ScoreBox>
-                        <Endscreenlable>Round End Scoreboard</Endscreenlable>
-                        {this.state.users.map(user =>{return(
-                            <PlayerContainer key={user.id}>
-                                <Scores user={user}/>
-                            </PlayerContainer>
-                        );})}
-                    </ScoreBox>
-                    ))
-            ): ""}
+      {this.state.roundend ? (
+        (!this.state.users ? (
+          <Spinner />
+        ):(
+          <ScoreBox>
+          <Endscreenlable>Round End Scoreboard</Endscreenlable>
+          {this.state.users.map(user =>{return(
+            <PlayerContainer key={user.id}>
+            <Scores user={user}/>
+            </PlayerContainer>
+          );})}
+          </ScoreBox>
+        ))
+      ): ""}
       </div>
-
-
     ]);
   }
 }

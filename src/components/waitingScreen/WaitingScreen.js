@@ -146,7 +146,7 @@ class waitingScreen extends React.Component {
       // Check if lobby is started, then go to draw screen
       if(this.state.lobby.status == "PLAYING") {
         try {
-          const response = await api.get('/lobbies/' + this.state.lobbyId + '/getGame');
+          const response = await api.get('/games/' + this.state.lobbyId + '/convert');
           const game = new Game(response.data);
           localStorage.setItem("gameId", game.id)
           this.props.history.push(`/draw`)
@@ -175,7 +175,7 @@ class waitingScreen extends React.Component {
   async startgame() {
     try {
       const requestBody = JSON.stringify({ id: this.state.lobbyId });
-      const url = '/lobbies/'+ this.state.lobbyId + '/start'
+      const url = '/games/'+ this.state.lobbyId + '/start'
       const response = await api.post(url, requestBody);
       const game = new Game(response.data);
 
