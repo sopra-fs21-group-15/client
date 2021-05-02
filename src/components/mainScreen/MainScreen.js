@@ -7,10 +7,8 @@ import Lobby from '../../views/Lobby';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import User from "../shared/models/User";
 import Friends from "../../views/Friends";
-import {random} from "nanoid";
 
 const Container = styled(BaseContainer)`
   color: white;
@@ -134,7 +132,6 @@ class MainScreen extends React.Component {
     }
   }
 
-  //TODO We see in the log if the PW is correct
   async join_lobby(lobby) {
     let input_password = "";
     if (lobby.password !== "")
