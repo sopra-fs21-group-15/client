@@ -12,6 +12,7 @@ class Lobby{
     this.timer = data.timer;
     this.members = data.members;
     this.status = data.status;
+    this.rounds = data.rounds;
   }
 }
 

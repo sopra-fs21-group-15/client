@@ -125,7 +125,7 @@ class waitingScreen extends React.Component {
         lobby: null,
         gamemode: "Classic",
         owner: false,
-        lobbyStatus: "Open",
+
     };
     }
 
@@ -147,9 +147,8 @@ class waitingScreen extends React.Component {
         this.setState({ owner: true });
       else
         this.setState({ owner: false });
-      if (this.state.max_players <= this.state.lobby.members.length){
-      this.setState(this.lobbyStatus: "full");
-      }}, 3000);
+
+      }, 3000);
 
     this.setState({ intervalID });
   }
@@ -229,7 +228,9 @@ class waitingScreen extends React.Component {
             })}
             </UserlistContainer>
           )}
-
+            {!this.state.lobby ? (
+                        <Spinner />
+                      ):(
           <LobbyinformationContainer>
           <Lobbyinformation>
           <Label>Lobbyname</Label>
@@ -290,9 +291,10 @@ class waitingScreen extends React.Component {
           </OneLineBlock>
           </Lobbyinformation>
           </LobbyinformationContainer>
+          )}
           </Layout>
           <hr width="100%" />
-
+            
           <ButtonContainer>
             <Button disabled={ !this.state.owner || (this.state.lobby && this.state.lobby.members.length <= 2) } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
           </ButtonContainer>
