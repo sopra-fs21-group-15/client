@@ -159,7 +159,7 @@ class waitingScreen extends React.Component {
 
   async startgame() {
     try {
-      await api.post('/lobbies/'+ this.state.lobbyId + '/start');
+      await api.post('/lobbies/'+ this.state.lobby.id + '/start');
       this.props.history.push(`/draw`)
     } catch (error) {
       alert(`Something went wrong during the starting the game: \n${handleError(error)}`);

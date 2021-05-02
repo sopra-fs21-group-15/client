@@ -205,7 +205,7 @@ class MainScreen extends React.Component {
                 onClick={() => {this.go_to_profile(this.state.username)}}
             >View Profile</Button>
 
-            <h2>Registered Users</h2>
+            <h2 style={{marginTop:41+"px"}}>Registered Users</h2>
             <Users>
               {this.state.users.map(user => {
                 return (

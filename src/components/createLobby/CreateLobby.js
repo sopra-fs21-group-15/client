@@ -124,7 +124,6 @@ class CreateLobby extends React.Component {
       alert(`Something went wrong during the lobby creation: \n${handleError(error)}`);
       this.props.history.push(`/game/dashboard`);
     }
-
   }
 
   goback() {
