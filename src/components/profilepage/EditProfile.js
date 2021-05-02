@@ -2,11 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
-import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
-import Profile from "../../views/Profile";
 
 const FormContainer = styled.div`
   margin-top: 2em;
@@ -89,9 +87,6 @@ class EditProfile extends React.Component {
     // Example: if the key is username, this statement is the equivalent to the following one:
     // this.setState({'username': value});
     this.setState({ [key]: value });
-  }
-
-  componentDidMount() {
   }
 
   async edit() {

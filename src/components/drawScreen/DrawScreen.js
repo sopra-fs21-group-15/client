@@ -275,7 +275,7 @@ class DrawScreen extends React.Component {
     let messages = [ {"sender": "niklassc", "timestamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"sender": "example_user", "timestamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"sender": "niklassc", "timestamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
 
     this.state = {
-      game_id: localStorage.getItem('gameId'), // TODO get actual id
+      game_id: localStorage.getItem('gameId'),
       game: null, // Game object, regularly fetched from backend
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
@@ -374,9 +374,7 @@ class DrawScreen extends React.Component {
         size: size,
         colour: colour
       });
-      /** await the confirmation of the backend **/
-      const url = '/game/' + this.state.game_id +'/drawing';
-      const response = await api.put(url, requestBody);
+      await api.put('/game/' + this.state.game_id +'/drawing', requestBody);
     } catch (error) {
       this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
     }
@@ -495,7 +493,7 @@ class DrawScreen extends React.Component {
 
       // End scoreboard
       if (this.state.roundend){
-        var myVar = setTimeout(this.setState({roundend:false}),5000)
+        setTimeout(this.setState({roundend:false}),5000)
       }
     }, 5000);
     this.setState({ interval_draw_instructions });
@@ -627,20 +625,16 @@ class DrawScreen extends React.Component {
       </div>,
       //render the roundend score board
       <div>
-      {this.state.roundend ? (
-        (!this.state.users ? (
-          <Spinner />
-        ):(
+        {this.state.roundend && this.state.users ? (
           <ScoreBox>
           <Endscreenlable>Round End Scoreboard</Endscreenlable>
           {this.state.users.map(user =>{return(
             <PlayerContainer key={user.id}>
-            <Scores user={user}/>
+              <Scores user={user}/>
             </PlayerContainer>
           );})}
           </ScoreBox>
-        ))
-      ): ""}
+        ) : ""}
       </div>
     ]);
   }
