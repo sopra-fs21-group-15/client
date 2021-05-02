@@ -143,10 +143,17 @@ class waitingScreen extends React.Component {
         alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
       }
 
+      console.log(this.state.lobby.status);
       // Check if lobby is started, then go to draw screen
-      if(this.state.lobby.state == "PLAYING") {
-        console.log("JOIN LOBBY");
-        // TODO API call
+      if(this.state.lobby.status == "PLAYING") {
+        try {
+          const response = await api.get('/lobbies/' + this.state.lobbyId + '/getGame');
+          const game = new Game(response.data);
+          localStorage.setItem("gameId", game.id)
+          this.props.history.push(`/draw`)
+        } catch (error) {
+          alert(`Something went wrong during the redirection to the started game: \n${handleError(error)}`);
+        }
       }
 
       /// Find out who is the owner of the Lobby
@@ -168,27 +175,15 @@ class waitingScreen extends React.Component {
 
   async startgame() {
     try {
-      const requestBody = JSON.stringify({
-              id: this.state.lobbyId
-            });
+      const requestBody = JSON.stringify({ id: this.state.lobbyId });
+      const url = '/lobbies/'+ this.state.lobbyId + '/start'
+      const response = await api.post(url, requestBody);
+      console.log(response)
+      const game = new Game(response.data);
 
-
-        const url = '/lobbies/'+ this.state.lobbyId + '/start'
-
-        const response = await api.post(url, requestBody);
-        console.log(response)
-        const game = new Game(response.data);
-
-            // set the gameID
-        localStorage.setItem("gameId", game.id)
-
-
-
-
+      // set the gameID
+      localStorage.setItem("gameId", game.id)
       this.props.history.push(`/draw`)
-
-
-
     } catch (error) {
       alert(`Something went wrong during the starting the game: \n${handleError(error)}`);
     }
