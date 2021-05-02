@@ -162,9 +162,6 @@ class waitingScreen extends React.Component {
 
   async startgame() {
     try {
-<<<<<<< Updated upstream
-      await api.post('/lobbies/'+ this.state.lobby.id + '/start');
-=======
       const requestBody = JSON.stringify({
               id: this.state.lobbyId
             });
