@@ -173,13 +173,13 @@ const Scoreboardlabel = styled.label`
 
 `;
 
-
 const PlayerContainer = styled.li`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
+
 const Hint = styled.div`
   position: absolute;
   //min-width: 100px;
@@ -200,6 +200,20 @@ const Hint = styled.div`
 
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
+`;
+
+const Wordbox = styled.div`
+  position fixed;
+  left: 0;
+  top: 0;
+  background: rgba(50, 50, 50, 0.9);
+  box-shadow: rgba(0, 0, 0, 0.9) 0px -4px 4px;
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 
@@ -253,7 +267,9 @@ class DrawScreen extends React.Component {
       users: "",
       messages, // JSON of all chat messages
       timestamp_last_message: 0,
-      timestamp_last_draw_instruction: 0 // Time of the last draw instruction that was received (guesser mode)
+      timestamp_last_draw_instruction: 0, // Time of the last draw instruction that was received (guesser mode)
+      word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
+      word: "" // Word that has to be drawn (Drawer mode)
     };
   }
 
@@ -360,6 +376,9 @@ class DrawScreen extends React.Component {
     this.resetCanvas();
     this.updateBrushPreview();
 
+    // Words
+    this.setState({ word_options: ["Apfel", "Mond", "Pikachu"] })
+
     // Regularly update the time left
     let intervalID = setInterval(async () => {
       // Countdown the timer
@@ -454,9 +473,13 @@ class DrawScreen extends React.Component {
     }
   }
 
+  choose_word(word) {
+    this.setState({ word });
+    this.setState({ word_options: null });
+  }
+
   render() {
     return ([
-
       // Lobby list
       <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
     onMouseDown={(e) => {
@@ -512,24 +535,29 @@ class DrawScreen extends React.Component {
       <Scoreboard>
       <Scoreboardlabel>Scoreboard</Scoreboardlabel>
       <HR/>
-        {!this.state.users ? (
-                              <Spinner />
-                            )
-                            :
-                            (
+      {!this.state.users ? (
+        <Spinner />
+      ):(
         <Users>
-        {this.state.users.map(user =>{
-        return(
-        <PlayerContainer key={user.id}>
-                <Scores user={user}/>
-        </PlayerContainer>
-                );
-                })}
-
+        {this.state.users.map(user =>{return(
+          <PlayerContainer key={user.id}>
+            <Scores user={user}/>
+          </PlayerContainer>
+        );})}
         </Users>
-        )}
-      </Scoreboard>
-
+      )}
+      </Scoreboard>,
+      <div>
+        {this.state.word_options ? (
+          <Wordbox>
+            {this.state.word_options.map(word => {
+              return (
+                <Button onClick={() => this.choose_word(word)}>{word}</Button>
+              );
+            })}
+          </Wordbox>
+        ): ""}
+      </div>
     ]);
   }
 }
