@@ -167,18 +167,18 @@ class waitingScreen extends React.Component {
             });
 
 
-      const url = '/lobbies/'+ this.state.lobbyId + '/start'
+        const url = '/lobbies/'+ this.state.lobbyId + '/start'
 
-      const response = await api.post(url, requestBody);
+        const response = await api.post(url, requestBody);
         console.log(response)
-      const game = new Game(response.data);
+        const game = new Game(response.data);
 
             // set the gameID
-            localStorage.setItem("gameId", game.id)
+        localStorage.setItem("gameId", game.id)
 
 
 
->>>>>>> Stashed changes
+
       this.props.history.push(`/draw`)
 
 
