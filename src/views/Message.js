@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { Button } from './design/Button';
 
 const Container = styled.li`
   align-items: left;

@@ -136,8 +136,6 @@ class CreateLobby extends React.Component {
     this.setState({ [key]: value });
   }
 
-  async componentDidMount() {}
-
   render() {
     return (
       // Lobby list

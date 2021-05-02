@@ -306,7 +306,7 @@ class waitingScreen extends React.Component {
           <Label>Private</Label>
           <OneLineBlock>
           <InputField id="form_private" type="checkbox" disabled={!this.state.owner} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
-          {this.state.private == true ? (
+          {this.state.private ? (
             this.state.testmode ?
               <InputField id="form_password" placeholder="Password"  onChange={e => {this.handleInputChange('password', e.target.value);}}/>
             :
