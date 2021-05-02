@@ -76,9 +76,12 @@ const Messages = styled.ul`
   list-style-type: none;
   list-style-position: outside;
   padding: 0px;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   border-radius: 8px;
+
+  display: flex;
+  flex-direction: column-reverse;
 
 `;
 
@@ -579,7 +582,7 @@ class DrawScreen extends React.Component {
         <BrushPreview ref={this.brushPreview}/>
         <Chatbox>
           <Messages>
-            {this.state.messages.map(message => {
+            {this.state.messages.slice(0).reverse().map(message => {
               return (
                 <Message message={message} />
               );
