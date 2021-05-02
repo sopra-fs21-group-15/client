@@ -143,6 +143,12 @@ class waitingScreen extends React.Component {
         alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
       }
 
+      // Check if lobby is started, then go to draw screen
+      if(this.state.lobby.state == "PLAYING") {
+        console.log("JOIN LOBBY");
+        // TODO API call
+      }
+
       /// Find out who is the owner of the Lobby
       let owner_name = this.state.lobby.members[0];
       if (owner_name == this.state.username)
@@ -321,7 +327,7 @@ class waitingScreen extends React.Component {
           <hr width="100%" />
 
           <ButtonContainer>
-            <Button disabled={ !this.state.owner || !(this.state.lobby && this.state.lobby.members.length <= 2) } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
+            <Button disabled={ !this.state.owner || (this.state.lobby && this.state.lobby.members.length <= 2) } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
           </ButtonContainer>
           <ButtonContainer>
             <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
