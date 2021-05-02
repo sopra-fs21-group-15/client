@@ -143,7 +143,6 @@ class waitingScreen extends React.Component {
         alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
       }
 
-      console.log(this.state.lobby.status);
       // Check if lobby is started, then go to draw screen
       if(this.state.lobby.status == "PLAYING") {
         try {
@@ -178,7 +177,6 @@ class waitingScreen extends React.Component {
       const requestBody = JSON.stringify({ id: this.state.lobbyId });
       const url = '/lobbies/'+ this.state.lobbyId + '/start'
       const response = await api.post(url, requestBody);
-      console.log(response)
       const game = new Game(response.data);
 
       // set the gameID
