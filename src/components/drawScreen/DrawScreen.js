@@ -349,7 +349,7 @@ class DrawScreen extends React.Component {
         colour: colour
       });
       /** await the confirmation of the backend **/
-      const url = '/game/' + this.state.game_id +'drawing';
+      const url = '/game/' + this.state.game_id +'/drawing';
       const response = await api.put(url, requestBody);
     } catch (error) {
       this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
@@ -417,7 +417,7 @@ class DrawScreen extends React.Component {
           game_id: this.state.game_id,
           timestamp: this.state.timestamp_last_draw_instruction
         });
-        const url = '/game/' + this.state.game_id +'drawing';
+        const url = '/game/' + this.state.game_id +'/drawing';
         const response = await api.get(url, requestBody);
 
         let timestamp_last_draw_instruction;
