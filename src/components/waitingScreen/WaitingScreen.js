@@ -4,6 +4,7 @@ import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
 import WaitingPlayers from '../../views/waitinglist';
 import Lobby from "../shared/models/Lobby";
+import Game from "../shared/models/Game";
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
@@ -125,6 +126,7 @@ class waitingScreen extends React.Component {
         lobby: null,
         gamemode: "Classic",
         owner: false,
+        testmode:false,
 
     };
     }
@@ -151,6 +153,7 @@ class waitingScreen extends React.Component {
       }, 3000);
 
     this.setState({ intervalID });
+
   }
 
   componentWillUnmount() {
@@ -159,12 +162,35 @@ class waitingScreen extends React.Component {
 
   async startgame() {
     try {
+<<<<<<< Updated upstream
       await api.post('/lobbies/'+ this.state.lobby.id + '/start');
+=======
+      const requestBody = JSON.stringify({
+              id: this.state.lobbyId
+            });
+
+
+      const url = '/lobbies/'+ this.state.lobbyId + '/start'
+
+      const response = await api.post(url, requestBody);
+        console.log(response)
+      const game = new Game(response.data);
+
+            // set the gameID
+            localStorage.setItem("gameId", game.id)
+
+
+
+>>>>>>> Stashed changes
       this.props.history.push(`/draw`)
+
+
+
     } catch (error) {
       alert(`Something went wrong during the starting the game: \n${handleError(error)}`);
     }
   }
+
 
   async goback() {
     try {
@@ -172,13 +198,14 @@ class waitingScreen extends React.Component {
         username: localStorage.getItem('username')
       });
 
-      const url = '/lobbies/' + this.state.lobbyId +'/leavers'
-      await api.put(url, requestBody)
+      const url = '/lobbies/' + this.state.lobbyId +'/leavers';
+      await api.put(url, requestBody);
+
     } catch(error) {
       alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
     }
-
     this.props.history.push(`/game`);
+
   }
 
   remove_player(user){
@@ -237,7 +264,7 @@ class waitingScreen extends React.Component {
           <h2>{this.state.lobby.lobbyname}</h2>
           <Label>Gamemode</Label>
 
-          {this.state.owner ?
+          {this.state.testmode ?
             <SelectField id="form_gamemode" disabled={this.state.disabled} onChange={e => {this.handleInputChange("gamemode", e.target.value);}}>
               <option value={this.state.gamemode}>{this.state.gamemode}</option>
               <option value="Classic">Classic</option>
@@ -248,7 +275,7 @@ class waitingScreen extends React.Component {
           }
 
           <Label>Max. Players</Label>
-          {this.state.owner ?
+          {this.state.testmode ?
             <SelectField id="from_player" disabled={this.state.disabled} onChange={e => {this.handleInputChange("max_players", e.target.value);}}>
               <option value={this.state.lobby.size}>{this.state.lobby.size}</option>
               <option value="4">4</option>
@@ -264,7 +291,7 @@ class waitingScreen extends React.Component {
           }
 
           <Label>Rounds</Label>
-          {this.state.owner ?
+          {this.state.testmode ?
             <SelectField id="from_rounds" disabled={this.state.disabled} onChange={e => {this.handleInputChange("rounds", e.target.value);}}>
               <option value={this.state.lobby.rounds}>{this.state.lobby.rounds}</option>
               <option value="2">2</option>
@@ -283,7 +310,7 @@ class waitingScreen extends React.Component {
           <OneLineBlock>
           <InputField id="form_private" type="checkbox" disabled={!this.state.owner} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
           {this.state.private == true ? (
-            this.state.owner ?
+            this.state.testmode ?
               <InputField id="form_password" placeholder="Password"  onChange={e => {this.handleInputChange('password', e.target.value);}}/>
             :
               <h2>Password: {this.state.lobby.password}</h2>
@@ -291,12 +318,13 @@ class waitingScreen extends React.Component {
           </OneLineBlock>
           </Lobbyinformation>
           </LobbyinformationContainer>
+
           )}
           </Layout>
           <hr width="100%" />
-            
+
           <ButtonContainer>
-            <Button disabled={ !this.state.owner || (this.state.lobby && this.state.lobby.members.length <= 2) } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
+            <Button disabled={ !this.state.owner || !(this.state.lobby && this.state.lobby.members.length <= 2) } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
           </ButtonContainer>
           <ButtonContainer>
             <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
