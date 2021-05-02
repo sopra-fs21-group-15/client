@@ -123,14 +123,9 @@ class waitingScreen extends React.Component {
         loginId: localStorage.getItem('loginId'),
         username: localStorage.getItem('username'), // own username
         lobby: null,
-        gamemode: null,
-        max_players: null,
-        rounds: null,
-        private: false,
-        disabled:true,
-        password:null,
-
-        owner: false
+        gamemode: "Classic",
+        owner: false,
+        lobbyStatus: "Open",
     };
     }
 
@@ -152,7 +147,9 @@ class waitingScreen extends React.Component {
         this.setState({ owner: true });
       else
         this.setState({ owner: false });
-    }, 3000);
+      if (this.state.max_players <= this.state.lobby.members.length){
+      this.setState(this.lobbyStatus: "full");
+      }}, 3000);
 
     this.setState({ intervalID });
   }
@@ -236,7 +233,7 @@ class waitingScreen extends React.Component {
           <LobbyinformationContainer>
           <Lobbyinformation>
           <Label>Lobbyname</Label>
-          <h2>{this.state.lobbyName}</h2>
+          <h2>{this.state.lobby.lobbyname}</h2>
           <Label>Gamemode</Label>
 
           {this.state.owner ?
@@ -252,7 +249,7 @@ class waitingScreen extends React.Component {
           <Label>Max. Players</Label>
           {this.state.owner ?
             <SelectField id="from_player" disabled={this.state.disabled} onChange={e => {this.handleInputChange("max_players", e.target.value);}}>
-              <option value={this.state.max_players}>{this.state.max_players}</option>
+              <option value={this.state.lobby.size}>{this.state.lobby.size}</option>
               <option value="4">4</option>
               <option value="5">5</option>
               <option value="6">6</option>
@@ -262,13 +259,13 @@ class waitingScreen extends React.Component {
               <option value="10">10</option>
             </SelectField>
           :
-            <h2>{this.state.max_players}</h2>
+            <h2>{this.state.lobby.size}</h2>
           }
 
           <Label>Rounds</Label>
           {this.state.owner ?
             <SelectField id="from_rounds" disabled={this.state.disabled} onChange={e => {this.handleInputChange("rounds", e.target.value);}}>
-              <option value={this.state.rounds}>{this.state.rounds}</option>
+              <option value={this.state.lobby.rounds}>{this.state.lobby.rounds}</option>
               <option value="2">2</option>
               <option value="3">3</option>
               <option value="4">4</option>
@@ -278,17 +275,17 @@ class waitingScreen extends React.Component {
               <option value="8">8</option>
             </SelectField>
           :
-            <h2>{this.state.rounds}</h2>
+            <h2>{this.state.lobby.rounds}</h2>
           }
 
           <Label>Private</Label>
           <OneLineBlock>
-          <InputField id="form_private" type="checkbox" disabled={this.state.disabled} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
+          <InputField id="form_private" type="checkbox" disabled={!this.state.owner} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
           {this.state.private == true ? (
             this.state.owner ?
               <InputField id="form_password" placeholder="Password"  onChange={e => {this.handleInputChange('password', e.target.value);}}/>
             :
-              <h2>Password: {this.state.password}</h2>
+              <h2>Password: {this.state.lobby.password}</h2>
           ) : ""  }
           </OneLineBlock>
           </Lobbyinformation>
