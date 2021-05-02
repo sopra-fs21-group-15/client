@@ -73,6 +73,7 @@ class ProfilePage extends React.Component {
                         (<Profile user={this.state.user}/>): ("")}
                         <ButtonContainer>
                             <Button
+                                disabled={this.state.loggedInUser !== this.state.userId}
                                 width="100%"
                                 onClick={() => {
                                     localStorage.setItem("chosenUserEdit", this.state.userId);

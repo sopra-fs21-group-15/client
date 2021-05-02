@@ -119,6 +119,7 @@ class Login extends React.Component {
       // Save the log-in Id + username
       localStorage.setItem('loginId', user.id);
       localStorage.setItem('username', user.username);
+      localStorage.setItem('visited User',user.username)
 
       // Store the token into the local storage.
       localStorage.setItem('token', user.token);

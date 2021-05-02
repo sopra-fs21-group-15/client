@@ -92,7 +92,8 @@ class EditProfile extends React.Component {
     this.setState({ [key]: value });
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
   async edit() {
     try{
@@ -126,7 +127,7 @@ class EditProfile extends React.Component {
                       placeholder="Please enter new Username here.."
                       onChange={e => {
                         this.handleInputChange('username', e.target.value);
-                        /** change username **/
+                          /** change username **/
                       }}
                     />
 

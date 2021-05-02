@@ -192,7 +192,7 @@ class MainScreen extends React.Component {
             </Button>
           </LobbylistContainer>
         )}
-          {!this.state.users || !this.state.user || !this.state.friends? (
+          {!this.state.users || !this.state.user ? (
             <Spinner />
           )
           :
@@ -202,7 +202,7 @@ class MainScreen extends React.Component {
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
             <Button
-                onClick={() => {this.go_to_profile(this.state.user)}}
+                onClick={() => {this.go_to_profile(this.state.username)}}
             >View Profile</Button>
 
             <h2>Registered Users</h2>
