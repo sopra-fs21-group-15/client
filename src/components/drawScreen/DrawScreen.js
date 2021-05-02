@@ -215,6 +215,26 @@ const Wordbox = styled.div`
   align-items: center;
 `;
 
+const ScoreBox = styled.div`
+  position fixed;
+  left: 0;
+  top: 0;
+  background: rgba(50, 50, 50, 0.95);
+  box-shadow: rgba(0, 0, 0, 0.9) 0px -4px 4px;
+  width: 100vw;
+  height: 100vh;
+  color: white;
+  display: column;
+  justify-content: center;
+  align-items: center;
+
+`;
+const Endscreenlable = styled.h1`
+padding-top: 5%;
+padding-left: 35%;
+font-size: 250%;
+font-variant: small-caps;
+`;
 
 
 class DrawScreen extends React.Component {
@@ -434,12 +454,16 @@ class DrawScreen extends React.Component {
 
       } catch(error) {
         this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the draw-instructions: \n${handleError(error)}`});
-      }
+      } //End Scoreboard
+        if (this.state.roundend){
+        var myVar = setTimeout(this.setState({roundend:false}),5000)
+        }
 
     }, 1000);
     this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
     this.setState({ intervalID });
   }
+
 
   componentWillUnmount() {
     clearInterval(this.state.intervalID);
@@ -480,7 +504,9 @@ class DrawScreen extends React.Component {
   choose_word(word) {
     this.setState({ word });
     this.setState({ word_options: null });
+    this.setState({roundend: true})
   }
+
 
   render() {
     return ([
@@ -561,6 +587,23 @@ class DrawScreen extends React.Component {
             })}
           </Wordbox>
         ): ""}
+      </div>,
+      //render the roundend score board
+      <div>
+            {this.state.roundend ? (
+                (!this.state.users ? (
+                    <Spinner />
+                    ):(
+                    <ScoreBox>
+                        <Endscreenlable>Round End Scoreboard</Endscreenlable>
+                        {this.state.users.map(user =>{return(
+                            <PlayerContainer key={user.id}>
+                                <Scores user={user}/>
+                            </PlayerContainer>
+                        );})}
+                    </ScoreBox>
+                    ))
+            ): ""}
       </div>
 
 
