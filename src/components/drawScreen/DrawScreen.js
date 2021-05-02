@@ -364,17 +364,40 @@ class DrawScreen extends React.Component {
     ctx.stroke();
   }
 
+  getCurrentDateString() {
+    let date = new Date();
+
+    let day = date.getDate();
+    if (day < 10) day = "0" + day;
+
+    let month = date.getMonth() + 1;
+    if (month < 10) month = "0" + month;
+
+    let hours = date.getHours();
+    if (hours < 10) hours = "0" + hours;
+
+    let minutes = date.getMinutes();
+    if (minutes < 10) minutes = "0" + minutes;
+
+    let seconds = date.getSeconds();
+    if (seconds < 10) seconds = "0" + seconds;
+
+    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+
+    return dateString;
+  }
+
   async sendDrawInstruction(x, y, size, colour) {
     try {
       const requestBody = JSON.stringify({
-        user_id: this.state.loginId,
-        game_id: this.state.game_id,
+        sender: this.state.username,
         x: x,
         y: y,
+        timestamp: this.getCurrentDateString(),
         size: size,
         colour: colour
       });
-      await api.put('/game/' + this.state.game_id +'/drawing', requestBody);
+      await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
     } catch (error) {
       this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
     }
@@ -420,11 +443,6 @@ class DrawScreen extends React.Component {
         let game = new Game(response.data);
         this.setState({ game });
 
-        console.log("loginId", this.state.loginId);
-        console.log("gameid", this.state.game_id);
-        console.log("response (game)", response.data);
-        console.log("game", game);
-
         // Set owner
         if(this.state.username == this.state.game.members[0])
           this.setState({ owner: true, drawer: true });
@@ -467,13 +485,18 @@ class DrawScreen extends React.Component {
       if(this.state.drawer)
         return;
       try {
+        console.log("Start polling insts");
         const requestBody = JSON.stringify({
-          user_id: this.state.loginId,
-          game_id: this.state.game_id,
           timestamp: this.state.timestamp_last_draw_instruction
         });
-        const url = '/game/' + this.state.game_id +'/drawing';
+
+        console.log("requestBody", requestBody);
+
+        const url = '/games/' + this.state.game_id +'/drawing';
+        console.log("url", url);
         const response = await api.get(url, requestBody);
+
+        console.log("response.data", response.data);
 
         let timestamp_last_draw_instruction;
         response.forEach(instr => {
