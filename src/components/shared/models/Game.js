@@ -1,5 +1,5 @@
 /**
- * Lobby Model
+ * Game Model
  */
 
 class Game{

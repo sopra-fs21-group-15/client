@@ -269,7 +269,8 @@ class DrawScreen extends React.Component {
       timestamp_last_message: 0,
       timestamp_last_draw_instruction: 0, // Time of the last draw instruction that was received (guesser mode)
       word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
-      word: "" // Word that has to be drawn (Drawer mode)
+      word: "", // Word that has to be drawn (Drawer mode)
+      roundend: false
     };
   }
 
@@ -396,7 +397,8 @@ class DrawScreen extends React.Component {
         });
 
         /** await the confirmation of the backend **/
-        const response = await api.get('/chat', requestBody);
+        const url = '/game/' + this.state.game_id + '/length'
+        const response = await api.get(url, requestBody);
 
         // Set timestamp_last_message
         let timestamp_last_message = response[response.lenght -1].timestamp;
@@ -452,7 +454,8 @@ class DrawScreen extends React.Component {
         message: this.state.chat_message
       });
       /** await the confirmation of the backend **/
-      const response = await api.put('/chat', requestBody);
+      const url = '/game/' + this.state.game_id +'/guess';
+      const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
     } catch (error) {
       this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the chat message: \n${handleError(error)}`});
@@ -467,7 +470,8 @@ class DrawScreen extends React.Component {
   }
   async show_leaderboard(){
     try{
-      const responseusers = await api.get('');
+      const url = '/game/'+this.state.game_id+'/score'
+      const responseusers = await api.get(url);
       this.setState({users: responseusers.data})
     }catch(error){
       alert(`Something went wrong while fetching the points: \n${handleError(error)}`)
@@ -559,6 +563,8 @@ class DrawScreen extends React.Component {
           </Wordbox>
         ): ""}
       </div>
+
+
     ]);
   }
 }
