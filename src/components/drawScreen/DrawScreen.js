@@ -292,7 +292,7 @@ class DrawScreen extends React.Component {
       users: "",
       messages, // JSON of all chat messages
       timestamp_last_message: 0,
-      timestamp_last_draw_instruction: 0, // Time of the last draw instruction that was received (guesser mode)
+      timestamp_last_draw_instruction: "1900-01-01 00:00:00", // Time of the last draw instruction that was received (guesser mode)
       word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
       word: "", // Word that has to be drawn (Drawer mode)
       roundend: false
@@ -390,12 +390,13 @@ class DrawScreen extends React.Component {
   async sendDrawInstruction(x, y, size, colour) {
     try {
       const requestBody = JSON.stringify({
-        sender: this.state.username,
+        username: this.state.username,
         x: x,
         y: y,
         timestamp: this.getCurrentDateString(),
         size: size,
-        colour: colour
+        colour: "GOLD"
+        //colour: colour
       });
       await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
     } catch (error) {
@@ -479,7 +480,7 @@ class DrawScreen extends React.Component {
     }, 5000);
     this.setState({ interval_chat });
 
-    // Regulary pull draw instructions (guesser mode)
+    // Regularly pull draw instructions (guesser mode)
     let interval_draw_instructions = setInterval(async () => {
       // Poll draw instructions (guesser mode)
       if(this.state.drawer)
@@ -487,7 +488,7 @@ class DrawScreen extends React.Component {
       try {
         console.log("Start polling insts");
         const requestBody = JSON.stringify({
-          timestamp: this.state.timestamp_last_draw_instruction
+          timeStamp: this.state.timestamp_last_draw_instruction
         });
 
         console.log("requestBody", requestBody);
