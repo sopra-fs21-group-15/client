@@ -477,7 +477,7 @@ class DrawScreen extends React.Component {
       } catch (error) {
         this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
       }
-    }, 5000);
+    }, 50000);
     this.setState({ interval_chat });
 
     // Regularly pull draw instructions (guesser mode)
@@ -486,21 +486,13 @@ class DrawScreen extends React.Component {
       if(this.state.drawer)
         return;
       try {
-        console.log("Start polling insts");
         const requestBody = JSON.stringify({
           timeStamp: this.state.timestamp_last_draw_instruction
         });
-
-        console.log("requestBody", requestBody);
-
-        const url = '/games/' + this.state.game_id +'/drawing';
-        console.log("url", url);
-        const response = await api.get(url, requestBody);
-
-        console.log("response.data", response.data);
+        const response = await api.post('/games/' + this.state.game_id +'/drawing', requestBody);
 
         let timestamp_last_draw_instruction;
-        response.forEach(instr => {
+        response.data.forEach(instr => {
           let ctx = this.mainCanvas.current.getContext('2d');
           ctx.lineWidth = instr.size;
           ctx.fillStyle = instr.colour;
@@ -508,7 +500,8 @@ class DrawScreen extends React.Component {
           ctx.stroke();
           timestamp_last_draw_instruction = instr.timestamp;
         });
-        this.setState({ timestamp_last_draw_instruction });
+        if(timestamp_last_draw_instruction)
+          this.setState({ timestamp_last_draw_instruction });
 
       } catch(error) {
         this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the draw-instructions: \n${handleError(error)}`});
