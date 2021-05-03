@@ -395,8 +395,7 @@ class DrawScreen extends React.Component {
         y: y,
         timestamp: this.getCurrentDateString(),
         size: size,
-        colour: "GOLD"
-        //colour: colour
+        colour: colour
       });
       await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
     } catch (error) {
@@ -492,16 +491,16 @@ class DrawScreen extends React.Component {
         const response = await api.post('/games/' + this.state.game_id +'/drawing', requestBody);
 
         let timestamp_last_draw_instruction;
+        let ctx = this.mainCanvas.current.getContext('2d');
+        ctx.beginPath();
         response.data.forEach(instr => {
-          let ctx = this.mainCanvas.current.getContext('2d');
           ctx.lineWidth = instr.size;
-          ctx.fillStyle = instr.colour;
+          ctx.strokeStyle = instr.colour;
           ctx.lineTo(instr.x, instr.y);
           ctx.stroke();
-          timestamp_last_draw_instruction = instr.timestamp;
-        });
-        if(timestamp_last_draw_instruction)
+          timestamp_last_draw_instruction = instr.timeStamp;
           this.setState({ timestamp_last_draw_instruction });
+        });
 
       } catch(error) {
         this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the draw-instructions: \n${handleError(error)}`});
