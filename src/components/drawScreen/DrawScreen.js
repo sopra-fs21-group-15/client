@@ -304,12 +304,10 @@ class DrawScreen extends React.Component {
   }
 
   resetCanvas() {
-    this.mainCanvas.current.width = this.state.canvas_width;
-    this.mainCanvas.current.height = this.state.canvas_height;
-    let ctx = this.mainCanvas.current.getContext('2d');
-
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, this.state.canvas_width, this.state.canvas_height);
+    let draw_colour = this.state.draw_colour;
+    this.setState({ draw_colour: "#FFFFFF" }); // FIXME for some reason state cant be set here
+    this.fillCanvas();
+    this.setState({ draw_colour });
   }
 
   fillCanvas() {
@@ -319,6 +317,9 @@ class DrawScreen extends React.Component {
 
     ctx.fillStyle = this.state.draw_colour;
     ctx.fillRect(0, 0, this.state.canvas_width, this.state.canvas_height);
+
+    if(this.state.game && this.state.drawer)
+      this.sendDrawInstruction(-1, -1, -1, this.state.draw_colour);
   }
 
   updateBrushPreview() {
@@ -391,12 +392,13 @@ class DrawScreen extends React.Component {
     try {
       const requestBody = JSON.stringify({
         username: this.state.username,
-        x: x,
-        y: y,
+        x: Math.round(x),
+        y: Math.round(y),
         timestamp: this.getCurrentDateString(),
         size: size,
         colour: colour
       });
+      console.log("requestBody", requestBody);
       await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
     } catch (error) {
       this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
@@ -482,7 +484,7 @@ class DrawScreen extends React.Component {
     // Regularly pull draw instructions (guesser mode)
     let interval_draw_instructions = setInterval(async () => {
       // Poll draw instructions (guesser mode)
-      if(this.state.drawer)
+      if(this.state.drawer || !this.state.game)
         return;
       try {
         const requestBody = JSON.stringify({
@@ -494,12 +496,19 @@ class DrawScreen extends React.Component {
         let ctx = this.mainCanvas.current.getContext('2d');
         ctx.beginPath();
         response.data.forEach(instr => {
-          ctx.lineWidth = instr.size;
-          ctx.strokeStyle = instr.colour;
-          ctx.lineTo(instr.x, instr.y);
-          ctx.stroke();
-          timestamp_last_draw_instruction = instr.timeStamp;
-          this.setState({ timestamp_last_draw_instruction });
+          // Fill/Clear Instructions have x = -1
+          if(instr.x == -1) {
+            this.setState({ draw_colour: instr.colour });
+            this.fillCanvas();
+          } else {
+            // Normal draw instructions
+            ctx.lineWidth = instr.size;
+            ctx.strokeStyle = instr.colour;
+            ctx.lineTo(instr.x, instr.y);
+            ctx.stroke();
+            timestamp_last_draw_instruction = instr.timeStamp;
+            this.setState({ timestamp_last_draw_instruction });
+          }
         });
 
       } catch(error) {
