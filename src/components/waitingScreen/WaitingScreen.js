@@ -319,7 +319,7 @@ class waitingScreen extends React.Component {
           <hr width="100%" />
 
           <ButtonContainer>
-            <Button disabled={ !this.state.owner || (this.state.lobby && this.state.lobby.members.length <= 2) } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
+            <Button disabled={ !this.state.owner || (this.state.lobby && this.state.lobby.members.length < 2) } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
           </ButtonContainer>
           <ButtonContainer>
             <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
