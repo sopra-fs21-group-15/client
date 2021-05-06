@@ -292,7 +292,7 @@ class DrawScreen extends React.Component {
       users: "",
       messages, // JSON of all chat messages
       timestamp_last_message: 0,
-      timestamp_last_draw_instruction: "1900-01-01 00:00:00", // Time of the last draw instruction that was received (guesser mode)
+      timestamp_last_draw_instruction: "1900-01-01 00:00:00:000", // Time of the last draw instruction that was received (guesser mode)
       word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
       word: "", // Word that has to be drawn (Drawer mode)
       roundend: false
@@ -383,7 +383,11 @@ class DrawScreen extends React.Component {
     let seconds = date.getSeconds();
     if (seconds < 10) seconds = "0" + seconds;
 
-    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+    let milliseconds = date.getMilliseconds();
+    if (milliseconds < 100) milliseconds = "0" + milliseconds;
+    if (milliseconds < 10) milliseconds = "0" + milliseconds;
+
+    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
 
     return dateString;
   }
@@ -391,10 +395,10 @@ class DrawScreen extends React.Component {
   async sendDrawInstruction(x, y, size, colour) {
     try {
       const requestBody = JSON.stringify({
-        username: this.state.username,
+        // username: this.state.username,
         x: Math.round(x),
         y: Math.round(y),
-        timestamp: this.getCurrentDateString(),
+        // timeString: this.getCurrentDateString(),
         size: size,
         colour: colour
       });
@@ -488,7 +492,7 @@ class DrawScreen extends React.Component {
         return;
       try {
         const requestBody = JSON.stringify({
-          timeStamp: this.state.timestamp_last_draw_instruction
+          timeString: this.state.timestamp_last_draw_instruction
         });
         const response = await api.post('/games/' + this.state.game_id +'/drawing', requestBody);
 
