@@ -69,7 +69,7 @@ class CreateLobby extends React.Component {
       // Lobby list
       <BaseContainer>
         <FormContainer>
-          <h2>Create a Lobby</h2>
+          <Legend>Create a Lobby</Legend>
           <HR/>
 
           <Label>Lobbyname</Label>

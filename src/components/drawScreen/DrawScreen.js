@@ -17,15 +17,6 @@ const Users = styled.ul`
   list-style: none;
   padding-left: 0;
 `;
-const Blur = styled.div`
-position: absolute;
-top:0px;
-left: 0px;
-width: 100%;
-height: 100%;
-background: rgba(50, 50, 50, 0.5);
-z-index: 1;
-`;
 
 const Canvas = styled.canvas`
   position: absolute;
@@ -289,7 +280,7 @@ class DrawScreen extends React.Component {
   }
 
   changeColour(colour) {
-    this.setState({ ['draw_colour']: colour });
+    this.setState({ draw_colour: colour });
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.strokeStyle = colour;
@@ -298,7 +289,7 @@ class DrawScreen extends React.Component {
   }
 
   changeSize(size) {
-    this.setState({ ['draw_size']: size });
+    this.setState({ draw_size: size });
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.lineWidth = size;
@@ -374,7 +365,7 @@ class DrawScreen extends React.Component {
     if(!this.state.drawer)
       return;
 
-    if(button == 0) {
+    if(button === 0) {
       let ctx = this.mainCanvas.current.getContext('2d');
       this.setState({ mouse_down: true });
       ctx.beginPath();
@@ -384,7 +375,7 @@ class DrawScreen extends React.Component {
   }
 
   canvas_onMouseUp(button) {
-    if(button == 0)
+    if(button === 0)
       this.setState({ mouse_down: false });
   }
 
@@ -412,7 +403,7 @@ class DrawScreen extends React.Component {
         this.setState({ game });
 
         // Set owner
-        if(this.state.username == this.state.game.members[0])
+        if(this.state.username === this.state.game.members[0])
           this.setState({ owner: true, drawer: true });
         else
           this.setState({ owner: false, drawer: false });
@@ -461,11 +452,11 @@ class DrawScreen extends React.Component {
         let timestamp_last_draw_instruction;
         let ctx = this.mainCanvas.current.getContext('2d');
         response.data.forEach(instr => {
-          if(instr.x == -1) {
+          if(instr.x === -1) {
             // Fill/Clear-instructions have x = -1
             this.setState({ draw_colour: instr.colour });
             this.fillCanvas();
-          } else if(instr.x == -2) {
+          } else if(instr.x === -2) {
             // LineBegin-instructions have x = -2
             ctx.beginPath();
           } else {
@@ -581,7 +572,7 @@ class DrawScreen extends React.Component {
           </Messages>
 
           <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
-          { this.state.chat_message == "" ?
+          { this.state.chat_message === "" ?
             <Button disabled onClick={() => {this.send_message()}} >Send</Button>
             :
             <Button onClick={() => {this.send_message()}} >Send</Button>
