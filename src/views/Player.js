@@ -32,7 +32,7 @@ const UserName = styled.div`
 const Player = ({ user, f_onClick }) => {
   return (
     <Container>
-      <UserName>{user.username}</UserName>
+      <UserName>{user.username} {user.status==="ONLINE" ? "🟢" : "🔴"}</UserName>
       {f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
     </Container>
   );
