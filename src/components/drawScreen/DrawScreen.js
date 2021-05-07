@@ -378,6 +378,8 @@ class DrawScreen extends React.Component {
       let ctx = this.mainCanvas.current.getContext('2d');
       this.setState({ mouse_down: true });
       ctx.beginPath();
+      if(this.state.game && this.state.drawer)
+        this.sendDrawInstruction(-2, -2, -2, "#FF0000");
     }
   }
 
@@ -458,12 +460,14 @@ class DrawScreen extends React.Component {
 
         let timestamp_last_draw_instruction;
         let ctx = this.mainCanvas.current.getContext('2d');
-        ctx.beginPath();
         response.data.forEach(instr => {
-          // Fill/Clear Instructions have x = -1
           if(instr.x == -1) {
+            // Fill/Clear-instructions have x = -1
             this.setState({ draw_colour: instr.colour });
             this.fillCanvas();
+          } else if(instr.x == -2) {
+            // LineBegin-instructions have x = -2
+            ctx.beginPath();
           } else {
             // Normal draw instructions
             ctx.lineWidth = instr.size;
