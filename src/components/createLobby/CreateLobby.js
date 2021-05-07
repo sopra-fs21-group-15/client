@@ -5,86 +5,14 @@ import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import {api, handleError} from "../../helpers/api";
 import Lobby from "../shared/models/Lobby";
+import { FormContainer } from '../../views/design/FormContainer.js';
+import { Legend } from '../../views/design/Legend.js';
+import { Label } from '../../views/design/Label.js';
+import { InputField } from '../../views/design/InputField.js';
+import { HR } from '../../views/design/HR.js';
+import { OneLineBlock } from '../../views/design/OneLineBlock.js';
+import { SelectField } from '../../views/design/SelectField.js';
 
-const Container = styled(BaseContainer)`
-  color: white;
-  text-align: center;
-  background: rgba(50, 50, 50, 0.9);
-  border-radius: 10px;
-  padding: 50px;
-`;
-
-const FormContainer = styled.div`
-  margin-top: 0.5em;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 300px;
-  justify-content: center;
-`;
-
-const OneLineBlock = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const Form = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 60%;
-  height: 375px;
-  font-size: 16px;
-  font-weight: 300;
-  padding-left: 37px;
-  padding-right: 37px;
-  border-radius: 5px;
-  background: linear-gradient(rgb(255,255,255), rgb(180, 190, 200));
-  transition: opacity 0.5s ease, transform 0.5s ease;
-`;
-
-const InputField = styled.input`
-  &::placeholder {
-    color: black;
-  }
-  height: 35px;
-  padding-left: 15px;
-  margin: 12px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 1);
-  color: black;
-  
-`;
-
-const SelectField = styled.select`
-  &::placeholder {
-    color: black;
-  }
-  height: 35px;
-  padding-left: 15px;
-  margin-left: -4px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 1);
-  color: black;
-`;
-
-const Label = styled.label`
-  color: #999999;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  width: 100%;
-`;
 
 class CreateLobby extends React.Component {
   constructor() {
@@ -139,10 +67,10 @@ class CreateLobby extends React.Component {
   render() {
     return (
       // Lobby list
-      <Container>
+      <BaseContainer>
         <FormContainer>
           <h2>Create a Lobby</h2>
-          <hr width="100%" />
+          <HR/>
 
           <Label>Lobbyname</Label>
           <InputField id="form_name"
@@ -172,16 +100,11 @@ class CreateLobby extends React.Component {
             <InputField id="form_private" type="checkbox" onChange={e => {this.handleInputChange('private', e.target.checked);}} />
             {this.state.private === true ? <InputField id="form_password" value={this.state.password} onChange={e => {this.handleInputChange('password', e.target.value);}} placeholder="Password" /> : "" }
           </OneLineBlock>
-          <hr width="100%" />
-          <ButtonContainer>
-            <Button width="25%" onClick={() => {this.createLobby();}}>Create Lobby</Button>
-          </ButtonContainer>
-          <ButtonContainer>
-            <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
-          </ButtonContainer>
-
+          <HR/>
+          <Button width="25%" onClick={() => {this.createLobby();}}>Create Lobby</Button>
+          <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
         </FormContainer>
-      </Container>
+      </BaseContainer>
     );
   }
 }

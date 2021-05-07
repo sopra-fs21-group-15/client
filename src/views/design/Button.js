@@ -4,6 +4,10 @@ export const Button = styled.button`
   &:hover {
     transform: translateY(-2px);
   }
+  &:focus {
+    border-radius: 0px;
+    background: rgba(255, 255, 255, 1);
+  }
 
   padding: 6px;
   padding-left: 30px;
@@ -21,4 +25,8 @@ export const Button = styled.button`
   opacity: ${props => (props.disabled ? 0.4 : 1)};
   background: rgb(230, 238, 235);
   transition: all 0.3s ease;
+
+  margin-top: 20px;
+  min-width: 200px;
+  width: 25%;
 `;
