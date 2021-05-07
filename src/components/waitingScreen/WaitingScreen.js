@@ -143,7 +143,7 @@ class waitingScreen extends React.Component {
       }
 
       // Check if lobby is started, then go to draw screen
-      if(this.state.lobby.status == "PLAYING") {
+      if(this.state.lobby.status === "PLAYING") {
         try {
           const response = await api.get('/games/' + this.state.lobbyId + '/convert');
           const game = new Game(response.data);
@@ -156,7 +156,7 @@ class waitingScreen extends React.Component {
 
       /// Find out who is the owner of the Lobby
       let owner_name = this.state.lobby.members[0];
-      if (owner_name == this.state.username)
+      if (owner_name === this.state.username)
         this.setState({ owner: true });
       else
         this.setState({ owner: false });

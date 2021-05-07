@@ -67,7 +67,7 @@ class MainScreen extends React.Component {
       user: null,
       userId: localStorage.getItem("visited User"),
       users: null,
-      friends: null,
+      friends: localStorage.getItem("friends"),
       lobbies: null,
       lobby: null,
       lobbyId: localStorage.getItem("lobbyId"),
@@ -195,14 +195,14 @@ class MainScreen extends React.Component {
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
             <Button
-                onClick={() => {this.go_to_profile(this.state.username)}}
+                onClick={() => {this.go_to_profile(this.state.user)}}
             >View Profile</Button>
 
             <h2 style={{marginTop:41+"px"}}>Registered Users</h2>
             <Users>
               {this.state.users.map(user => {
                 return (
-                    <PlayerContainer key={user.id}>
+                    <PlayerContainer>
                       <Player user={user} f_onClick={() => this.go_to_profile(user)}/>
                     </PlayerContainer>
                 );

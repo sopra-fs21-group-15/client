@@ -43,11 +43,15 @@ class ProfilePage extends React.Component {
   constructor() {
     super();
     this.state = {
+        friends: null,
         user: null,
         userId: localStorage.getItem("visited User"), /** get the ID of the visited profile **/
         loggedInUser: localStorage.getItem("loginId"), /** get the ID of the logged in user **/
+        friendsId: localStorage.getItem("friends"),
+        actualFriend: false
     };
     this.getUser();
+    this.getFriends();
   }
 
   async getUser() {
@@ -58,8 +62,35 @@ class ProfilePage extends React.Component {
     this.setState({user : user})
   }
 
+  async getFriends(){
+      const url = '/friends/'+this.state.friendsId;
+      const response = await api.get(url);
+      const friends = new User(response.data);
+      this.setState({friends: friends.username})
+  }
+
+  // NOT SURE IF NEEDED MAYBE ALSO POSSIBLE WIT LOCALSTORAGE
+    async addFriends(){
+      const url = '/friends/' + this.state.userId;
+      const response = await api.put(url);
+      const friend = new User(response.data);
+      localStorage.setItem('friends',friend.username);
+  }
+
+  async removeFriends(){
+      const url = '/friends/' + this.state.userId + '/remove';
+      const response = await api.put(url);
+      const friends = new User(response.data);
+      localStorage.removeItem('friends', friends.username);
+  }
+
+
+
+
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     this.getUser()
+      this.getFriends()
   }
 
     render() {
@@ -72,6 +103,7 @@ class ProfilePage extends React.Component {
                         {this.state.user?
                         (<Profile user={this.state.user}/>): ("")}
                         <ButtonContainer>
+                            {this.state.loggedInUser === this.state.userId ?
                             <Button
                                 disabled={this.state.loggedInUser !== this.state.userId}
                                 width="100%"
@@ -81,7 +113,24 @@ class ProfilePage extends React.Component {
                                 }}
                             >
                                 Edit Profile
-                            </Button>
+                            </Button> : this.state.actualFriend ? <Button
+                                    width="100%"
+                                    onClick={() => {
+                                        this.removeFriends();
+                                        this.state.actualFriend = false;
+                                    }}>
+                                    remove Friend
+                                </Button>
+                                    :
+                                    <Button
+                                    width="100%"
+                                    onClick={() => {
+                                        this.addFriends();
+                                        this.state.actualFriend = true;
+                                    }}>
+                                    add Friend
+                                </Button>
+                            }
                         </ButtonContainer>
 
                         <ButtonContainer>
