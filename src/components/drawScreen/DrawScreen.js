@@ -8,11 +8,14 @@ import { withRouter } from 'react-router-dom';
 import Colour from '../../views/Colour';
 import Message from '../../views/Message';
 import Game from "../shared/models/Game";
+import { HR } from '../../views/design/HR.js';
+import { Label } from '../../views/design/Label.js';
+import { InputField } from '../../views/design/InputField.js';
+
 
 const Users = styled.ul`
   list-style: none;
   padding-left: 0;
-
 `;
 const Blur = styled.div`
 position: absolute;
@@ -23,29 +26,13 @@ height: 100%;
 background: rgba(50, 50, 50, 0.5);
 z-index: 1;
 `;
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 45px;
-  width: 15%;
-`;
-const selection = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  top: 50%;
-  width: 15%;
-  left: 500px;
-  align-items: column;
-`;
+
 const Canvas = styled.canvas`
   position: absolute;
-
   // Place not in the middle of the whole screen but in middle of what is left
   // when you substract the sidebar-width.
   left: calc(57.5% - 256px / 2);
   transform: translateX(-50%);
-
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
 `;
@@ -85,13 +72,6 @@ const Messages = styled.ul`
 
 `;
 
-const HR = styled.hr`
-  color: rgba(255, 255, 255, 0.1);
-  width 90%;
-  margin-top: 1em;
-  margin-bottom: 1em;
-`;
-
 const H1 = styled.h1`
   color: white;
   font-variant: small-caps;
@@ -112,26 +92,6 @@ const ColoursContainer = styled.div`
   grid-template-columns: repeat(auto-fill, 32px);
 
   // background: rgba(255, 0, 0, 0.3);
-`;
-
-const Label = styled.label`
-  color: #999999;
-  margin-bottom: 10px;
-  font-variant: small-caps;
-`;
-
-const InputField = styled.input`
-  &::placeholder {
-    color: black;
-  }
-  height: 35px;
-  padding-left: 15px;
-  margin: 12px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 1);
-  color: black;
 `;
 
 const Timer = styled.div`
@@ -599,12 +559,12 @@ class DrawScreen extends React.Component {
           <Label>Size</Label>,
           <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />,
           <HR/>,
-          <Button width="40%" onClick={() => {this.fillCanvas()}}>Fill</Button>,
-          <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>,
+          <Button onClick={() => {this.fillCanvas()}}>Fill</Button>,
+          <Button onClick={() => {this.resetCanvas()}}>Clear</Button>,
           <HR/>
         ]) : ( "" )}
 
-        <Button width="80%" onClick={() => {this.download_image()}}>Download image</Button>
+        <Button onClick={() => {this.download_image()}}>Download image</Button>
         <HR/>
         <BrushPreview ref={this.brushPreview}/>
         <Chatbox>
@@ -618,12 +578,10 @@ class DrawScreen extends React.Component {
 
           <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
           { this.state.chat_message == "" ?
-
-            <Button disabled width="40%" onClick={() => {this.send_message()}} >Send</Button>
+            <Button disabled onClick={() => {this.send_message()}} >Send</Button>
             :
-            <Button width="40%" onClick={() => {this.send_message()}} >Send</Button>
+            <Button onClick={() => {this.send_message()}} >Send</Button>
           }
-
         </Chatbox>
       </Sidebar>,
       <Scoreboard>

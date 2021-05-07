@@ -4,57 +4,13 @@ import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
 import User from '../shared/models/User';
 import { withRouter } from 'react-router-dom';
+import { InputField } from '../../views/design/InputField.js';
 import { Button } from '../../views/design/Button';
+import { FormContainer } from '../../views/design/FormContainer.js';
+import { Legend } from '../../views/design/Legend.js';
+import { Label } from '../../views/design/Label.js';
+import { HR } from '../../views/design/HR.js';
 
-const FormContainer = styled.div`
-  margin-top: 2em;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 300px;
-  justify-content: center;
-`;
-
-const Form = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 60%;
-  height: 375px;
-  font-size: 16px;
-  font-weight: 300;
-  padding-left: 37px;
-  padding-right: 37px;
-  border-radius: 5px;
-  background: linear-gradient(rgb(255,255,255), rgb(180, 190, 200));
-  transition: opacity 0.5s ease, transform 0.5s ease;
-`;
-
-const InputField = styled.input`
-  &::placeholder {
-    color: black;
-  }
-  height: 35px;
-  padding-left: 15px;
-  margin-left: -4px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 1);
-  color: black;
-`;
-
-const Label = styled.label`
-  color: black;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-`;
 
 /**
  * Classes in React allow you to have an internal state within the class and to have the React life-cycle for your component.
@@ -129,46 +85,14 @@ class Registration extends React.Component {
     return (
       <BaseContainer>
         <FormContainer>
-          <Form>
-            <h2> Registration </h2>
-            <Label>Username</Label>
-            <InputField
-              placeholder="Please enter here.."
-              onChange={e => {
-                this.handleInputChange('username', e.target.value);
-              }}
-            />
-            <Label>Password</Label>
-            <InputField
-              placeholder="Please enter here.."
-              onChange={e => {
-                this.handleInputChange('password', e.target.value);
-              }}
-            />
-            <ButtonContainer>
-              <Button
-                disabled={!this.state.username || !this.state.password}
-                width="50%"
-                onClick={() => {
-                  this.register();
-                }}
-              >
-                Create user
-              </Button>
-            </ButtonContainer>
-            {/* Added back to login button...
-             Maybe change color, if I got time to...*/}
-            <ButtonContainer>
-             <Button
-               width="50%"
-               onClick={() => {
-               this.props.history.push("/login");
-               }}
-             >
-             Back to Login
-             </Button>
-            </ButtonContainer>
-          </Form>
+          <Legend>Registration</Legend>
+          <Label>Username</Label>
+          <InputField placeholder="Please enter here.." onChange={e => { this.handleInputChange('username', e.target.value); }} />
+          <Label>Password</Label>
+          <InputField placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} />
+          <HR/>
+          <Button disabled={!this.state.username || !this.state.password} onClick={() => { this.register(); }} > Create user </Button>
+          <Button onClick={() => { this.props.history.push("/login"); }} > Back to Login </Button>
         </FormContainer>
       </BaseContainer>
     );
