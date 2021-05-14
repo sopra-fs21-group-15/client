@@ -11,6 +11,8 @@ import Game from "../shared/models/Game";
 import { HR } from '../../views/design/HR.js';
 import { Label } from '../../views/design/Label.js';
 import { InputField } from '../../views/design/InputField.js';
+import { Chatbox } from '../../views/design/Chatbox.js';
+import { Messages } from '../../views/design/Messages.js';
 
 
 const Users = styled.ul`
@@ -43,24 +45,6 @@ const Sidebar = styled.div`
   padding: 0px 5px;
   text-align: center;
   overflow-y: auto;
-`;
-
-const Chatbox = styled.div`
-`;
-
-const Messages = styled.ul`
-  background: white;
-  height: 250px;
-  list-style-type: none;
-  list-style-position: outside;
-  padding: 0px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  border-radius: 8px;
-
-  display: flex;
-  flex-direction: column-reverse;
-
 `;
 
 const H1 = styled.h1`
@@ -105,6 +89,7 @@ const Timer = styled.div`
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
 `;
+
 const Scoreboard = styled.div`
     position: absolute;
     width:190px ;
@@ -120,6 +105,7 @@ const Scoreboard = styled.div`
 
 
 `;
+
 const Scoreboardlabel = styled.label`
     font-size: 25px;
     font-variant: small-caps;
@@ -231,22 +217,28 @@ class DrawScreen extends React.Component {
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
+      loginId: localStorage.getItem('loginId'),
       hint: "A__b_c_", // Will contain some letters and underscores
+      username: localStorage.getItem('username'),
+      users: "",
+      word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
+      word: "", // Word that has to be drawn (Drawer mode)
+      roundend: false,
+
+      // Draw + Canvas related
       canvas_width: 854,
       canvas_height: 480,
       draw_colour: "#ffffff",
       draw_size: 5,
       mouse_down: false, // stores whether the LEFT mouse button is down
-      loginId: localStorage.getItem('loginId'),
-      username: localStorage.getItem('username'),
-      chat_message: "", // Value of the chat input field
-      users: "",
-      messages, // JSON of all chat messages
-      timestamp_last_message: 0,
+
+      // Draw instructions
       timestamp_last_draw_instruction: "1900-01-01 00:00:00:000", // Time of the last draw instruction that was received (guesser mode)
-      word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
-      word: "", // Word that has to be drawn (Drawer mode)
-      roundend: false
+
+      // Chat
+      chat_message: "", // Value of the chat input field
+      messages, // JSON of all chat messages
+      timestamp_last_message: "1900-01-01 00:00:00:000", // Time of the last message that was received
     };
   }
 

@@ -14,6 +14,9 @@ import { InputField } from '../../views/design/InputField.js';
 import { OneLineBlock } from '../../views/design/OneLineBlock.js';
 import { SelectField } from '../../views/design/SelectField.js';
 import Player from '../../views/Player';
+import { Chatbox } from '../../views/design/Chatbox.js';
+import { Messages } from '../../views/design/Messages.js';
+import Message from '../../views/Message';
 
 
 const PlayerUl = styled.ul`
@@ -45,17 +48,22 @@ class waitingScreen extends React.Component {
   constructor() {
     super();
     this.state = {
-        lobbyId: localStorage.getItem('lobbyId'),
-        loginId: localStorage.getItem('loginId'),
-        username: localStorage.getItem('username'), // own username
-        lobby: null,
-        gamemode: "Classic",
-        owner: false,
+      lobbyId: localStorage.getItem('lobbyId'),
+      loginId: localStorage.getItem('loginId'),
+      username: localStorage.getItem('username'), // own username
+      lobby: null,
+      gamemode: "Classic",
+      owner: false,
+
+      // Chat
+      chat_message: "", // Value of the chat input field
+      messages: [], // JSON of all chat messages
+      timestamp_last_message: "1900-01-01 00:00:00:000" // Time of the last message that was received
     };
     }
 
   async componentDidMount() {
-    let intervalID = setInterval(async () => {
+    let intervalLobbyinfo = setInterval(async () => {
       // get lobby and update local lobby object
       try {
         const url = '/lobbies/' + this.state.lobbyId;
@@ -86,13 +94,47 @@ class waitingScreen extends React.Component {
         this.setState({ owner: false });
 
       }, 3000);
+    this.setState({ intervalLobbyinfo });
 
-    this.setState({ intervalID });
+
+    // Regularly poll the chat
+    let intervalChat = setInterval(async () => {
+      try {
+        const requestBody = JSON.stringify({
+          timeStamp: this.state.timestamp_last_message
+        });
+
+        /** await the confirmation of the backend **/
+        const url = '/lobbies/' + this.state.lobbyId + '/chats'
+        const response = await api.post(url, requestBody);
+
+
+        console.log("requestBody", requestBody);
+        console.log("response.data", response.data);
+        console.log("response.data.messages.length", response.data.messages.length);
+        console.log("response.data.messages[0].timestamp", response.data.messages[0].timeStamp);
+        console.log("response.data.messages[response.data.messages.length -1].timeStamp", response.data.messages[response.data.messages.length -1].timeStamp);
+
+        // Set timestamp_last_message
+        let timestamp_last_message = response.data.messages[response.data.messages.length -1].timeStamp;
+        let messages = this.state.messages.concat(response);
+        this.setState({ timestamp_last_message, messages });
+
+
+        // response.data.messages.forEach(msg => {
+
+        // }
+      } catch (error) {
+        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
+      }
+    }, 2000);
+    this.setState({ intervalChat });
 
   }
 
   componentWillUnmount() {
-    clearInterval(this.state.intervalID);
+    clearInterval(this.state.intervalLobbyinfo);
+    clearInterval(this.state.intervalChat);
   }
 
   async startgame() {
@@ -110,6 +152,57 @@ class waitingScreen extends React.Component {
     }
   }
 
+  getCurrentDateString() {
+    let date = new Date();
+
+    let day = date.getDate();
+    if (day < 10) day = "0" + day;
+
+    let month = date.getMonth() + 1;
+    if (month < 10) month = "0" + month;
+
+    let hours = date.getHours();
+    if (hours < 10) hours = "0" + hours;
+
+    let minutes = date.getMinutes();
+    if (minutes < 10) minutes = "0" + minutes;
+
+    let seconds = date.getSeconds();
+    if (seconds < 10) seconds = "0" + seconds;
+
+    let milliseconds = date.getMilliseconds();
+    if (milliseconds < 100) milliseconds = "0" + milliseconds;
+    if (milliseconds < 10) milliseconds = "0" + milliseconds;
+
+    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
+
+    return dateString;
+  }
+
+  async send_message() {
+    let timeStamp = this.getCurrentDateString();
+
+    try {
+      const requestBody = JSON.stringify({
+        timeStamp: timeStamp,
+        message: this.state.chat_message,
+        writerName: this.state.username
+      });
+
+      /** await the confirmation of the backend **/
+      const url = '/lobbies/' + this.state.lobbyId +'/chats';
+      const response = await api.put(url, requestBody);
+      this.setState({ chat_message: "" });
+
+
+      console.log("url", url);
+      console.log("requestBody", requestBody);
+      console.log("response", response);
+
+    } catch (error) {
+      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the chat message: \n${handleError(error)}`});
+    }
+  }
 
   async goback() {
     try {
@@ -162,7 +255,24 @@ class waitingScreen extends React.Component {
                 </PlayerUl>
               );
             })}
+          <Chatbox>
+            <Messages>
+              {this.state.messages.slice(0).reverse().map(message => {
+                return (
+                  <Message message={message} />
+                );
+              })}
+            </Messages>
+
+            <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+            { this.state.chat_message === "" ?
+              <Button disabled onClick={() => {this.send_message()}} >Send</Button>
+              :
+              <Button onClick={() => {this.send_message()}} >Send</Button>
+            }
+          </Chatbox>
           </FloatLeft>
+
           <FloatRight>
           <FormContainer>
           <Label>Lobbyname</Label>
