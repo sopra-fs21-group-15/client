@@ -209,7 +209,7 @@ class DrawScreen extends React.Component {
       "#ffffff"
       ];
 
-    let messages = [ {"sender": "niklassc", "timestamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"sender": "example_user", "timestamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"sender": "niklassc", "timestamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
+    let messages = [ {"writerName": "niklassc", "timeStamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"writerName": "example_user", "timeStamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"writerName": "niklassc", "timeStamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
 
     this.state = {
       game_id: localStorage.getItem('gameId'),
