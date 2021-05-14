@@ -348,7 +348,7 @@ class DrawScreen extends React.Component {
       console.log("requestBody", requestBody);
       await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
     } catch (error) {
-      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
+      this.errorInChat(`Something went wrong while sending the draw-Instruction: \n${handleError(error)}`);
     }
   }
 
@@ -400,7 +400,7 @@ class DrawScreen extends React.Component {
         else
           this.setState({ owner: false, drawer: false });
       } catch (error) {
-        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while fetching the game-info: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while fetching the game-info: \n${handleError(error)}`);
       }
     }, 5000);
     this.setState({ interval_game_info });
@@ -425,7 +425,7 @@ class DrawScreen extends React.Component {
         let messages = this.state.messages.concat(response);
         this.setState({ timestamp_last_message, messages });
       } catch (error) {
-        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
     }, 50000);
     this.setState({ interval_chat });
@@ -463,7 +463,7 @@ class DrawScreen extends React.Component {
         });
 
       } catch(error) {
-        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the draw-instructions: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
       }
       this.setState({ interval_draw_instructions });
 
@@ -497,8 +497,12 @@ class DrawScreen extends React.Component {
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
     } catch (error) {
-      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the chat message: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while sending the chat-message: \n${handleError(error)}`);
     }
+  }
+
+  errorInChat(errMsg) {
+    this.state.messages.push({"writerName": "SYSTEM", "timeStamp": this.getCurrentDateString(), message: errMsg});
   }
 
   download_image() {

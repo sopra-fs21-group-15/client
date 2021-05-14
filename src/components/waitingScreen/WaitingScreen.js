@@ -103,13 +103,15 @@ class waitingScreen extends React.Component {
         const requestBody = JSON.stringify({
           timeStamp: this.state.timestamp_last_message
         });
+        const url = '/lobbies/' + this.state.lobbyId + '/chats'
+
+        console.log("url", url);
+        console.log("requestBody", requestBody);
 
         /** await the confirmation of the backend **/
-        const url = '/lobbies/' + this.state.lobbyId + '/chats'
         const response = await api.post(url, requestBody);
 
 
-        console.log("requestBody", requestBody);
         console.log("response.data", response.data);
         console.log("response.data.messages.length", response.data.messages.length);
         console.log("response.data.messages[0].timestamp", response.data.messages[0].timeStamp);
@@ -117,19 +119,18 @@ class waitingScreen extends React.Component {
 
         // Set timestamp_last_message
         let timestamp_last_message = response.data.messages[response.data.messages.length -1].timeStamp;
-        let messages = this.state.messages.concat(response);
+        let messages = this.state.messages.concat(response.data.messages);
         this.setState({ timestamp_last_message, messages });
-
-
-        // response.data.messages.forEach(msg => {
-
-        // }
       } catch (error) {
-        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
     }, 2000);
     this.setState({ intervalChat });
 
+  }
+
+  errorInChat(errMsg) {
+    this.state.messages.push({"writerName": "SYSTEM", "timeStamp": this.getCurrentDateString(), message: errMsg});
   }
 
   componentWillUnmount() {
@@ -189,14 +190,15 @@ class waitingScreen extends React.Component {
         writerName: this.state.username
       });
 
+      console.log("url", url);
+      console.log("requestBody", requestBody);
+
       /** await the confirmation of the backend **/
       const url = '/lobbies/' + this.state.lobbyId +'/chats';
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
 
 
-      console.log("url", url);
-      console.log("requestBody", requestBody);
       console.log("response", response);
 
     } catch (error) {
