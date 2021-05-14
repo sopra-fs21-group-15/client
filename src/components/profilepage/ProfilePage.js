@@ -43,16 +43,19 @@ class ProfilePage extends React.Component {
   constructor() {
     super();
     this.state = {
-        friends: null,
         user: null,
         userId: localStorage.getItem("visited User"), /** get the ID of the visited profile **/
         loggedInUser: localStorage.getItem("loginId"), /** get the ID of the logged in user **/
-        friendsId: localStorage.getItem("friends"),
-        actualFriend: false
+        actualFriend: false,
+        users: null,
+        myUser: null
+
     };
     this.getUser();
-    this.getFriends();
+    this.getMyUser();
   }
+
+
 
   async getUser() {
     const url = '/users/' + this.state.userId;
@@ -62,35 +65,90 @@ class ProfilePage extends React.Component {
     this.setState({user : user})
   }
 
-  async getFriends(){
-      const url = '/friends/'+this.state.friendsId;
+  async getMyUser(){
+      const url = '/users/' + this.state.loggedInUser;
+      // wait for the user information
       const response = await api.get(url);
-      const friends = new User(response.data);
-      this.setState({friends: friends.username})
+      const myUser = new User(response.data);
+      this.setState({myUser : myUser})
+
   }
 
-  // NOT SURE IF NEEDED MAYBE ALSO POSSIBLE WIT LOCALSTORAGE
-    async addFriends(){
-      const url = '/friends/' + this.state.userId;
-      const response = await api.put(url);
-      const friend = new User(response.data);
-      localStorage.setItem('friends',friend.username);
+
+  checkIfFriend(){
+              if (this.state.myUser.friendsList.includes(this.state.user.username)) {
+                  this.setState({actualFriend: true})
+      }
+              else this.setState({actualFriend: false})}
+
+
+  async addFriends(){
+      const requestBody = JSON.stringify({
+          username: this.state.user.username
+      })
+
+      const url = '/users/' + this.state.loggedInUser + '/friendsList';
+      const response = await api.put(url,requestBody);
+      const myUser = new User(response.data)
+      this.setState({myUser:myUser})
+      //this.setState({actualFriend: true})
+      console.log("----------------")
+      await this.checkIfFriend()
+      //console.log(user.friendsList.length)
+      //console.log(user.friendsList[1])
+      console.log(myUser.friendsList)
+      console.log(this.state.user)
+
+
   }
 
   async removeFriends(){
-      const url = '/friends/' + this.state.userId + '/remove';
-      const response = await api.put(url);
-      const friends = new User(response.data);
-      localStorage.removeItem('friends', friends.username);
+      const requestBody = JSON.stringify({
+          username: this.state.user.username
+      })
+      const url = '/users/' + this.state.loggedInUser + '/removeFriendList';
+      const response = await api.put(url,requestBody);
+      const myUser = new User(response.data)
+      this.setState({myUser:myUser})
+      //this.setState({actualFriend: false})
+      await this.checkIfFriend()
+      console.log("----------------")
+      console.log(myUser.friendsList)
+      console.log(this.state.user)
+
   }
 
+  // method to check if user is in my friendsList
+    async componentDidMount() {
+        try {
+            const response = await api.get('/users');
+            this.setState({ users: response.data });
+
+            const url = '/users/' + this.state.loggedInUser;
+            // wait for the user information
+            const response2 = await api.get(url);
+            const myUser = new User(response2.data);
+            this.setState({myUser : myUser})
+
+        } catch (error) {
+            alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
+        }
+
+        //console.log(this.state.myUser.friendsList)
+        //console.log(this.state.users[3].username)
+
+        this.checkIfFriend()
 
 
 
+    }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate(prevProps, prevState, snapshot) {
     this.getUser()
-      this.getFriends()
+
+
+
+
   }
 
     render() {
@@ -113,11 +171,10 @@ class ProfilePage extends React.Component {
                                 }}
                             >
                                 Edit Profile
-                            </Button> : this.state.actualFriend ? <Button
+                            </Button> :  this.state.actualFriend ? <Button
                                     width="100%"
                                     onClick={() => {
                                         this.removeFriends();
-                                        this.state.actualFriend = false;
                                     }}>
                                     remove Friend
                                 </Button>
@@ -126,7 +183,6 @@ class ProfilePage extends React.Component {
                                     width="100%"
                                     onClick={() => {
                                         this.addFriends();
-                                        this.state.actualFriend = true;
                                     }}>
                                     add Friend
                                 </Button>

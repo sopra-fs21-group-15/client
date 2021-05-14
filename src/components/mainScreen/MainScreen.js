@@ -9,6 +9,7 @@ import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
 
+
 const Container = styled(BaseContainer)`
   color: white;
   text-align: center;
@@ -67,7 +68,6 @@ class MainScreen extends React.Component {
       user: null,
       userId: localStorage.getItem("visited User"),
       users: null,
-      friends: localStorage.getItem("friends"),
       lobbies: null,
       lobby: null,
       lobbyId: localStorage.getItem("lobbyId"),
@@ -117,9 +117,11 @@ class MainScreen extends React.Component {
     // Get specific user
     this.getUser()
 
+
     try {
       const response = await api.get('/users');
       this.setState({ users: response.data });
+
 
       const responseLobby = await api.get('/lobbies');
       this.setState({lobbies: responseLobby.data});
@@ -195,6 +197,7 @@ class MainScreen extends React.Component {
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
             <Button
+                style={{marginTop:18+"px"}}
                 onClick={() => {this.go_to_profile(this.state.user)}}
             >View Profile</Button>
 

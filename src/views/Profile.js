@@ -45,7 +45,7 @@ const Profile = ({ user }) => {
         <Name> Online Status: {user.status}</Name>
       </Ingrid>
       <Ingrid>
-        <Name> Creation Date: {user.creation_date}</Name>
+        <Name> Creation Date: {user.creationDate}</Name>
       </Ingrid>
       <Ingrid>
         <Name>Birth Date: {user.birth_date ? user.birth_date: "-"} </Name>

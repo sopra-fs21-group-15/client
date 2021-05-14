@@ -10,8 +10,8 @@ class User {
     this.token = null;
     this.status = null;
     this.birth_date = null; //added birth date
-    this.creation_date = null; //added creation date
-    this.friends = data.friends;
+    this.creationDate = null; //added creation date
+    this.friendsList = data.friendsList;
     Object.assign(this, data);
   }
 
