@@ -35,8 +35,8 @@ const MessageBody = styled.p`
 const Message = ({ message }) => {
   return (
     <Container>
-      <Sender>{message.sender}</Sender>
-      <Timestamp>({message.timestamp})</Timestamp>
+      <Sender>{message.writerName}</Sender>
+      <Timestamp>({message.timeStamp})</Timestamp>
       <MessageBody>{message.message}</MessageBody>
     </Container>
   );

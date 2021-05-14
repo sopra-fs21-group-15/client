@@ -11,6 +11,8 @@ import Game from "../shared/models/Game";
 import { HR } from '../../views/design/HR.js';
 import { Label } from '../../views/design/Label.js';
 import { InputField } from '../../views/design/InputField.js';
+import { Chatbox } from '../../views/design/Chatbox.js';
+import { Messages } from '../../views/design/Messages.js';
 
 
 const Users = styled.ul`
@@ -43,24 +45,6 @@ const Sidebar = styled.div`
   padding: 0px 5px;
   text-align: center;
   overflow-y: auto;
-`;
-
-const Chatbox = styled.div`
-`;
-
-const Messages = styled.ul`
-  background: white;
-  height: 250px;
-  list-style-type: none;
-  list-style-position: outside;
-  padding: 0px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  border-radius: 8px;
-
-  display: flex;
-  flex-direction: column-reverse;
-
 `;
 
 const H1 = styled.h1`
@@ -105,6 +89,7 @@ const Timer = styled.div`
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
 `;
+
 const Scoreboard = styled.div`
     position: absolute;
     width:190px ;
@@ -120,6 +105,7 @@ const Scoreboard = styled.div`
 
 
 `;
+
 const Scoreboardlabel = styled.label`
     font-size: 25px;
     font-variant: small-caps;
@@ -223,7 +209,7 @@ class DrawScreen extends React.Component {
       "#ffffff"
       ];
 
-    let messages = [ {"sender": "niklassc", "timestamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"sender": "example_user", "timestamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"sender": "niklassc", "timestamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
+    let messages = [ {"writerName": "niklassc", "timeStamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"writerName": "example_user", "timeStamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"writerName": "niklassc", "timeStamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
 
     this.state = {
       game_id: localStorage.getItem('gameId'),
@@ -231,22 +217,28 @@ class DrawScreen extends React.Component {
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
+      loginId: localStorage.getItem('loginId'),
       hint: "A__b_c_", // Will contain some letters and underscores
+      username: localStorage.getItem('username'),
+      users: "",
+      word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
+      word: "", // Word that has to be drawn (Drawer mode)
+      roundend: false,
+
+      // Draw + Canvas related
       canvas_width: 854,
       canvas_height: 480,
       draw_colour: "#ffffff",
       draw_size: 5,
       mouse_down: false, // stores whether the LEFT mouse button is down
-      loginId: localStorage.getItem('loginId'),
-      username: localStorage.getItem('username'),
-      chat_message: "", // Value of the chat input field
-      users: "",
-      messages, // JSON of all chat messages
-      timestamp_last_message: 0,
+
+      // Draw instructions
       timestamp_last_draw_instruction: "1900-01-01 00:00:00:000", // Time of the last draw instruction that was received (guesser mode)
-      word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
-      word: "", // Word that has to be drawn (Drawer mode)
-      roundend: false
+
+      // Chat
+      chat_message: "", // Value of the chat input field
+      messages, // JSON of all chat messages
+      timestamp_last_message: "1900-01-01 00:00:00:000", // Time of the last message that was received
     };
   }
 
@@ -356,7 +348,7 @@ class DrawScreen extends React.Component {
       console.log("requestBody", requestBody);
       await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
     } catch (error) {
-      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
+      this.errorInChat(`Something went wrong while sending the draw-Instruction: \n${handleError(error)}`);
     }
   }
 
@@ -408,7 +400,7 @@ class DrawScreen extends React.Component {
         else
           this.setState({ owner: false, drawer: false });
       } catch (error) {
-        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while fetching the game-info: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while fetching the game-info: \n${handleError(error)}`);
       }
     }, 5000);
     this.setState({ interval_game_info });
@@ -433,7 +425,7 @@ class DrawScreen extends React.Component {
         let messages = this.state.messages.concat(response);
         this.setState({ timestamp_last_message, messages });
       } catch (error) {
-        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
     }, 50000);
     this.setState({ interval_chat });
@@ -471,7 +463,7 @@ class DrawScreen extends React.Component {
         });
 
       } catch(error) {
-        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the draw-instructions: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
       }
       this.setState({ interval_draw_instructions });
 
@@ -505,8 +497,12 @@ class DrawScreen extends React.Component {
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
     } catch (error) {
-      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the chat message: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while sending the chat-message: \n${handleError(error)}`);
     }
+  }
+
+  errorInChat(errMsg) {
+    this.state.messages.push({"writerName": "SYSTEM", "timeStamp": this.getCurrentDateString(), message: errMsg});
   }
 
   download_image() {
