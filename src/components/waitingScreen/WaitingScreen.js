@@ -112,12 +112,12 @@ class waitingScreen extends React.Component {
         const response = await api.post(url, requestBody);
 
 
-        console.log("response.data", response.data);
-        console.log("response.data.messages.length", response.data.messages.length);
-        console.log("response.data.messages[0].timestamp", response.data.messages[0].timeStamp);
-        console.log("response.data.messages[response.data.messages.length -1].timeStamp", response.data.messages[response.data.messages.length -1].timeStamp);
 
         // Set timestamp_last_message
+        if(response.data.messages.length == 0)
+          return;
+
+        console.log("response.data", response.data);
         let timestamp_last_message = response.data.messages[response.data.messages.length -1].timeStamp;
         let messages = this.state.messages.concat(response.data.messages);
         this.setState({ timestamp_last_message, messages });
@@ -190,11 +190,11 @@ class waitingScreen extends React.Component {
         writerName: this.state.username
       });
 
-      console.log("url", url);
-      console.log("requestBody", requestBody);
 
       /** await the confirmation of the backend **/
       const url = '/lobbies/' + this.state.lobbyId +'/chats';
+      console.log("url", url);
+      console.log("requestBody", requestBody);
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
 
@@ -278,7 +278,7 @@ class waitingScreen extends React.Component {
           <FloatRight>
           <FormContainer>
           <Label>Lobbyname</Label>
-          <h2>{this.state.lobby.lobbyname}</h2>
+          <h2>{this.state.lobby.lobbyname} (#{this.state.lobbyId})</h2>
           <Label>Gamemode</Label>
             <SelectField id="form_gamemode" disabled={this.state.disabled} onChange={e => {this.handleInputChange("gamemode", e.target.value);}}>
               <option value={this.state.gamemode}>{this.state.gamemode}</option>
@@ -334,5 +334,5 @@ class waitingScreen extends React.Component {
     );
   }
 }
-
 export default withRouter(waitingScreen);
+
