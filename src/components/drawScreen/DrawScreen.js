@@ -526,6 +526,24 @@ class DrawScreen extends React.Component {
     this.setState({ word_options: null });
   }
 
+  async leaveGame() {
+    if(!window.confirm("Are you sure you want to leave the game?"))
+      return;
+
+    try {
+      const requestBody = JSON.stringify({
+        username: localStorage.getItem('username')
+      });
+
+      // const url = '/lobbies/' + this.state.lobbyId +'/leavers';
+      // await api.put(url, requestBody);
+
+    } catch(error) {
+      alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
+    }
+    this.props.history.push(`/game`);
+  }
+
   render() {
     return ([
       // Lobby list
@@ -536,8 +554,6 @@ class DrawScreen extends React.Component {
       <Hint>{this.state.hint}</Hint>,
       <Sidebar>
         <H1 onClick={this.changeColour}>Tools</H1>
-        <HR />
-
         {this.state.drawer ? ([
           <ColoursContainer>
               {this.colours.map(colour => {
@@ -546,18 +562,16 @@ class DrawScreen extends React.Component {
                 );
               })},
           </ColoursContainer>,
-          <HR/>,
           <Label>Size</Label>,
           <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />,
-          <HR/>,
           <Button onClick={() => {this.fillCanvas()}}>Fill</Button>,
           <Button onClick={() => {this.resetCanvas()}}>Clear</Button>,
-          <HR/>
         ]) : ( "" )}
 
         <Button onClick={() => {this.download_image()}}>Download image</Button>
         <HR/>
         <BrushPreview ref={this.brushPreview}/>
+        <HR/>
         <Chatbox>
           <Messages>
             {this.state.messages.slice(0).reverse().map(message => {
@@ -574,10 +588,10 @@ class DrawScreen extends React.Component {
             <Button onClick={() => {this.send_message()}} >Send</Button>
           }
         </Chatbox>
+        <Button onClick={() => {this.leaveGame()}}>Leave Game</Button>
       </Sidebar>,
       <Scoreboard>
       <Scoreboardlabel>Scoreboard</Scoreboardlabel>
-      <HR/>
       {!this.state.users ? (
         <Spinner />
       ):(
