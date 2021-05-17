@@ -13,7 +13,6 @@ import { Legend } from '../../views/design/Legend.js';
 import { InputField } from '../../views/design/InputField.js';
 import { OneLineBlock } from '../../views/design/OneLineBlock.js';
 import { SelectField } from '../../views/design/SelectField.js';
-import Player from '../../views/Player';
 import { Chatbox } from '../../views/design/Chatbox.js';
 import { Messages } from '../../views/design/Messages.js';
 import Message from '../../views/Message';
@@ -44,7 +43,7 @@ const FloatRight = styled.div`
   width: 50%;
 `;
 
-class waitingScreen extends React.Component {
+class WaitingScreen extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -169,12 +168,10 @@ class waitingScreen extends React.Component {
     if (milliseconds < 100) milliseconds = "0" + milliseconds;
     if (milliseconds < 10) milliseconds = "0" + milliseconds;
 
-    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
-
-    return dateString;
+    return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
   }
 
-  async send_message() {
+  async sendMessage() {
     let timeStamp = this.getCurrentDateString();
 
     try {
@@ -186,7 +183,7 @@ class waitingScreen extends React.Component {
 
       /** await the confirmation of the backend **/
       const url = '/lobbies/' + this.state.lobbyId +'/chats';
-      const response = await api.put(url, requestBody);
+      await api.put(url, requestBody);
       this.setState({ chat_message: "" });
     } catch (error) {
       this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the chat message: \n${handleError(error)}`});
@@ -208,18 +205,6 @@ class waitingScreen extends React.Component {
     this.props.history.push(`/game`);
 
   }
-
-  remove_player(user){
-    var a = user.id;
-    var users = this.state.lobby.members;
-    for (var i=0; i<users.length;i++){
-      if (a===users[i].id){
-        var kick = users[i]; // send this user to the backend
-        // Api-Call to the backend to kick the user
-      }
-    }
-  }
-
 
   handleInputChange(key, value) {
     // Example: if the key is username, this statement is the equivalent to the following one:
@@ -255,9 +240,9 @@ class waitingScreen extends React.Component {
 
             <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
             { this.state.chat_message === "" ?
-              <Button disabled onClick={() => {this.send_message()}} >Send</Button>
+              <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
               :
-              <Button onClick={() => {this.send_message()}} >Send</Button>
+              <Button onClick={() => {this.sendMessage()}} >Send</Button>
             }
           </Chatbox>
           </FloatLeft>
@@ -321,5 +306,5 @@ class waitingScreen extends React.Component {
     );
   }
 }
-export default withRouter(waitingScreen);
+export default withRouter(WaitingScreen);
 
