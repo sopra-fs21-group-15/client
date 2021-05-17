@@ -105,19 +105,13 @@ class waitingScreen extends React.Component {
         });
         const url = '/lobbies/' + this.state.lobbyId + '/chats'
 
-        console.log("url", url);
-        console.log("requestBody", requestBody);
-
         /** await the confirmation of the backend **/
         const response = await api.post(url, requestBody);
 
-
-
         // Set timestamp_last_message
-        if(response.data.messages.length == 0)
+        if(response.data.messages.length === 0)
           return;
 
-        console.log("response.data", response.data);
         let timestamp_last_message = response.data.messages[response.data.messages.length -1].timeStamp;
         let messages = this.state.messages.concat(response.data.messages);
         this.setState({ timestamp_last_message, messages });
@@ -190,17 +184,10 @@ class waitingScreen extends React.Component {
         writerName: this.state.username
       });
 
-
       /** await the confirmation of the backend **/
       const url = '/lobbies/' + this.state.lobbyId +'/chats';
-      console.log("url", url);
-      console.log("requestBody", requestBody);
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
-
-
-      console.log("response", response);
-
     } catch (error) {
       this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the chat message: \n${handleError(error)}`});
     }

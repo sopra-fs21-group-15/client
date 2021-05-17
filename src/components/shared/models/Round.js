@@ -2,7 +2,7 @@
  * Round Model
  */
 
-class Game{
+class Round {
   status;
   constructor(data= {}) {
     this.drawerName = data.drawerName;
