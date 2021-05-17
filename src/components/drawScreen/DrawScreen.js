@@ -210,8 +210,6 @@ class DrawScreen extends React.Component {
       "#ffffff"
       ];
 
-    let messages = [ {"writerName": "niklassc", "timeStamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"writerName": "example_user", "timeStamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"writerName": "niklassc", "timeStamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
-
     this.state = {
       game_id: localStorage.getItem('gameId'),
       game: null, // Game object, regularly fetched from backend
@@ -239,7 +237,7 @@ class DrawScreen extends React.Component {
 
       // Chat
       chat_message: "", // Value of the chat input field
-      messages, // JSON of all chat messages
+      messages: [], // JSON of all chat messages
       timestamp_last_message: "1900-01-01 00:00:00:000", // Time of the last message that was received
     };
   }
@@ -422,6 +420,7 @@ class DrawScreen extends React.Component {
     // Regularly fetch round info
     let intervaleRoundInfo = setInterval(async () => {
       try {
+        console.log("TEST");
         const response = await api.get('/games/' + this.state.game_id + "/update");
         console.log("ROUND", response.data);
 
@@ -429,39 +428,43 @@ class DrawScreen extends React.Component {
         this.setState({ round });
 
         // Set drawer
-        if(this.state.username === this.state.round.drawerName) {
+        if(this.state.username === this.state.round.drawerName)
           this.setState({ drawer: true, hint: round.word });
-        }
+        else
+          this.setState({ drawer: false, hint: "_____" });
+        console.log("TEST");
       } catch (error) {
         this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
     }, 5000);
     this.setState({ intervaleRoundInfo });
 
+
     // Regularly poll the chat
-    let interval_chat = setInterval(async () => {
+    let intervalChat = setInterval(async () => {
       try {
         const requestBody = JSON.stringify({
-          user_id: this.state.loginId,
-          game_id: this.state.game_id,
-          timestamp: this.state.timestamp_last_message
+          timeStamp: this.state.timestamp_last_message
         });
+        const url = '/games/' + this.state.game_id + '/chats'
 
         /** await the confirmation of the backend **/
-        const url = '/game/' + this.state.game_id + '/length'
-        const response = await api.get(url, requestBody);
+        const response = await api.post(url, requestBody);
 
         // Set timestamp_last_message
-        let timestamp_last_message = response[response.lenght -1].timestamp;
+        if(response.data.messages.length === 0)
+          return;
 
-        // Add new messages to our chat
-        let messages = this.state.messages.concat(response);
+        console.log("CHATPOLL request", requestBody);
+
+        let timestamp_last_message = response.data.messages[response.data.messages.length -1].timeStamp;
+        let messages = this.state.messages.concat(response.data.messages);
         this.setState({ timestamp_last_message, messages });
       } catch (error) {
         this.errorInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
-    }, 50000);
-    this.setState({ interval_chat });
+    }, 2000);
+    this.setState({ intervalChat });
 
     // Regularly pull draw instructions (guesser mode)
     let interval_draw_instructions = setInterval(async () => {
@@ -514,24 +517,28 @@ class DrawScreen extends React.Component {
     // Clear all intervals
     clearInterval(this.state.interval_countdown);
     clearInterval(this.state.interval_game_info);
-    clearInterval(this.state.interval_chat);
+    clearInterval(this.state.intervalChat);
     clearInterval(this.state.interval_draw_instructions);
     clearInterval(this.state.intervaleRoundInfo);
   }
 
-  async send_message() {
+  async sendMessage() {
+    let timeStamp = this.getCurrentDateString();
     try {
       const requestBody = JSON.stringify({
-        user_id: this.state.loginId,
-        game_id: this.state.game_id,
-        message: this.state.chat_message
+        timeStamp: timeStamp,
+        message: this.state.chat_message,
+        writerName: this.state.username
       });
+
       /** await the confirmation of the backend **/
-      const url = '/game/' + this.state.game_id +'/guess';
+      const url = '/games/' + this.state.game_id +'/chats';
+      console.log("SEND MESSAGE", url, requestBody);
       const response = await api.put(url, requestBody);
+      console.log("SEND MESSAGE RESPONSE", response);
       this.setState({ chat_message: "" });
     } catch (error) {
-        this.errorInChat(`Something went wrong while sending the chat-message: \n${handleError(error)}`);
+      this.errorInChat(`Something went wrong while sending the chat message: \n${handleError(error)}`);
     }
   }
 
@@ -624,9 +631,9 @@ class DrawScreen extends React.Component {
 
           <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
           { this.state.chat_message === "" ?
-            <Button disabled onClick={() => {this.send_message()}} >Send</Button>
+            <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
             :
-            <Button onClick={() => {this.send_message()}} >Send</Button>
+            <Button onClick={() => {this.sendMessage()}} >Send</Button>
           }
         </Chatbox>
         <Button onClick={() => {this.leaveGame()}}>Leave Game</Button>
