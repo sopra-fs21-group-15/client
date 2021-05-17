@@ -3,23 +3,21 @@ import styled from "styled-components";
 import { Button } from './design/Button';
 
 const Container = styled.div`
-  margin: 6px 0;
+  margin: 3px 0;
   width: 280px;
   padding: 10px;
   border-radius: 6px;
   display: flex;
   align-items: center;
-  border: 1px solid #ffffff26;
+  border: none;
 `;
 
-const FriendsName = styled.div`
+const UserName = styled.div`
   font-weight: lighter;
   margin-left: 5px;
   font-size: 17px;
-  padding-right: 60px;
-  
+  margin-right: auto;
 `;
-
 
 
 /**
@@ -31,11 +29,13 @@ const FriendsName = styled.div`
  * @FunctionalComponent
  */
 
-const Friends = ({ friends, f_onClick }) => {
+const Friends = ({ user, f_onClick }) => {
     return (
-        <Container onClick="f_onClick">
-            <FriendsName>{friends.name}</FriendsName>
-            { f_onClick ? <Button onClick={f_onClick}>View Profile</Button> : "" }
+        <Container>
+            <UserName>{user.username} {user.status==="ONLINE" ? "🟢" : user.status==="OFFLINE" ? "🔴": user.stats === "CHILLING" ? "😎" : "" }</UserName>
+            {f_onClick ? <Button
+                width={50+"px"}
+                onClick={f_onClick}>Profile</Button> : "" }
         </Container>
     );
 };

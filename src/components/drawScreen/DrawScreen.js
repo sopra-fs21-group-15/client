@@ -8,44 +8,22 @@ import { withRouter } from 'react-router-dom';
 import Colour from '../../views/Colour';
 import Message from '../../views/Message';
 import Game from "../shared/models/Game";
+import { HR } from '../../views/design/HR.js';
+import { Label } from '../../views/design/Label.js';
+import { InputField } from '../../views/design/InputField.js';
+
 
 const Users = styled.ul`
   list-style: none;
   padding-left: 0;
+`;
 
-`;
-const Blur = styled.div`
-position: absolute;
-top:0px;
-left: 0px;
-width: 100%;
-height: 100%;
-background: rgba(50, 50, 50, 0.5);
-z-index: 1;
-`;
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 45px;
-  width: 15%;
-`;
-const selection = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  top: 50%;
-  width: 15%;
-  left: 500px;
-  align-items: column;
-`;
 const Canvas = styled.canvas`
   position: absolute;
-
   // Place not in the middle of the whole screen but in middle of what is left
   // when you substract the sidebar-width.
   left: calc(57.5% - 256px / 2);
   transform: translateX(-50%);
-
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
 `;
@@ -85,13 +63,6 @@ const Messages = styled.ul`
 
 `;
 
-const HR = styled.hr`
-  color: rgba(255, 255, 255, 0.1);
-  width 90%;
-  margin-top: 1em;
-  margin-bottom: 1em;
-`;
-
 const H1 = styled.h1`
   color: white;
   font-variant: small-caps;
@@ -112,26 +83,6 @@ const ColoursContainer = styled.div`
   grid-template-columns: repeat(auto-fill, 32px);
 
   // background: rgba(255, 0, 0, 0.3);
-`;
-
-const Label = styled.label`
-  color: #999999;
-  margin-bottom: 10px;
-  font-variant: small-caps;
-`;
-
-const InputField = styled.input`
-  &::placeholder {
-    color: black;
-  }
-  height: 35px;
-  padding-left: 15px;
-  margin: 12px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 1);
-  color: black;
 `;
 
 const Timer = styled.div`
@@ -292,7 +243,7 @@ class DrawScreen extends React.Component {
       users: "",
       messages, // JSON of all chat messages
       timestamp_last_message: 0,
-      timestamp_last_draw_instruction: "1900-01-01 00:00:00", // Time of the last draw instruction that was received (guesser mode)
+      timestamp_last_draw_instruction: "1900-01-01 00:00:00:000", // Time of the last draw instruction that was received (guesser mode)
       word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
       word: "", // Word that has to be drawn (Drawer mode)
       roundend: false
@@ -329,7 +280,7 @@ class DrawScreen extends React.Component {
   }
 
   changeColour(colour) {
-    this.setState({ ['draw_colour']: colour });
+    this.setState({ draw_colour: colour });
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.strokeStyle = colour;
@@ -338,7 +289,7 @@ class DrawScreen extends React.Component {
   }
 
   changeSize(size) {
-    this.setState({ ['draw_size']: size });
+    this.setState({ draw_size: size });
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.lineWidth = size;
@@ -383,7 +334,11 @@ class DrawScreen extends React.Component {
     let seconds = date.getSeconds();
     if (seconds < 10) seconds = "0" + seconds;
 
-    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+    let milliseconds = date.getMilliseconds();
+    if (milliseconds < 100) milliseconds = "0" + milliseconds;
+    if (milliseconds < 10) milliseconds = "0" + milliseconds;
+
+    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
 
     return dateString;
   }
@@ -391,10 +346,10 @@ class DrawScreen extends React.Component {
   async sendDrawInstruction(x, y, size, colour) {
     try {
       const requestBody = JSON.stringify({
-        username: this.state.username,
+        // username: this.state.username,
         x: Math.round(x),
         y: Math.round(y),
-        timestamp: this.getCurrentDateString(),
+        // timeString: this.getCurrentDateString(),
         size: size,
         colour: colour
       });
@@ -410,15 +365,17 @@ class DrawScreen extends React.Component {
     if(!this.state.drawer)
       return;
 
-    if(button == 0) {
+    if(button === 0) {
       let ctx = this.mainCanvas.current.getContext('2d');
       this.setState({ mouse_down: true });
       ctx.beginPath();
+      if(this.state.game && this.state.drawer)
+        this.sendDrawInstruction(-2, -2, -2, "#FF0000");
     }
   }
 
   canvas_onMouseUp(button) {
-    if(button == 0)
+    if(button === 0)
       this.setState({ mouse_down: false });
   }
 
@@ -446,7 +403,7 @@ class DrawScreen extends React.Component {
         this.setState({ game });
 
         // Set owner
-        if(this.state.username == this.state.game.members[0])
+        if(this.state.username === this.state.game.members[0])
           this.setState({ owner: true, drawer: true });
         else
           this.setState({ owner: false, drawer: false });
@@ -488,18 +445,20 @@ class DrawScreen extends React.Component {
         return;
       try {
         const requestBody = JSON.stringify({
-          timeStamp: this.state.timestamp_last_draw_instruction
+          timeString: this.state.timestamp_last_draw_instruction
         });
         const response = await api.post('/games/' + this.state.game_id +'/drawing', requestBody);
 
         let timestamp_last_draw_instruction;
         let ctx = this.mainCanvas.current.getContext('2d');
-        ctx.beginPath();
         response.data.forEach(instr => {
-          // Fill/Clear Instructions have x = -1
-          if(instr.x == -1) {
+          if(instr.x === -1) {
+            // Fill/Clear-instructions have x = -1
             this.setState({ draw_colour: instr.colour });
             this.fillCanvas();
+          } else if(instr.x === -2) {
+            // LineBegin-instructions have x = -2
+            ctx.beginPath();
           } else {
             // Normal draw instructions
             ctx.lineWidth = instr.size;
@@ -595,12 +554,12 @@ class DrawScreen extends React.Component {
           <Label>Size</Label>,
           <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />,
           <HR/>,
-          <Button width="40%" onClick={() => {this.fillCanvas()}}>Fill</Button>,
-          <Button width="40%" onClick={() => {this.resetCanvas()}}>Clear</Button>,
+          <Button onClick={() => {this.fillCanvas()}}>Fill</Button>,
+          <Button onClick={() => {this.resetCanvas()}}>Clear</Button>,
           <HR/>
         ]) : ( "" )}
 
-        <Button width="80%" onClick={() => {this.download_image()}}>Download image</Button>
+        <Button onClick={() => {this.download_image()}}>Download image</Button>
         <HR/>
         <BrushPreview ref={this.brushPreview}/>
         <Chatbox>
@@ -613,13 +572,11 @@ class DrawScreen extends React.Component {
           </Messages>
 
           <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
-          { this.state.chat_message == "" ?
-
-            <Button disabled width="40%" onClick={() => {this.send_message()}} >Send</Button>
+          { this.state.chat_message === "" ?
+            <Button disabled onClick={() => {this.send_message()}} >Send</Button>
             :
-            <Button width="40%" onClick={() => {this.send_message()}} >Send</Button>
+            <Button onClick={() => {this.send_message()}} >Send</Button>
           }
-
         </Chatbox>
       </Sidebar>,
       <Scoreboard>

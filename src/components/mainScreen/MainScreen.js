@@ -10,15 +10,6 @@ import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
 
 
-const Container = styled(BaseContainer)`
-  color: white;
-  text-align: center;
-  background: rgba(50, 50, 50, 0.9);
-  border-radius: 10px;
-  padding: 50px;
-  margin-top: 50px;
-`;
-
 const FriendsListContainer = styled.div`
   float: right;
   padding-left: 35px; 
@@ -36,14 +27,12 @@ const ListsContainer = styled.div`
   max-height: 300px;
 `;
 
-
 const Users = styled.ul`
   list-style: none;
   padding-left: 0;
   padding-bottom: 10px;
   max-height: 250px;
   overflow-y: auto;
-  
 `;
 
 const PlayerContainer = styled.li`
@@ -162,13 +151,11 @@ class MainScreen extends React.Component {
   render() {
     return (
       // Lobby list
-      <Container>
+      <BaseContainer>
           <ListsContainer>
         {!this.state.lobbies ? (
           <Spinner />
-        )
-        :
-        (
+        ):(
           <LobbylistContainer>
             <h2>Lobbies</h2>
             <Lobbies>
@@ -178,30 +165,26 @@ class MainScreen extends React.Component {
                 );
               })}
             </Lobbies>
-            <Button
-                onClick={() => {
-                  this.createLobby();
-                }}
-            >
+            <Button onClick={() => {this.createLobby();}}>
               Create Lobby
             </Button>
           </LobbylistContainer>
         )}
           {!this.state.users || !this.state.user ? (
             <Spinner />
-          )
-          :
-          (
-              // User and his FriendsList
-              //
+          ):(
+          // User and his FriendsList
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
+
             <Button
-                style={{marginTop:18+"px"}}
+                style={{marginTop:38+"px"}}
                 onClick={() => {this.go_to_profile(this.state.user)}}
             >View Profile</Button>
 
-            <h2 style={{marginTop:41+"px"}}>Registered Users</h2>
+
+
+            <h2 style={{marginTop:"41px"}}>Registered Users</h2>
             <Users>
               {this.state.users.map(user => {
                 return (
@@ -211,19 +194,10 @@ class MainScreen extends React.Component {
                 );
               })}
             </Users>
-            <Button
-                width="55%"
-                onClick={() => {
-                  this.logout();
-                }}
-            >
-              Logout
-            </Button>
-            </FriendsListContainer>
-
-          )}
-          </ListsContainer>
-      </Container>
+            <Button onClick={() => { this.logout(); }} > Logout </Button>
+            </FriendsListContainer> )}
+      </ListsContainer>
+      </BaseContainer>
 
     );
   }

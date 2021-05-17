@@ -7,112 +7,38 @@ import Game from "../shared/models/Game";
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
+import { FormContainer } from '../../views/design/FormContainer.js';
+import { Label } from '../../views/design/Label.js';
+import { Legend } from '../../views/design/Legend.js';
+import { InputField } from '../../views/design/InputField.js';
+import { OneLineBlock } from '../../views/design/OneLineBlock.js';
+import { SelectField } from '../../views/design/SelectField.js';
 
-const Container = styled(BaseContainer)`
-  color: white;
-  text-align: center;
-  background: rgba(50, 50, 50, 0.9);
-  border-radius: 10px;
-  padding: 50px;
-`;
-const Layout = styled.div`
-    display:flex;
-    flex-direction:row;
-    position:relative;
-  `;
-const UserlistContainer = styled.div`
-    list-style: none;
-    padding-left: 40px;
-    padding-right: 340px;
+
+
+const PlayerUl = styled.ul`
 `;
 
-const PlayerContainer = styled.li`
+const PlayerLi = styled.li`
+  border: 1px solid grey;
+  border-radius: 7px;
+  padding: 7px;
+  margin-bottom: 12px;
+  width: 25%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
-const LobbyinformationContainer = styled.div`
-  position: absolute
+
+const FloatLeft = styled.div`
+  width: 50%;
+  float: left;
+`;
+
+const FloatRight = styled.div`
   float: right;
-  right:50px;
-`;
-const Lobbyinformation = styled.li`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: right;
-`;
-
-const FormContainer = styled.div`
-  margin-top: 2em;
-  display: flex;
-  flex-direction: column;
-  align-items: right;
-  min-height: 300px;
-  justify-content: right;
-`;
-
-const OneLineBlock = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const Form = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 60%;
-  height: 375px;
-  font-size: 16px;
-  font-weight: 300;
-  padding-left: 37px;
-  padding-right: 37px;
-  border-radius: 5px;
-  background: linear-gradient(rgb(255,255,255), rgb(180, 190, 200));
-  transition: opacity 0.5s ease, transform 0.5s ease;
-`;
-
-const InputField = styled.input`
-  &::placeholder {
-    color: black;
-  }
-  height: 35px;
-  padding-left: 15px;
-  margin: 12px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 1);
-  color: black;
-`;
-
-const SelectField = styled.select`
-  &::placeholder {
-    color: black;
-  }
-  height: 35px;
-  padding-left: 15px;
-  margin-left: -4px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 1);
-  color: black;
-`;
-
-const Label = styled.label`
-  color: #999999;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  width: 100%;
+  width: 50%;
 `;
 
 class waitingScreen extends React.Component {
@@ -125,8 +51,6 @@ class waitingScreen extends React.Component {
         lobby: null,
         gamemode: "Classic",
         owner: false,
-        testmode:false,
-
     };
     }
 
@@ -224,53 +148,34 @@ class waitingScreen extends React.Component {
   render() {
     return (
       // Lobby list
-      <Container>
-        <FormContainer>
-          <h2>Chill Area</h2>
-          <hr width="100%" />
-          <Layout>
+      <BaseContainer>
+          <Legend>Chill Area</Legend>
           {!this.state.lobby ? (
             <Spinner />
           ):(
-            <UserlistContainer>
+            <div style={{overflow: "auto"}} >
+            <FloatLeft>
             {this.state.lobby.members.map(user => {
               return(
-                <ul>
-                  <li>{user}</li>
-                </ul>
+                <PlayerUl>
+                  <PlayerLi>{user}</PlayerLi>
+                </PlayerUl>
               );
-              // return (
-              //   <PlayerContainer key={user.id}>
-              //   {this.state.owner ?
-              //     <WaitingPlayers user={user} /> //f_onClick={() => this.remove_player(user)} add when necessary
-              //   :
-              //     <WaitingPlayers user={user}/>}
-              //     </PlayerContainer>
-              // );
             })}
-            </UserlistContainer>
-          )}
-            {!this.state.lobby ? (
-                        <Spinner />
-                      ):(
-          <LobbyinformationContainer>
-          <Lobbyinformation>
+          </FloatLeft>
+          <FloatRight>
+          <FormContainer>
           <Label>Lobbyname</Label>
           <h2>{this.state.lobby.lobbyname}</h2>
           <Label>Gamemode</Label>
-
-          {this.state.testmode ?
             <SelectField id="form_gamemode" disabled={this.state.disabled} onChange={e => {this.handleInputChange("gamemode", e.target.value);}}>
               <option value={this.state.gamemode}>{this.state.gamemode}</option>
               <option value="Classic">Classic</option>
               <option value="Pokemon">Pokemon</option>
             </SelectField>
-          :
             <h2>{this.state.gamemode}</h2>
-          }
 
           <Label>Max. Players</Label>
-          {this.state.testmode ?
             <SelectField id="from_player" disabled={this.state.disabled} onChange={e => {this.handleInputChange("max_players", e.target.value);}}>
               <option value={this.state.lobby.size}>{this.state.lobby.size}</option>
               <option value="4">4</option>
@@ -281,12 +186,9 @@ class waitingScreen extends React.Component {
               <option value="9">9</option>
               <option value="10">10</option>
             </SelectField>
-          :
             <h2>{this.state.lobby.size}</h2>
-          }
 
           <Label>Rounds</Label>
-          {this.state.testmode ?
             <SelectField id="from_rounds" disabled={this.state.disabled} onChange={e => {this.handleInputChange("rounds", e.target.value);}}>
               <option value={this.state.lobby.rounds}>{this.state.lobby.rounds}</option>
               <option value="2">2</option>
@@ -297,35 +199,26 @@ class waitingScreen extends React.Component {
               <option value="7">7</option>
               <option value="8">8</option>
             </SelectField>
-          :
             <h2>{this.state.lobby.rounds}</h2>
-          }
 
           <Label>Private</Label>
           <OneLineBlock>
           <InputField id="form_private" type="checkbox" disabled={!this.state.owner} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
           {this.state.private ? (
-            this.state.testmode ?
+              <div><Label>Password: {this.state.lobby.password}</Label>
               <InputField id="form_password" placeholder="Password"  onChange={e => {this.handleInputChange('password', e.target.value);}}/>
-            :
-              <h2>Password: {this.state.lobby.password}</h2>
+              </div>
           ) : ""  }
           </OneLineBlock>
-          </Lobbyinformation>
-          </LobbyinformationContainer>
-
+            </FormContainer>
+            </FloatRight>
+            </div>
           )}
-          </Layout>
-          <hr width="100%" />
+        
 
-          <ButtonContainer>
-            <Button disabled={ !this.state.owner || (this.state.lobby && this.state.lobby.members.length < 2) } width="25%" onClick={() => {this.startgame();}}>Start the Game</Button>
-          </ButtonContainer>
-          <ButtonContainer>
-            <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
-          </ButtonContainer>
-        </FormContainer>
-      </Container>
+          <Button disabled={ !this.state.owner || (this.state.lobby && this.state.lobby.members.length < 2) } onClick={() => {this.startgame();}}>Start the Game</Button>
+          <Button onClick={() => {this.goback();}}>Back</Button>
+      </BaseContainer>
     );
   }
 }

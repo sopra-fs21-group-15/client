@@ -4,77 +4,13 @@ import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
 import User from '../shared/models/User';
 import { withRouter } from 'react-router-dom';
+import { InputField } from '../../views/design/InputField.js';
+import { Button } from '../../views/design/Button';
+import { FormContainer } from '../../views/design/FormContainer.js';
+import { Legend } from '../../views/design/Legend.js';
+import { Label } from '../../views/design/Label.js';
+import { HR } from '../../views/design/HR.js';
 
-
-const FormContainer = styled.div`
-  margin-top: 2em;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 300px;
-  justify-content: center;
-`;
-
-const Form = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 60%;
-  height: 375px;
-  font-size: 16px;
-  font-weight: 300;
-  padding-left: 37px;
-  padding-right: 37px;
-  border-radius: 5px;
-  background: linear-gradient(rgb(255,255,255), rgb(180, 190, 200));
-  transition: opacity 0.5s ease, transform 0.5s ease;
-`;
-
-const InputField = styled.input`
-  &::placeholder {
-    color: black;
-  }
-  height: 35px;
-  padding-left: 15px;
-  margin-left: -4px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 1);
-  color: black;
-`;
-const Button = styled.button`
-  &:hover {
-    transform: translateY(-2px);
-    color: black;
-  }
-  padding: 6px;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 13px;
-  text-align: center;
-  color: black;
-  width: ${props => props.width || null};
-  height: 35px;
-  border: none;
-  border-radius: 20px;
-  cursor: ${props => (props.disabled ? "default" : "pointer")};
-  opacity: ${props => (props.disabled ? 0.4 : 1)};
-  background: rgb(230, 238, 235);
-  transition: all 0.3s ease;
-`;
-
-const Label = styled.label`
-  color: black;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-`;
 
 /**
  * Classes in React allow you to have an internal state within the class and to have the React life-cycle for your component.
@@ -146,55 +82,18 @@ class Login extends React.Component {
   render() {
     return (
       <BaseContainer>
-
         <FormContainer>
-          <Form>
-            <h2> Login </h2>
-            <Label>Username</Label>
-            <InputField
-              placeholder="Please enter here.."
-              onChange={e => {
-                this.handleInputChange('username', e.target.value);
-              }}
-            />
-            <Label>Password</Label>
-            <InputField
-              placeholder="Please enter here.."
-              onChange={e => {
-                this.handleInputChange('password', e.target.value);
-              }}
-              type="password" /* Hide the password! But only in the login. */
-            />
-            <ButtonContainer>
-              <Button
-                disabled={!this.state.username || !this.state.password}
-                width="50%"
-                onClick={() => {
-                  this.login();
-                }}
-              >
-                Login
-              </Button>
-            </ButtonContainer>
-
-            {/* Added registration button...
-             Maybe change color, if I got time to...*/}
-            <ButtonContainer>
-             <Button
-               width="50%"
-               onClick={() => {
-               this.props.history.push("/registration");
-               /** go to the registration page **/
-               }}
-             >
-             Register
-             </Button>
-            </ButtonContainer>
-          </Form>
+          <Legend>Login</Legend>
+          <Label>Username</Label>
+          <InputField placeholder="Please enter here.." onChange={e => { this.handleInputChange('username', e.target.value); }} />
+          <Label>Password</Label>
+          <InputField placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} type="password" />
+          <HR/>
+          <Button disabled={!this.state.username || !this.state.password} onClick={() => { this.login(); }}>Login</Button>
+          <Button onClick={() => {this.props.history.push("/registration");}}>Register</Button>
         </FormContainer>
       </BaseContainer>
-    );
-  }
+    );  }
 }
 
 /**

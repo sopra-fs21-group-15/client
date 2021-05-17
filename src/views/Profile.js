@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 
+
 const Gridcontainer = styled.div`
   grid-template-columns: auto auto;
   grid-gap: 10px;
@@ -11,8 +12,8 @@ const Gridcontainer = styled.div`
 
 const Ingrid = styled.div`
   background-color: linear-gradient(rgb(27, 124, 186), rgb(2, 46, 101));
-  text-align: center;
-  padding: 20px 0;
+  text-align: left;
+  padding: 5px;
   font-size: 20px;
 `;
 
@@ -39,7 +40,7 @@ const Profile = ({ user }) => {
   return (
     <Gridcontainer>
       <Ingrid>
-          <Name>Username: {user.username} </Name>
+          <Name style={{marginTop:10+"px"}}>Username: {user.username} </Name>
       </Ingrid>
       <Ingrid>
         <Name> Online Status: {user.status}</Name>
@@ -50,6 +51,8 @@ const Profile = ({ user }) => {
       <Ingrid>
         <Name>Birth Date: {user.birth_date ? user.birth_date: "-"} </Name>
       </Ingrid>
+
+
     </Gridcontainer>
   );
 };

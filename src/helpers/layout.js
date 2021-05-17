@@ -7,8 +7,14 @@ export const SMALL_WIDTH = 768;
 
 export const BaseContainer = styled.div`
   margin-left: auto;
-  padding-left: 15px;
   margin-right: auto;
-  padding-right: 15px;
   max-width: ${DESKTOP_WIDTH}px;
+
+  justify-content: center;
+
+  color: white;
+  text-align: center;
+  background: rgba(50, 50, 50, 0.9);
+  border-radius: 10px;
+  padding: 50px;
 `;

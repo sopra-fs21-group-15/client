@@ -2,15 +2,52 @@ import React from 'react';
 import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
-import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
 import Profile from "../../views/Profile";
 
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+
+const Users = styled.div`
+  list-style: square;
+  padding-left: 0px;
+  padding-bottom: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+`;
+
+
+const Button = styled.button`
+  &:hover {
+    transform: translateY(-2px);
+  }
+  &:focus {
+    border-radius: 0px;
+    background: rgba(255, 255, 255, 1);
+  }
+
+  padding: 6px;
+  padding-left: 30px;
+  padding-right: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 13px;
+  text-align: center;
+  color: black;
+  width: ${props => props.width || null};
+  height: 35px;
+  border: none;
+  border-radius: 20px;
+  cursor: ${props => (props.disabled ? "default" : "pointer")};
+  opacity: ${props => (props.disabled ? 0.4 : 1)};
+  background: rgb(230, 238, 235);
+  transition: all 0.3s ease;
+  margin: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+  margin-top: 5px;
+  min-width: 200px;
+  width: 25%;
 `;
 
 const FormContainer = styled.div`
@@ -37,6 +74,22 @@ const Form = styled.div`
   color: black;
 `;
 
+const FriendsList = styled.li`
+  font-weight: bold;
+  color: black;
+  
+`;
+
+const FriendsListBox = styled.div`
+  margin: 3px 0;
+  width: 320px;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  border: 1px solid #ffffff70;
+  
+`;
+
 
 
 class ProfilePage extends React.Component {
@@ -48,14 +101,13 @@ class ProfilePage extends React.Component {
         loggedInUser: localStorage.getItem("loginId"), /** get the ID of the logged in user **/
         actualFriend: false,
         users: null,
-        myUser: null
+        myUser: null,
+        friends: []
 
     };
     this.getUser();
     this.getMyUser();
   }
-
-
 
   async getUser() {
     const url = '/users/' + this.state.userId;
@@ -74,14 +126,13 @@ class ProfilePage extends React.Component {
 
   }
 
-
+    // method to check if friend is actually my friend or not
   checkIfFriend(){
               if (this.state.myUser.friendsList.includes(this.state.user.username)) {
-                  this.setState({actualFriend: true})
-      }
+                  this.setState({actualFriend: true})}
               else this.setState({actualFriend: false})}
 
-
+   // method to add a friend
   async addFriends(){
       const requestBody = JSON.stringify({
           username: this.state.user.username
@@ -91,17 +142,10 @@ class ProfilePage extends React.Component {
       const response = await api.put(url,requestBody);
       const myUser = new User(response.data)
       this.setState({myUser:myUser})
-      //this.setState({actualFriend: true})
-      console.log("----------------")
       await this.checkIfFriend()
-      //console.log(user.friendsList.length)
-      //console.log(user.friendsList[1])
-      console.log(myUser.friendsList)
-      console.log(this.state.user)
-
 
   }
-
+    // method to remove friends
   async removeFriends(){
       const requestBody = JSON.stringify({
           username: this.state.user.username
@@ -110,13 +154,22 @@ class ProfilePage extends React.Component {
       const response = await api.put(url,requestBody);
       const myUser = new User(response.data)
       this.setState({myUser:myUser})
-      //this.setState({actualFriend: false})
       await this.checkIfFriend()
-      console.log("----------------")
-      console.log(myUser.friendsList)
-      console.log(this.state.user)
-
   }
+
+  displayFriends(){
+      for (let i = 0; i<this.state.myUser.friendsList.length; i++){
+          this.state.friends.push(this.state.myUser.friendsList[i])
+      }
+  }
+
+
+  go_to_profile(user) {
+        // set the id for the profile the user is visiting
+        localStorage.setItem("visited User", user.id);
+        // go to profile page
+        this.props.history.push("/game/dashboard/profilepage");
+    }
 
   // method to check if user is in my friendsList
     async componentDidMount() {
@@ -130,24 +183,25 @@ class ProfilePage extends React.Component {
             const myUser = new User(response2.data);
             this.setState({myUser : myUser})
 
+
+
         } catch (error) {
             alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
         }
 
         //console.log(this.state.myUser.friendsList)
-        //console.log(this.state.users[3].username)
+
 
         this.checkIfFriend()
+        this.displayFriends()
 
-
+        console.log(this.state.myUser.friendsList)
+        console.log(this.state.friends)
 
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
     this.getUser()
-
-
-
 
   }
 
@@ -160,8 +214,24 @@ class ProfilePage extends React.Component {
                         <center><h1><u>Profile Page</u></h1></center>
                         {this.state.user?
                         (<Profile user={this.state.user}/>): ("")}
-                        <ButtonContainer>
+                        {this.state.loggedInUser === this.state.userId ?
+                            <h2><u>Friends</u></h2> : ("")}
+                        {this.state.loggedInUser === this.state.userId ?(
+
+                            <Users>
+                        {this.state.friends.map(user => {
+                            return (
+                                <FriendsListBox>
+                                    <center><FriendsList>{user}</FriendsList></center>
+                                </FriendsListBox>
+                            )
+                        })}
+                            </Users>
+
+                            ):("")}
+
                             {this.state.loggedInUser === this.state.userId ?
+
                             <Button
                                 disabled={this.state.loggedInUser !== this.state.userId}
                                 width="100%"
@@ -187,9 +257,6 @@ class ProfilePage extends React.Component {
                                     add Friend
                                 </Button>
                             }
-                        </ButtonContainer>
-
-                        <ButtonContainer>
                         <Button
                             width="100%"
                             onClick={() => {
@@ -198,7 +265,6 @@ class ProfilePage extends React.Component {
                         >
                             Go back
                         </Button>
-                        </ButtonContainer>
                     </Form>
                 </FormContainer>
             </BaseContainer>
