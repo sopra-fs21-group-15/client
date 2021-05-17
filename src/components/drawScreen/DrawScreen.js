@@ -215,7 +215,7 @@ class DrawScreen extends React.Component {
     this.state = {
       game_id: localStorage.getItem('gameId'),
       game: null, // Game object, regularly fetched from backend
-      round: null, // Round object, regularly fetched from backend # TODO
+      round: null, // Round object, regularly fetched from backend
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
@@ -248,11 +248,11 @@ class DrawScreen extends React.Component {
     this.setState({ [key]: value });
   }
 
-  resetCanvas() {
+  async resetCanvas() {
     let draw_colour = this.state.draw_colour;
-    this.setState({ draw_colour: "#FFFFFF" }); // FIXME for some reason state cant be set here
+    await this.setState({ draw_colour: "#FFFFFF" });
     this.fillCanvas();
-    this.setState({ draw_colour });
+    await this.setState({ draw_colour });
   }
 
   fillCanvas() {
@@ -332,9 +332,7 @@ class DrawScreen extends React.Component {
     if (milliseconds < 100) milliseconds = "0" + milliseconds;
     if (milliseconds < 10) milliseconds = "0" + milliseconds;
 
-    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
-
-    return dateString;
+    return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
   }
 
   async sendDrawInstruction(x, y, size, colour) {
@@ -580,8 +578,8 @@ class DrawScreen extends React.Component {
         username: localStorage.getItem('username')
       });
 
-      // const url = '/lobbies/' + this.state.lobbyId +'/leavers';
-      // await api.put(url, requestBody);
+      const url = '/games/' + this.state.game_id +'/leavers';
+      await api.put(url, requestBody);
 
     } catch(error) {
       alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
