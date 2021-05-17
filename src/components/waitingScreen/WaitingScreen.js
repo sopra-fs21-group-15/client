@@ -75,14 +75,8 @@ class WaitingScreen extends React.Component {
 
       // Check if lobby is started, then go to draw screen
       if(this.state.lobby.status === "PLAYING") {
-        try {
-          const response = await api.get('/games/' + this.state.lobbyId + '/convert');
-          const game = new Game(response.data);
-          localStorage.setItem("gameId", game.id)
-          this.props.history.push(`/draw`)
-        } catch (error) {
-          alert(`Something went wrong during the redirection to the started game: \n${handleError(error)}`);
-        }
+        localStorage.setItem("gameId", this.state.lobbyId);
+        this.props.history.push(`/draw`)
       }
 
       /// Find out who is the owner of the Lobby

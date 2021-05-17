@@ -422,6 +422,7 @@ class DrawScreen extends React.Component {
     // Regularly fetch round info
     let intervaleRoundInfo = setInterval(async () => {
       try {
+        console.log("TEST");
         const response = await api.get('/games/' + this.state.game_id + "/update");
         console.log("ROUND", response.data);
 
@@ -429,9 +430,11 @@ class DrawScreen extends React.Component {
         this.setState({ round });
 
         // Set drawer
-        if(this.state.username === this.state.round.drawerName) {
+        if(this.state.username === this.state.round.drawerName)
           this.setState({ drawer: true, hint: round.word });
-        }
+        else
+          this.setState({ drawer: false, hint: "_____" });
+        console.log("TEST");
       } catch (error) {
         this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
@@ -445,7 +448,7 @@ class DrawScreen extends React.Component {
         const requestBody = JSON.stringify({
           timeStamp: this.state.timestamp_last_message
         });
-        const url = '/games/' + this.state.game_id + '/guess'
+        const url = '/games/' + this.state.game_id + '/chats'
 
         /** await the confirmation of the backend **/
         const response = await api.post(url, requestBody);
@@ -453,6 +456,8 @@ class DrawScreen extends React.Component {
         // Set timestamp_last_message
         if(response.data.messages.length === 0)
           return;
+
+        console.log("CHATPOLL request", requestBody);
 
         let timestamp_last_message = response.data.messages[response.data.messages.length -1].timeStamp;
         let messages = this.state.messages.concat(response.data.messages);
@@ -529,7 +534,8 @@ class DrawScreen extends React.Component {
       });
 
       /** await the confirmation of the backend **/
-      const url = '/games/' + this.state.game_id +'/guess';
+      const url = '/games/' + this.state.game_id +'/chats';
+      console.log("SEND MESSAGE", url, requestBody);
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
     } catch (error) {
