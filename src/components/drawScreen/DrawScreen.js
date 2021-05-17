@@ -8,6 +8,7 @@ import { withRouter } from 'react-router-dom';
 import Colour from '../../views/Colour';
 import Message from '../../views/Message';
 import Game from "../shared/models/Game";
+import Round from "../shared/models/Round";
 import { HR } from '../../views/design/HR.js';
 import { Label } from '../../views/design/Label.js';
 import { InputField } from '../../views/design/InputField.js';
@@ -214,11 +215,12 @@ class DrawScreen extends React.Component {
     this.state = {
       game_id: localStorage.getItem('gameId'),
       game: null, // Game object, regularly fetched from backend
+      round: null, // Round object, regularly fetched from backend # TODO
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
       loginId: localStorage.getItem('loginId'),
-      hint: "A__b_c_", // Will contain some letters and underscores
+      hint: "A__b_c_", // Shows hint for guessers, shows word for drawer
       username: localStorage.getItem('username'),
       users: "",
       word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
@@ -271,8 +273,8 @@ class DrawScreen extends React.Component {
     this.brushPreview.current.style.background = this.state.draw_colour;
   }
 
-  changeColour(colour) {
-    this.setState({ draw_colour: colour });
+  async changeColour(colour) {
+    await this.setState({ draw_colour: colour });
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.strokeStyle = colour;
@@ -280,8 +282,8 @@ class DrawScreen extends React.Component {
     this.updateBrushPreview();
   }
 
-  changeSize(size) {
-    this.setState({ draw_size: size });
+  async changeSize(size) {
+    await this.setState({ draw_size: size });
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.lineWidth = size;
@@ -345,7 +347,6 @@ class DrawScreen extends React.Component {
         size: size,
         colour: colour
       });
-      console.log("requestBody", requestBody);
       await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
     } catch (error) {
       this.errorInChat(`Something went wrong while sending the draw-Instruction: \n${handleError(error)}`);
@@ -371,9 +372,24 @@ class DrawScreen extends React.Component {
       this.setState({ mouse_down: false });
   }
 
+  async getRound() {
+    try {
+      const response = await api.get('/games/' + this.state.game_id + "/update");
+      console.log("ROUND", response.data);
+
+      let round = new Round(response.data);
+      this.setState({ round });
+
+    } catch (error) {
+      this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
+    }
+  }
+
   componentDidMount() {
     this.resetCanvas();
     this.updateBrushPreview();
+
+    this.getRound();
 
     // Words
     this.setState({ word_options: ["Apfel", "Mond", "Pikachu"] })
@@ -387,7 +403,7 @@ class DrawScreen extends React.Component {
     }, 1000);
     this.setState({ interval_countdown });
 
-    // Regularly fetch game info
+    // Regularly fetch game info # TODO mabye not needed any more
     let interval_game_info = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id);
@@ -396,14 +412,33 @@ class DrawScreen extends React.Component {
 
         // Set owner
         if(this.state.username === this.state.game.members[0])
-          this.setState({ owner: true, drawer: true });
+          this.setState({ owner: true });
         else
-          this.setState({ owner: false, drawer: false });
+          this.setState({ owner: false });
       } catch (error) {
         this.errorInChat(`Something went wrong while fetching the game-info: \n${handleError(error)}`);
       }
     }, 5000);
     this.setState({ interval_game_info });
+
+    // Regularly fetch round info
+    let intervaleRoundInfo = setInterval(async () => {
+      try {
+        const response = await api.get('/games/' + this.state.game_id + "/update");
+        console.log("ROUND", response.data);
+
+        let round = new Round(response.data);
+        this.setState({ round });
+
+        // Set drawer
+        if(this.state.username === this.state.round.drawerName) {
+          this.setState({ drawer: true, hint: round.word });
+        }
+      } catch (error) {
+        this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
+      }
+    }, 5000);
+    this.setState({ intervaleRoundInfo });
 
     // Regularly poll the chat
     let interval_chat = setInterval(async () => {
@@ -483,6 +518,7 @@ class DrawScreen extends React.Component {
     clearInterval(this.state.interval_game_info);
     clearInterval(this.state.interval_chat);
     clearInterval(this.state.interval_draw_instructions);
+    clearInterval(this.state.intervaleRoundInfo);
   }
 
   async send_message() {
@@ -521,9 +557,16 @@ class DrawScreen extends React.Component {
     }
   }
 
-  choose_word(word) {
+  async chooseWord(word) {
     this.setState({ word });
-    this.setState({ word_options: null });
+
+    try {
+      const url = '/games/' + this.state.game_id + '/choices/' + word;
+      await api.get(url);
+
+    } catch(error) {
+      alert(`Something went wrong while choosing the word: \n${handleError(error)}`)
+    }
   }
 
   async leaveGame() {
@@ -553,7 +596,7 @@ class DrawScreen extends React.Component {
       <Timer>{this.state.time_left}</Timer>,
       <Hint>{this.state.hint}</Hint>,
       <Sidebar>
-        <H1 onClick={this.changeColour}>Tools</H1>
+        <H1>Tools #{this.state.game_id}</H1>
         {this.state.drawer ? ([
           <ColoursContainer>
               {this.colours.map(colour => {
@@ -605,11 +648,11 @@ class DrawScreen extends React.Component {
       )}
       </Scoreboard>,
       <div>
-        {this.state.drawer && this.state.word_options ? (
+        {this.state.round && this.state.drawer && this.state.round.status === "SELECTING" ? (
           <Wordbox>
-            {this.state.word_options.map(word => {
+            {this.state.round.words.map(word => {
               return (
-                <Button onClick={() => this.choose_word(word)}>{word}</Button>
+                <Button onClick={() => this.chooseWord(word)}>{word}</Button>
               );
             })}
           </Wordbox>
