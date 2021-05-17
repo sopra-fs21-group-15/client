@@ -268,7 +268,6 @@ class DrawScreen extends React.Component {
   }
 
   updateBrushPreview() {
-    console.log(this.state.draw_colour);
     this.brushPreview.current.style.width = this.state.draw_size + "px";
     this.brushPreview.current.style.height = this.state.draw_size + "px";
     this.brushPreview.current.style.background = this.state.draw_colour;
