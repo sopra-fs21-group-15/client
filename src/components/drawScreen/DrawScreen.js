@@ -226,6 +226,7 @@ class DrawScreen extends React.Component {
       word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
       word: "", // Word that has to be drawn (Drawer mode)
       roundend: false,
+      drawInstructionBuffer: [], // Buffer of drawInstructions that will be sent to the backend
 
       // Draw + Canvas related
       canvas_width: 854,
@@ -304,7 +305,9 @@ class DrawScreen extends React.Component {
     y -= rect.top;
 
     // Send draw instruction to the backend
-    this.sendDrawInstruction(x, y, ctx.lineWidth, ctx.strokeStyle);
+    //this.sendDrawInstruction(x, y, ctx.lineWidth, ctx.strokeStyle);
+    // Add the drawInstruction to the send-buffer
+    let buffer = this.state.drawInstructionBuffer.push({x: x, y: y, size: ctx.lineWidth, colour: ctx.strokeStyle});
 
     ctx.lineTo(x, y);
     ctx.stroke();
@@ -465,6 +468,26 @@ class DrawScreen extends React.Component {
     }, 50000);
     this.setState({ interval_chat });
 
+
+    // Regularly pull draw instructions (guesser mode)
+    let intervalSendDrawInstructionBuffer = setInterval(async () => {
+      // Send the buffer of draw instructions (drawer mode)
+      if(!this.state.drawer)
+        return;
+      try {
+        const requestBody = JSON.stringify({
+          drawInstructions: this.state.drawInstructionBuffer
+        });
+        console.log("DrawInstructionSEND", requestBody);
+        await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
+
+        this.setState({ drawInstructionBuffer: [] });
+      } catch(error) {
+        this.errorInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
+      }
+    }, 3000);
+    this.setState({ intervalSendDrawInstructionBuffer });
+
     // Regularly pull draw instructions (guesser mode)
     let interval_draw_instructions = setInterval(async () => {
       // Poll draw instructions (guesser mode)
@@ -519,6 +542,7 @@ class DrawScreen extends React.Component {
     clearInterval(this.state.interval_chat);
     clearInterval(this.state.interval_draw_instructions);
     clearInterval(this.state.intervaleRoundInfo);
+    clearInterval(this.state.intervalSendDrawInstructionBuffer);
   }
 
   async send_message() {
