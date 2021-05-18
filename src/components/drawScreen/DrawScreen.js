@@ -420,7 +420,6 @@ class DrawScreen extends React.Component {
     // Regularly fetch round info
     let intervaleRoundInfo = setInterval(async () => {
       try {
-        console.log("TEST");
         const response = await api.get('/games/' + this.state.game_id + "/update");
         console.log("ROUND", response.data);
 
@@ -432,7 +431,6 @@ class DrawScreen extends React.Component {
           this.setState({ drawer: true, hint: round.word });
         else
           this.setState({ drawer: false, hint: "_____" });
-        console.log("TEST");
       } catch (error) {
         this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
@@ -448,14 +446,15 @@ class DrawScreen extends React.Component {
         });
         const url = '/games/' + this.state.game_id + '/chats'
 
-        /** await the confirmation of the backend **/
+        console.log("CHATPOLL request", requestBody);
         const response = await api.post(url, requestBody);
+        console.log("CHATPOLL reponse.data", response.data);
+
 
         // Set timestamp_last_message
         if(response.data.messages.length === 0)
           return;
 
-        console.log("CHATPOLL request", requestBody);
 
         let timestamp_last_message = response.data.messages[response.data.messages.length -1].timeStamp;
         let messages = this.state.messages.concat(response.data.messages);
@@ -608,7 +607,7 @@ class DrawScreen extends React.Component {
                 return (
                   <Colour colour={colour} f_onClick={() => {this.changeColour(colour)}} />
                 );
-              })},
+              })}
           </ColoursContainer>,
           <Label>Size</Label>,
           <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />,
