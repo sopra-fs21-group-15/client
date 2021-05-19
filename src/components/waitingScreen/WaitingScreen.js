@@ -246,7 +246,7 @@ class WaitingScreen extends React.Component {
           <Label>Lobbyname</Label>
           <h2>{this.state.lobby.lobbyname} (#{this.state.lobbyId})</h2>
           <Label>Gamemode</Label>
-            <SelectField id="form_gamemode" disabled={this.state.disabled} onChange={e => {this.handleInputChange("gamemode", e.target.value);}}>
+            <SelectField id="form_gamemode" disabled={!this.state.owner} onChange={e => {this.handleInputChange("gamemode", e.target.value);}}>
               <option value={this.state.gamemode}>{this.state.gamemode}</option>
               <option value="Classic">Classic</option>
               <option value="Pokemon">Pokemon</option>
@@ -254,7 +254,7 @@ class WaitingScreen extends React.Component {
             <h2>{this.state.gamemode}</h2>
 
           <Label>Max. Players</Label>
-            <SelectField id="from_player" disabled={this.state.disabled} onChange={e => {this.handleInputChange("max_players", e.target.value);}}>
+            <SelectField id="from_player" disabled={!this.state.owner} onChange={e => {this.handleInputChange("max_players", e.target.value);}}>
               <option value={this.state.lobby.size}>{this.state.lobby.size}</option>
               <option value="4">4</option>
               <option value="5">5</option>
@@ -267,7 +267,7 @@ class WaitingScreen extends React.Component {
             <h2>{this.state.lobby.size}</h2>
 
           <Label>Rounds</Label>
-            <SelectField id="from_rounds" disabled={this.state.disabled} onChange={e => {this.handleInputChange("rounds", e.target.value);}}>
+            <SelectField id="from_rounds" disabled={!this.state.owner} onChange={e => {this.handleInputChange("rounds", e.target.value);}}>
               <option value={this.state.lobby.rounds}>{this.state.lobby.rounds}</option>
               <option value="2">2</option>
               <option value="3">3</option>
