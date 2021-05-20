@@ -62,7 +62,7 @@ class Registration extends React.Component {
 
 
       // Registration successfully worked --> navigate to the route /game in the GameRouter
-      this.props.history.push(`/game`);
+      this.props.history.push(`/mainScreen`);
     } catch (error) {
       alert(`Something went wrong during the register: \n${handleError(error)}`);
       this.props.history.push(`/registration`); //redirect user to register page

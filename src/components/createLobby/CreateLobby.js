@@ -49,12 +49,12 @@ class CreateLobby extends React.Component {
     }
     catch (error){
       alert(`Something went wrong during the lobby creation: \n${handleError(error)}`);
-      this.props.history.push(`/game/dashboard`);
+      this.props.history.push(`/mainScreen`);
     }
   }
 
   goback() {
-    this.props.history.push(`/game`);
+    this.props.history.push(`/mainScreen`);
   }
 
   handleInputChange(key, value) {

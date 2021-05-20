@@ -23,8 +23,7 @@ const LobbylistContainer = styled.div`
 `;
 
 const ListsContainer = styled.div`
-  height: 300px;
-  max-height: 300px;
+  overflow: auto;
 `;
 
 const Users = styled.ul`
@@ -87,15 +86,18 @@ class MainScreen extends React.Component {
 
       localStorage.removeItem('token');
       localStorage.removeItem('loginId');
+      localStorage.removeItem('username');
       localStorage.removeItem('visited user');
       this.props.history.push('/login');
     }
-    //If you have not logout push the user to login page
     catch (error) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('loginId');
-      this.props.history.push(`/login`); //redirect user to game page
+      alert("Could not notify backend of logout");
     }
+    localStorage.removeItem('token');
+    localStorage.removeItem('loginId');
+    localStorage.removeItem('username');
+    localStorage.removeItem('visited user');
+    this.props.history.push('/login');
   }
 
   createLobby() {
@@ -144,7 +146,7 @@ class MainScreen extends React.Component {
     // set the id for the profile the user is visiting
     localStorage.setItem("visited User", user.id);
     // go to profile page
-    this.props.history.push("/game/dashboard/profilepage");
+    this.props.history.push("/profilePage");
   }
 
 
@@ -194,8 +196,8 @@ class MainScreen extends React.Component {
                 );
               })}
             </Users>
-            <Button onClick={() => { this.logout(); }} > Logout </Button>
             </FriendsListContainer> )}
+            <Button onClick={() => { this.logout(); }} > Logout </Button>
       </ListsContainer>
       </BaseContainer>
 

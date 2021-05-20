@@ -168,7 +168,7 @@ class ProfilePage extends React.Component {
         // set the id for the profile the user is visiting
         localStorage.setItem("visited User", user.id);
         // go to profile page
-        this.props.history.push("/game/dashboard/profilepage");
+        this.props.history.push("/profilePage");
     }
 
   // method to check if user is in my friendsList
@@ -227,7 +227,7 @@ class ProfilePage extends React.Component {
                                 width="100%"
                                 onClick={() => {
                                     localStorage.setItem("chosenUserEdit", this.state.userId);
-                                    this.props.history.push("/game/dashboard/profilepage/editprofile");
+                                    this.props.history.push("editProfile");
                                 }}
                             >
                                 Edit Profile
@@ -250,7 +250,7 @@ class ProfilePage extends React.Component {
                         <Button
                             width="100%"
                             onClick={() => {
-                                this.props.history.push("/game/dashboard");
+                                this.props.history.push("mainScreen");
                             }}
                         >
                             Go back

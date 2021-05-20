@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { ReactLogo } from "./ReactLogo";
 
 /**
  * Using styled-components you can visual HTML primitives and use props with it!

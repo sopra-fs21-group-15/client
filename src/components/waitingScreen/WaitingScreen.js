@@ -196,7 +196,7 @@ class WaitingScreen extends React.Component {
     } catch(error) {
       alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
     }
-    this.props.history.push(`/game`);
+    this.props.history.push(`/mainScreen`);
 
   }
 
