@@ -563,7 +563,7 @@ class DrawScreen extends React.Component {
 
   async chooseWord(word) {
     try {
-      const url = '/games/' + this.state.game_id + '/choices/' + this.state.username + '/' + this.state.words(word); // TODO change this.state.words to field of actual words
+      const url = '/games/' + this.state.game_id + '/choices/' + this.state.username + '/' + this.state.words.indexOf(word); // TODO change this.state.words to field of actual words
       await api.put(url);
     } catch(error) {
       alert(`Something went wrong while choosing the word: \n${handleError(error)}`)
