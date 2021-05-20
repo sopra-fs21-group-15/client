@@ -13,9 +13,9 @@ import { Legend } from '../../views/design/Legend.js';
 import { InputField } from '../../views/design/InputField.js';
 import { OneLineBlock } from '../../views/design/OneLineBlock.js';
 import { SelectField } from '../../views/design/SelectField.js';
-import { Chatbox } from '../../views/design/Chatbox.js';
-import { Messages } from '../../views/design/Messages.js';
-import Message from '../../views/Message';
+import Message from "../../views/Message";
+import {Chatbox} from "../../views/design/Chatbox";
+import {Messages} from "../../views/design/Messages";
 
 
 const PlayerUl = styled.ul`

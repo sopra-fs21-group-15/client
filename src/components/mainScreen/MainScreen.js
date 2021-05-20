@@ -9,6 +9,7 @@ import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
 
+
 const FriendsListContainer = styled.div`
   float: right;
   padding-left: 35px; 
@@ -56,7 +57,6 @@ class MainScreen extends React.Component {
       user: null,
       userId: localStorage.getItem("visited User"),
       users: null,
-      friends: null,
       lobbies: null,
       lobby: null,
       lobbyId: localStorage.getItem("lobbyId"),
@@ -106,9 +106,11 @@ class MainScreen extends React.Component {
     // Get specific user
     this.getUser()
 
+
     try {
       const response = await api.get('/users');
       this.setState({ users: response.data });
+
 
       const responseLobby = await api.get('/lobbies');
       this.setState({lobbies: responseLobby.data});
@@ -174,13 +176,19 @@ class MainScreen extends React.Component {
           // User and his FriendsList
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
-            <Button onClick={() => {this.go_to_profile(this.state.username)}} >View Profile</Button>
+
+            <Button
+                style={{marginTop:38+"px"}}
+                onClick={() => {this.go_to_profile(this.state.user)}}
+            >View Profile</Button>
+
+
 
             <h2 style={{marginTop:"41px"}}>Registered Users</h2>
             <Users>
               {this.state.users.map(user => {
                 return (
-                    <PlayerContainer key={user.id}>
+                    <PlayerContainer>
                       <Player user={user} f_onClick={() => this.go_to_profile(user)}/>
                     </PlayerContainer>
                 );
