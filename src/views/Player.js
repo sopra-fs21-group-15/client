@@ -33,7 +33,9 @@ const Player = ({ user, f_onClick }) => {
   return (
     <Container>
       <UserName>{user.username} {user.status==="ONLINE" ? "🟢" : user.status==="OFFLINE" ? "🔴": user.stats === "CHILLING" ? "😎" : "" }</UserName>
-      {f_onClick ? <Button onClick={f_onClick}>Profile</Button> : "" }
+      {f_onClick ? <Button
+          width={"25%"}
+          onClick={f_onClick}>Profile</Button> : "" }
     </Container>
   );
 };

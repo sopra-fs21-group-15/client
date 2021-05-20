@@ -27,6 +27,6 @@ export const Button = styled.button`
   transition: all 0.3s ease;
 
   margin-top: 20px;
-  min-width: 200px;
-  width: 5%;
+  min-width: 120px;
+ 
 `;

@@ -163,7 +163,7 @@ class ProfilePage extends React.Component {
       }
   }
 
-
+  //can be extended if I will go directly to my friends Profile from my Friendslist
   go_to_profile(user) {
         // set the id for the profile the user is visiting
         localStorage.setItem("visited User", user.id);
@@ -183,20 +183,12 @@ class ProfilePage extends React.Component {
             const myUser = new User(response2.data);
             this.setState({myUser : myUser})
 
-
-
         } catch (error) {
             alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
         }
 
-        //console.log(this.state.myUser.friendsList)
-
-
         this.checkIfFriend()
         this.displayFriends()
-
-        console.log(this.state.myUser.friendsList)
-        console.log(this.state.friends)
 
     }
 
@@ -227,11 +219,9 @@ class ProfilePage extends React.Component {
                             )
                         })}
                             </Users>
-
                             ):("")}
 
                             {this.state.loggedInUser === this.state.userId ?
-
                             <Button
                                 disabled={this.state.loggedInUser !== this.state.userId}
                                 width="100%"
