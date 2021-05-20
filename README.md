@@ -68,7 +68,7 @@ This project is based on https://github.com/HASEL-UZH/sopra-fs21-template-client
 
 ## License
 
-TODO ask everyone
+[AGPLv3](LICENSE)
 
 
 # Old readme parts
