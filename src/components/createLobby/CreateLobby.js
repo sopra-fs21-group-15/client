@@ -45,7 +45,7 @@ class CreateLobby extends React.Component {
 
       // set the lobbyID
       localStorage.setItem("lobbyId", lobby.id)
-      this.props.history.push(`/waitingRoom`)
+      this.props.history.push(`/waitingScreen`)
     }
     catch (error){
       alert(`Something went wrong during the lobby creation: \n${handleError(error)}`);
