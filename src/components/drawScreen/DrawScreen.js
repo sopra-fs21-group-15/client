@@ -222,8 +222,6 @@ class DrawScreen extends React.Component {
       hint: "A__b_c_", // Shows hint for guessers, shows word for drawer
       username: localStorage.getItem('username'),
       users: "",
-      word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
-      word: "", // Word that has to be drawn (Drawer mode)
       roundend: false, // TODO remove dedicated variable
 
       // Draw + Canvas related
@@ -387,9 +385,6 @@ class DrawScreen extends React.Component {
     this.updateBrushPreview();
 
     this.getRound();
-
-    // Words
-    this.setState({ word_options: ["Apfel", "Mond", "Pikachu"] })
 
     // Regularly update the time left
     let interval_countdown = setInterval(async () => {
@@ -592,12 +587,9 @@ class DrawScreen extends React.Component {
   }
 
   async chooseWord(word) {
-    this.setState({ word });
-
     try {
-      const url = '/games/' + this.state.game_id + '/choices/' + word;
-      await api.get(url);
-
+      const url = '/games/' + this.state.game_id + '/choices/' + this.state.username + '/' + this.state.words(word); // TODO change this.state.words to field of actual words
+      await api.put(url);
     } catch(error) {
       alert(`Something went wrong while choosing the word: \n${handleError(error)}`)
     }
