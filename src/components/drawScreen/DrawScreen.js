@@ -223,7 +223,7 @@ class DrawScreen extends React.Component {
       users: "",
       word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
       word: "", // Word that has to be drawn (Drawer mode)
-      roundend: false,
+      roundend: false, // TODO remove dedicated variable
 
       // Draw + Canvas related
       canvas_width: 854,
@@ -423,7 +423,13 @@ class DrawScreen extends React.Component {
         const response = await api.get('/games/' + this.state.game_id + "/update");
         console.log("ROUND", response.data);
 
+
         let round = new Round(response.data);
+        // Clear canvas if drawer changed (by comparison to previous round object)
+        if (!this.state.round || this.state.round.drawerName !== round.drawerName || this.state.round.id !== round.id ) {
+          this.resetCanvas();
+          console.log("DRAWER CHANGED");
+        }
         this.setState({ round });
 
         // Set drawer
@@ -534,7 +540,7 @@ class DrawScreen extends React.Component {
       const url = '/games/' + this.state.game_id +'/chats';
       console.log("SEND MESSAGE", url, requestBody);
       const response = await api.put(url, requestBody);
-      console.log("SEND MESSAGE RESPONSE", response);
+      console.log("SEND MESSAGE RESPONSE", response.data);
       this.setState({ chat_message: "" });
     } catch (error) {
       this.errorInChat(`Something went wrong while sending the chat message: \n${handleError(error)}`);
@@ -639,7 +645,7 @@ class DrawScreen extends React.Component {
       </Sidebar>,
       <Scoreboard>
       <Scoreboardlabel>Scoreboard</Scoreboardlabel>
-      {!this.state.users ? (
+      {!this.state.round ? (
         <Spinner />
       ):(
         <Users>
