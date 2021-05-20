@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
 import { api, handleError } from '../../helpers/api';
-import Scores from '../../views/Scores';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
@@ -107,13 +106,6 @@ const Scoreboard = styled.div`
 
 `;
 
-const PlayerContainer = styled.li`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
 const Hint = styled.div`
   position: absolute;
   //min-width: 100px;
@@ -148,27 +140,6 @@ const Wordbox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const ScoreBox = styled.div`
-  position fixed;
-  left: 0;
-  top: 0;
-  background: rgba(50, 50, 50, 0.95);
-  box-shadow: rgba(0, 0, 0, 0.9) 0px -4px 4px;
-  width: 100vw;
-  height: 100vh;
-  color: white;
-  display: column;
-  justify-content: center;
-  align-items: center;
-
-`;
-const Endscreenlable = styled.h1`
-padding-top: 5%;
-padding-left: 35%;
-font-size: 250%;
-font-variant: small-caps;
 `;
 
 
@@ -215,7 +186,6 @@ class DrawScreen extends React.Component {
       hint: "A__b_c_", // Shows hint for guessers, shows word for drawer
       username: localStorage.getItem('username'),
       users: "",
-      roundend: false, // TODO remove dedicated variable
 
       // Draw + Canvas related
       canvas_width: 854,
@@ -491,12 +461,6 @@ class DrawScreen extends React.Component {
       } catch(error) {
         this.errorInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
       }
-      this.setState({ interval_draw_instructions });
-
-      // End scoreboard
-      if (this.state.roundend){
-        setTimeout(this.setState({roundend:false}),5000)
-      }
     }, 5000);
     this.setState({ interval_draw_instructions });
 
@@ -543,15 +507,6 @@ class DrawScreen extends React.Component {
     link.download = "canvas.png";
     link.href = this.mainCanvas.current.toDataURL("image/png");
     link.click();
-  }
-  async show_leaderboard(){
-    try{
-      const url = '/game/'+this.state.game_id+'/score'
-      const responseusers = await api.get(url);
-      this.setState({users: responseusers.data})
-    }catch(error){
-      alert(`Something went wrong while fetching the points: \n${handleError(error)}`)
-    }
   }
 
   async chooseWord(word) {
@@ -648,19 +603,6 @@ class DrawScreen extends React.Component {
             })}
           </Wordbox>
         ): ""}
-      </div>,
-      //render the roundend score board
-      <div>
-        {this.state.roundend && this.state.users ? (
-          <ScoreBox>
-          <Endscreenlable>Round End Scoreboard</Endscreenlable>
-          {this.state.users.map(user =>{return(
-            <PlayerContainer key={user.id}>
-              <Scores user={user}/>
-            </PlayerContainer>
-          );})}
-          </ScoreBox>
-        ) : ""}
       </div>
     ]);
   }

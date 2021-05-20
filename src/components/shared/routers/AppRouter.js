@@ -50,12 +50,6 @@ class AppRouter extends React.Component {
               </GameGuard>
             )} />
 
-            <Route path="/waitingRoom" exact render={() => (
-              <GameGuard>
-                <WaitingScreen />
-              </GameGuard>
-            )} />
-
             <Route path="/draw" exact render={() => (
               <GameGuard>
                 <DrawScreen />
