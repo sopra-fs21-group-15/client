@@ -222,8 +222,6 @@ class DrawScreen extends React.Component {
       hint: "A__b_c_", // Shows hint for guessers, shows word for drawer
       username: localStorage.getItem('username'),
       users: "",
-      word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
-      word: "", // Word that has to be drawn (Drawer mode)
       roundend: false, // TODO remove dedicated variable
 
       // Draw + Canvas related
@@ -369,27 +367,9 @@ class DrawScreen extends React.Component {
       this.setState({ mouse_down: false });
   }
 
-  async getRound() {
-    try {
-      const response = await api.get('/games/' + this.state.game_id + "/update");
-      console.log("ROUND", response.data);
-
-      let round = new Round(response.data);
-      this.setState({ round });
-
-    } catch (error) {
-      this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
-    }
-  }
-
   componentDidMount() {
     this.resetCanvas();
     this.updateBrushPreview();
-
-    this.getRound();
-
-    // Words
-    this.setState({ word_options: ["Apfel", "Mond", "Pikachu"] })
 
     // Regularly update the time left
     let interval_countdown = setInterval(async () => {
@@ -424,12 +404,10 @@ class DrawScreen extends React.Component {
         const response = await api.get('/games/' + this.state.game_id + "/update");
         console.log("ROUND", response.data);
 
-
         let round = new Round(response.data);
         // Clear canvas if drawer changed (by comparison to previous round object)
         if (!this.state.round || this.state.round.drawerName !== round.drawerName || this.state.round.id !== round.id ) {
           this.resetCanvas();
-          console.log("DRAWER CHANGED");
         }
         this.setState({ round });
 
@@ -471,17 +449,11 @@ class DrawScreen extends React.Component {
           timeStamp: this.state.timestamp_last_message
         });
         const url = '/games/' + this.state.game_id + '/chats'
-
-        console.log("CHATPOLL request", requestBody);
         const response = await api.post(url, requestBody);
-        console.log("CHATPOLL reponse.data", response.data);
-
 
         // Set timestamp_last_message
         if(response.data.messages.length === 0)
           return;
-
-
         let timestamp_last_message = response.data.messages[response.data.messages.length -1].timeStamp;
         let messages = this.state.messages.concat(response.data.messages);
         this.setState({ timestamp_last_message, messages });
@@ -559,9 +531,7 @@ class DrawScreen extends React.Component {
 
       /** await the confirmation of the backend **/
       const url = '/games/' + this.state.game_id +'/chats';
-      console.log("SEND MESSAGE", url, requestBody);
       const response = await api.put(url, requestBody);
-      console.log("SEND MESSAGE RESPONSE", response.data);
       this.setState({ chat_message: "" });
 
       if(response.data)
@@ -592,12 +562,9 @@ class DrawScreen extends React.Component {
   }
 
   async chooseWord(word) {
-    this.setState({ word });
-
     try {
-      const url = '/games/' + this.state.game_id + '/choices/' + word;
-      await api.get(url);
-
+      const url = '/games/' + this.state.game_id + '/choices/' + this.state.username + '/' + this.state.words.indexOf(word); // TODO change this.state.words to field of actual words
+      await api.put(url);
     } catch(error) {
       alert(`Something went wrong while choosing the word: \n${handleError(error)}`)
     }
