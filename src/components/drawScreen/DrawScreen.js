@@ -8,9 +8,12 @@ import { withRouter } from 'react-router-dom';
 import Colour from '../../views/Colour';
 import Message from '../../views/Message';
 import Game from "../shared/models/Game";
+import Round from "../shared/models/Round";
 import { HR } from '../../views/design/HR.js';
 import { Label } from '../../views/design/Label.js';
 import { InputField } from '../../views/design/InputField.js';
+import { Chatbox } from '../../views/design/Chatbox.js';
+import { Messages } from '../../views/design/Messages.js';
 
 
 const Users = styled.ul`
@@ -43,24 +46,6 @@ const Sidebar = styled.div`
   padding: 0px 5px;
   text-align: center;
   overflow-y: auto;
-`;
-
-const Chatbox = styled.div`
-`;
-
-const Messages = styled.ul`
-  background: white;
-  height: 250px;
-  list-style-type: none;
-  list-style-position: outside;
-  padding: 0px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  border-radius: 8px;
-
-  display: flex;
-  flex-direction: column-reverse;
-
 `;
 
 const H1 = styled.h1`
@@ -105,6 +90,7 @@ const Timer = styled.div`
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
 `;
+
 const Scoreboard = styled.div`
     position: absolute;
     width:190px ;
@@ -120,6 +106,7 @@ const Scoreboard = styled.div`
 
 
 `;
+
 const Scoreboardlabel = styled.label`
     font-size: 25px;
     font-variant: small-caps;
@@ -223,30 +210,35 @@ class DrawScreen extends React.Component {
       "#ffffff"
       ];
 
-    let messages = [ {"sender": "niklassc", "timestamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"sender": "example_user", "timestamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"sender": "niklassc", "timestamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
-
     this.state = {
       game_id: localStorage.getItem('gameId'),
       game: null, // Game object, regularly fetched from backend
+      round: null, // Round object, regularly fetched from backend
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
-      hint: "A__b_c_", // Will contain some letters and underscores
+      loginId: localStorage.getItem('loginId'),
+      hint: "A__b_c_", // Shows hint for guessers, shows word for drawer
+      username: localStorage.getItem('username'),
+      users: "",
+      word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
+      word: "", // Word that has to be drawn (Drawer mode)
+      roundend: false,
+
+      // Draw + Canvas related
       canvas_width: 854,
       canvas_height: 480,
       draw_colour: "#ffffff",
       draw_size: 5,
       mouse_down: false, // stores whether the LEFT mouse button is down
-      loginId: localStorage.getItem('loginId'),
-      username: localStorage.getItem('username'),
-      chat_message: "", // Value of the chat input field
-      users: "",
-      messages, // JSON of all chat messages
-      timestamp_last_message: 0,
+
+      // Draw instructions
       timestamp_last_draw_instruction: "1900-01-01 00:00:00:000", // Time of the last draw instruction that was received (guesser mode)
-      word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
-      word: "", // Word that has to be drawn (Drawer mode)
-      roundend: false
+
+      // Chat
+      chat_message: "", // Value of the chat input field
+      messages: [], // JSON of all chat messages
+      timestamp_last_message: "1900-01-01 00:00:00:000", // Time of the last message that was received
     };
   }
 
@@ -254,11 +246,11 @@ class DrawScreen extends React.Component {
     this.setState({ [key]: value });
   }
 
-  resetCanvas() {
+  async resetCanvas() {
     let draw_colour = this.state.draw_colour;
-    this.setState({ draw_colour: "#FFFFFF" }); // FIXME for some reason state cant be set here
+    await this.setState({ draw_colour: "#FFFFFF" });
     this.fillCanvas();
-    this.setState({ draw_colour });
+    await this.setState({ draw_colour });
   }
 
   fillCanvas() {
@@ -279,8 +271,8 @@ class DrawScreen extends React.Component {
     this.brushPreview.current.style.background = this.state.draw_colour;
   }
 
-  changeColour(colour) {
-    this.setState({ draw_colour: colour });
+  async changeColour(colour) {
+    await this.setState({ draw_colour: colour });
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.strokeStyle = colour;
@@ -288,8 +280,8 @@ class DrawScreen extends React.Component {
     this.updateBrushPreview();
   }
 
-  changeSize(size) {
-    this.setState({ draw_size: size });
+  async changeSize(size) {
+    await this.setState({ draw_size: size });
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.lineWidth = size;
@@ -338,9 +330,7 @@ class DrawScreen extends React.Component {
     if (milliseconds < 100) milliseconds = "0" + milliseconds;
     if (milliseconds < 10) milliseconds = "0" + milliseconds;
 
-    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
-
-    return dateString;
+    return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
   }
 
   async sendDrawInstruction(x, y, size, colour) {
@@ -353,10 +343,9 @@ class DrawScreen extends React.Component {
         size: size,
         colour: colour
       });
-      console.log("requestBody", requestBody);
       await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
     } catch (error) {
-      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the drawing instruction: \n${handleError(error)}`});
+      this.errorInChat(`Something went wrong while sending the draw-Instruction: \n${handleError(error)}`);
     }
   }
 
@@ -379,9 +368,24 @@ class DrawScreen extends React.Component {
       this.setState({ mouse_down: false });
   }
 
+  async getRound() {
+    try {
+      const response = await api.get('/games/' + this.state.game_id + "/update");
+      console.log("ROUND", response.data);
+
+      let round = new Round(response.data);
+      this.setState({ round });
+
+    } catch (error) {
+      this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
+    }
+  }
+
   componentDidMount() {
     this.resetCanvas();
     this.updateBrushPreview();
+
+    this.getRound();
 
     // Words
     this.setState({ word_options: ["Apfel", "Mond", "Pikachu"] })
@@ -395,7 +399,7 @@ class DrawScreen extends React.Component {
     }, 1000);
     this.setState({ interval_countdown });
 
-    // Regularly fetch game info
+    // Regularly fetch game info # TODO mabye not needed any more
     let interval_game_info = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id);
@@ -404,39 +408,62 @@ class DrawScreen extends React.Component {
 
         // Set owner
         if(this.state.username === this.state.game.members[0])
-          this.setState({ owner: true, drawer: true });
+          this.setState({ owner: true });
         else
-          this.setState({ owner: false, drawer: false });
+          this.setState({ owner: false });
       } catch (error) {
-        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while fetching the game-info: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while fetching the game-info: \n${handleError(error)}`);
       }
     }, 5000);
     this.setState({ interval_game_info });
 
+    // Regularly fetch round info
+    let intervaleRoundInfo = setInterval(async () => {
+      try {
+        const response = await api.get('/games/' + this.state.game_id + "/update");
+        console.log("ROUND", response.data);
+
+        let round = new Round(response.data);
+        this.setState({ round });
+
+        // Set drawer
+        if(this.state.username === this.state.round.drawerName)
+          this.setState({ drawer: true, hint: round.word });
+        else
+          this.setState({ drawer: false, hint: "_____" });
+      } catch (error) {
+        this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
+      }
+    }, 5000);
+    this.setState({ intervaleRoundInfo });
+
+
     // Regularly poll the chat
-    let interval_chat = setInterval(async () => {
+    let intervalChat = setInterval(async () => {
       try {
         const requestBody = JSON.stringify({
-          user_id: this.state.loginId,
-          game_id: this.state.game_id,
-          timestamp: this.state.timestamp_last_message
+          timeStamp: this.state.timestamp_last_message
         });
+        const url = '/games/' + this.state.game_id + '/chats'
 
-        /** await the confirmation of the backend **/
-        const url = '/game/' + this.state.game_id + '/length'
-        const response = await api.get(url, requestBody);
+        console.log("CHATPOLL request", requestBody);
+        const response = await api.post(url, requestBody);
+        console.log("CHATPOLL reponse.data", response.data);
+
 
         // Set timestamp_last_message
-        let timestamp_last_message = response[response.lenght -1].timestamp;
+        if(response.data.messages.length === 0)
+          return;
 
-        // Add new messages to our chat
-        let messages = this.state.messages.concat(response);
+
+        let timestamp_last_message = response.data.messages[response.data.messages.length -1].timeStamp;
+        let messages = this.state.messages.concat(response.data.messages);
         this.setState({ timestamp_last_message, messages });
       } catch (error) {
-        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the chat: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
-    }, 50000);
-    this.setState({ interval_chat });
+    }, 2000);
+    this.setState({ intervalChat });
 
     // Regularly pull draw instructions (guesser mode)
     let interval_draw_instructions = setInterval(async () => {
@@ -471,7 +498,7 @@ class DrawScreen extends React.Component {
         });
 
       } catch(error) {
-        this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while polling the draw-instructions: \n${handleError(error)}`});
+        this.errorInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
       }
       this.setState({ interval_draw_instructions });
 
@@ -489,24 +516,33 @@ class DrawScreen extends React.Component {
     // Clear all intervals
     clearInterval(this.state.interval_countdown);
     clearInterval(this.state.interval_game_info);
-    clearInterval(this.state.interval_chat);
+    clearInterval(this.state.intervalChat);
     clearInterval(this.state.interval_draw_instructions);
+    clearInterval(this.state.intervaleRoundInfo);
   }
 
-  async send_message() {
+  async sendMessage() {
+    let timeStamp = this.getCurrentDateString();
     try {
       const requestBody = JSON.stringify({
-        user_id: this.state.loginId,
-        game_id: this.state.game_id,
-        message: this.state.chat_message
+        timeStamp: timeStamp,
+        message: this.state.chat_message,
+        writerName: this.state.username
       });
+
       /** await the confirmation of the backend **/
-      const url = '/game/' + this.state.game_id +'/guess';
+      const url = '/games/' + this.state.game_id +'/chats';
+      console.log("SEND MESSAGE", url, requestBody);
       const response = await api.put(url, requestBody);
+      console.log("SEND MESSAGE RESPONSE", response);
       this.setState({ chat_message: "" });
     } catch (error) {
-      this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the chat message: \n${handleError(error)}`});
+      this.errorInChat(`Something went wrong while sending the chat message: \n${handleError(error)}`);
     }
+  }
+
+  errorInChat(errMsg) {
+    this.state.messages.push({"writerName": "SYSTEM", "timeStamp": this.getCurrentDateString(), message: errMsg});
   }
 
   download_image() {
@@ -525,9 +561,34 @@ class DrawScreen extends React.Component {
     }
   }
 
-  choose_word(word) {
+  async chooseWord(word) {
     this.setState({ word });
-    this.setState({ word_options: null });
+
+    try {
+      const url = '/games/' + this.state.game_id + '/choices/' + word;
+      await api.get(url);
+
+    } catch(error) {
+      alert(`Something went wrong while choosing the word: \n${handleError(error)}`)
+    }
+  }
+
+  async leaveGame() {
+    if(!window.confirm("Are you sure you want to leave the game?"))
+      return;
+
+    try {
+      const requestBody = JSON.stringify({
+        username: localStorage.getItem('username')
+      });
+
+      const url = '/games/' + this.state.game_id +'/leavers';
+      await api.put(url, requestBody);
+
+    } catch(error) {
+      alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
+    }
+    this.props.history.push(`/game`);
   }
 
   render() {
@@ -539,29 +600,25 @@ class DrawScreen extends React.Component {
       <Timer>{this.state.time_left}</Timer>,
       <Hint>{this.state.hint}</Hint>,
       <Sidebar>
-        <H1 onClick={this.changeColour}>Tools</H1>
-        <HR />
-
+        <H1>Tools #{this.state.game_id}</H1>
         {this.state.drawer ? ([
           <ColoursContainer>
               {this.colours.map(colour => {
                 return (
                   <Colour colour={colour} f_onClick={() => {this.changeColour(colour)}} />
                 );
-              })},
+              })}
           </ColoursContainer>,
-          <HR/>,
           <Label>Size</Label>,
           <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />,
-          <HR/>,
           <Button onClick={() => {this.fillCanvas()}}>Fill</Button>,
           <Button onClick={() => {this.resetCanvas()}}>Clear</Button>,
-          <HR/>
         ]) : ( "" )}
 
         <Button onClick={() => {this.download_image()}}>Download image</Button>
         <HR/>
         <BrushPreview ref={this.brushPreview}/>
+        <HR/>
         <Chatbox>
           <Messages>
             {this.state.messages.slice(0).reverse().map(message => {
@@ -573,15 +630,15 @@ class DrawScreen extends React.Component {
 
           <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
           { this.state.chat_message === "" ?
-            <Button disabled onClick={() => {this.send_message()}} >Send</Button>
+            <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
             :
-            <Button onClick={() => {this.send_message()}} >Send</Button>
+            <Button onClick={() => {this.sendMessage()}} >Send</Button>
           }
         </Chatbox>
+        <Button onClick={() => {this.leaveGame()}}>Leave Game</Button>
       </Sidebar>,
       <Scoreboard>
       <Scoreboardlabel>Scoreboard</Scoreboardlabel>
-      <HR/>
       {!this.state.users ? (
         <Spinner />
       ):(
@@ -595,11 +652,11 @@ class DrawScreen extends React.Component {
       )}
       </Scoreboard>,
       <div>
-        {this.state.drawer && this.state.word_options ? (
+        {this.state.round && this.state.drawer && this.state.round.status === "SELECTING" ? (
           <Wordbox>
-            {this.state.word_options.map(word => {
+            {this.state.round.words.map(word => {
               return (
-                <Button onClick={() => this.choose_word(word)}>{word}</Button>
+                <Button onClick={() => this.chooseWord(word)}>{word}</Button>
               );
             })}
           </Wordbox>
