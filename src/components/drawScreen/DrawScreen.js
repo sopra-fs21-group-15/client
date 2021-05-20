@@ -214,6 +214,7 @@ class DrawScreen extends React.Component {
       game_id: localStorage.getItem('gameId'),
       game: null, // Game object, regularly fetched from backend
       round: null, // Round object, regularly fetched from backend
+      scoreboard: null, // Scoreboard, regularly fetched from backend
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
@@ -418,7 +419,7 @@ class DrawScreen extends React.Component {
     this.setState({ interval_game_info });
 
     // Regularly fetch round info
-    let intervaleRoundInfo = setInterval(async () => {
+    let intervalRoundInfo = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id + "/update");
         console.log("ROUND", response.data);
@@ -441,7 +442,26 @@ class DrawScreen extends React.Component {
         this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
     }, 5000);
-    this.setState({ intervaleRoundInfo });
+    this.setState({ intervalRoundInfo });
+
+
+    // Regularly fetch scoreboard
+    let intervalScoreboard = setInterval(async () => {
+      try {
+        const response = await api.get('/games/' + this.state.game_id + "/score");
+
+        // Rewrite format into one list of objects
+        let scoreboard = [];
+        for (let i = 0; i < response.data.players.length; i++)
+          scoreboard.push({ "username": response.data.players[i], "ranking": response.data.ranking[i], "score": response.data.score[i] });
+
+
+        this.setState({ scoreboard });
+      } catch (error) {
+        this.errorInChat(`Something went wrong while fetching the scoreboard: \n${handleError(error)}`);
+      }
+    }, 5000);
+    this.setState({ intervalScoreboard });
 
 
     // Regularly poll the chat
@@ -524,7 +544,8 @@ class DrawScreen extends React.Component {
     clearInterval(this.state.interval_game_info);
     clearInterval(this.state.intervalChat);
     clearInterval(this.state.interval_draw_instructions);
-    clearInterval(this.state.intervaleRoundInfo);
+    clearInterval(this.state.intervalRoundInfo);
+    clearInterval(this.state.intervalScoreboard);
   }
 
   async sendMessage() {
@@ -647,15 +668,12 @@ class DrawScreen extends React.Component {
         <Button onClick={() => {this.leaveGame()}}>Leave Game</Button>
       </Sidebar>,
       <Scoreboard>
-      <Scoreboardlabel>Scoreboard</Scoreboardlabel>
-      {!this.state.round ? (
+      {!this.state.scoreboard ? (
         <Spinner />
       ):(
         <Users>
-        {this.state.users.map(user =>{return(
-          <PlayerContainer key={user.id}>
-            <Scores user={user}/>
-          </PlayerContainer>
+        {this.state.scoreboard.map(entry =>{return(
+          <li>(#{entry.ranking}) {entry.username} - {entry.score}</li>
         );})}
         </Users>
       )}
