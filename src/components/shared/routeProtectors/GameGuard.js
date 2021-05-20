@@ -11,8 +11,10 @@ import { Redirect } from "react-router-dom";
  * @param props
  */
 export const GameGuard = props => {
-  if (localStorage.getItem("token")) {
+  if (localStorage.getItem("username")) {
     return props.children;
   }
+  // If user is not logged in, rediret to login page
+  // Used for all game screens
   return <Redirect to={"/login"} />;
 };

@@ -107,13 +107,6 @@ const Scoreboard = styled.div`
 
 `;
 
-const Scoreboardlabel = styled.label`
-    font-size: 25px;
-    font-variant: small-caps;
-    padding-top: 15px;
-
-`;
-
 const PlayerContainer = styled.li`
   display: flex;
   flex-direction: column;
@@ -585,7 +578,7 @@ class DrawScreen extends React.Component {
     } catch(error) {
       alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
     }
-    this.props.history.push(`/game`);
+    this.props.history.push(`/mainScreen`);
   }
 
   render() {
