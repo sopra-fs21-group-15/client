@@ -542,6 +542,9 @@ class DrawScreen extends React.Component {
       const response = await api.put(url, requestBody);
       console.log("SEND MESSAGE RESPONSE", response.data);
       this.setState({ chat_message: "" });
+
+      if(response.data)
+        alert("You guessed the word correctly!");
     } catch (error) {
       this.errorInChat(`Something went wrong while sending the chat message: \n${handleError(error)}`);
     }
