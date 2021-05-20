@@ -436,7 +436,7 @@ class DrawScreen extends React.Component {
         if(this.state.username === this.state.round.drawerName)
           this.setState({ drawer: true, hint: round.word });
         else
-          this.setState({ drawer: false, hint: "_____" });
+          this.setState({ drawer: false, hint: "_".repeat(round.word.length) });
       } catch (error) {
         this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
