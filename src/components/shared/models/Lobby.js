@@ -13,6 +13,7 @@ class Lobby{
     this.members = data.members;
     this.status = data.status;
     this.rounds = data.rounds;
+    this.gamemode = data.gamemode;
   }
 }
 
