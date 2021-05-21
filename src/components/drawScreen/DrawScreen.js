@@ -24,7 +24,7 @@ const Canvas = styled.canvas`
   position: absolute;
   // Place not in the middle of the whole screen but in middle of what is left
   // when you substract the sidebar-width.
-  left: calc(57.5% - 256px / 2);
+  left: calc(55.5% - 256px / 2);
   transform: translateX(-50%);
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
@@ -71,58 +71,53 @@ const ColoursContainer = styled.div`
 
 const Timer = styled.div`
   position: absolute;
-  //min-width: 100px;
   background: rgba(50, 50, 50, 0.9);;
   color: white;
   text-align: center;
-  font-size: 48px;
+  font-size: 40px;
   font-variant: small-caps;
   font-weight: 900;
-  padding: 10px;
+  padding: 7px;
 
-  // Place not in the middle of the whole screen but in middle of what is left
-  // when you substract the sidebar-width.
-  left: calc(80% - 256px / 2);
-  bottom: 100px;
-  transform: translateX(-50%);
+  // Place bottom-right corner of div with 20px distance to bottom of viewport
+  // and sidebar
+  left: calc(100vw - 256px - 20px);
+  transform: translateX(-100%);
+  bottom: 20px;
+
+  box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+`;
+
+const Hint = styled.div`
+  position: absolute;
+  background: rgba(50, 50, 50, 0.9);;
+  color: white;
+  text-align: center;
+  font-size: 40px;
+  font-variant: small-caps;
+  font-weight: 900;
+  padding: 7px;
+  letter-spacing: 7px;
+
+  left: 20px;
+  bottom: 20px;
 
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
 `;
 
 const Scoreboard = styled.div`
-    position: absolute;
-    width:190px ;
-    background: rgba(50, 50, 50, 0.9);
-    color: white;
-    text-align: center;
-    font-color: white;
-    left: calc(14% - 190px / 2);
-    top: 100px;
-    transform: translateX(-50%);
-    box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
-    border-radius: 8px;
-
-
-`;
-
-const Hint = styled.div`
   position: absolute;
-  //min-width: 100px;
-  background: rgba(50, 50, 50, 0.9);;
+  background: rgba(50, 50, 50, 0.9);
   color: white;
   text-align: center;
-  font-size: 48px;
-  font-variant: small-caps;
-  font-weight: 900;
-  padding: 10px;
-  letter-spacing: 7px;
+  font-color: white;
+  min-width: 128px;
+  min-height: 128px;
 
-  // Place not in the middle of the whole screen but in middle of what is left
-  // when you substract the sidebar-width.
-  left: calc(20% - 256px / 2);
-  bottom: 100px;
-  transform: translateX(-50%);
+  left: 20px;
+  top: 20px;
 
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
