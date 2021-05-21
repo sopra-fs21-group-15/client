@@ -6,7 +6,6 @@ import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import Colour from '../../views/Colour';
 import Message from '../../views/Message';
-import Game from "../shared/models/Game";
 import Round from "../shared/models/Round";
 import { HR } from '../../views/design/HR.js';
 import { Label } from '../../views/design/Label.js';
