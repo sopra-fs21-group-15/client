@@ -171,14 +171,13 @@ class DrawScreen extends React.Component {
 
     this.state = {
       game_id: localStorage.getItem('gameId'),
-      game: null, // Game object, regularly fetched from backend
       round: null, // Round object, regularly fetched from backend
       scoreboard: null, // Scoreboard, regularly fetched from backend
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
       loginId: localStorage.getItem('loginId'),
-      hint: "A__b_c_", // Shows hint for guessers, shows word for drawer
+      hint: "Loading...", // Shows hint for guessers, shows word for drawer
       username: localStorage.getItem('username'),
       users: "",
 
@@ -315,7 +314,7 @@ class DrawScreen extends React.Component {
       let ctx = this.mainCanvas.current.getContext('2d');
       this.setState({ mouse_down: true });
       ctx.beginPath();
-      if(this.state.game && this.state.drawer)
+      if(this.state.round && this.state.drawer)
         this.sendDrawInstruction(-2, -2, -2, "#FF0000");
     }
   }
@@ -337,24 +336,6 @@ class DrawScreen extends React.Component {
       this.setState({ time_left });
     }, 1000);
     this.setState({ interval_countdown });
-
-    // Regularly fetch game info # TODO mabye not needed any more
-    let interval_game_info = setInterval(async () => {
-      try {
-        const response = await api.get('/games/' + this.state.game_id);
-        let game = new Game(response.data);
-        this.setState({ game });
-
-        // Set owner
-        if(this.state.username === this.state.game.members[0])
-          this.setState({ owner: true });
-        else
-          this.setState({ owner: false });
-      } catch (error) {
-        this.errorInChat(`Something went wrong while fetching the game-info: \n${handleError(error)}`);
-      }
-    }, 5000);
-    this.setState({ interval_game_info });
 
     // Regularly fetch round info
     let intervalRoundInfo = setInterval(async () => {
@@ -424,7 +405,7 @@ class DrawScreen extends React.Component {
     // Regularly pull draw instructions (guesser mode)
     let interval_draw_instructions = setInterval(async () => {
       // Poll draw instructions (guesser mode)
-      if(this.state.drawer || !this.state.game)
+      if(this.state.drawer || !this.state.round)
         return;
       try {
         const requestBody = JSON.stringify({
@@ -465,7 +446,6 @@ class DrawScreen extends React.Component {
   componentWillUnmount() {
     // Clear all intervals
     clearInterval(this.state.interval_countdown);
-    clearInterval(this.state.interval_game_info);
     clearInterval(this.state.intervalChat);
     clearInterval(this.state.interval_draw_instructions);
     clearInterval(this.state.intervalRoundInfo);
