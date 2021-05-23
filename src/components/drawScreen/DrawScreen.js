@@ -344,10 +344,11 @@ class DrawScreen extends React.Component {
         // Set drawer
         if(this.state.username === this.state.round.drawerName)
           this.setState({ drawer: true, hint: round.word });
-        else
+        else {
           this.setState({ drawer: false });
           if(round.word)
             this.setState({ hint: "_".repeat(round.word.length) });
+        }
       } catch (error) {
         this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
@@ -497,7 +498,7 @@ class DrawScreen extends React.Component {
 
   async chooseWord(word) {
     try {
-      const url = '/games/' + this.state.game_id + '/choices/' + this.state.username + '/' + this.state.words.indexOf(word); // TODO change this.state.words to field of actual words
+      const url = '/games/' + this.state.game_id + '/choices/' + this.state.username + '/' + this.state.round.selection.indexOf(word);
       await api.put(url);
     } catch(error) {
       alert(`Something went wrong while choosing the word: \n${handleError(error)}`)
@@ -582,7 +583,7 @@ class DrawScreen extends React.Component {
       <div>
         {this.state.round && this.state.drawer && this.state.round.status === "SELECTING" ? (
           <Wordbox>
-            {this.state.round.words.map(word => {
+            {this.state.round.selection.map(word => {
               return (
                 <Button onClick={() => this.chooseWord(word)}>{word}</Button>
               );

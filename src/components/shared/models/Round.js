@@ -14,7 +14,7 @@ class Round {
     this.players = data.players;
     this.status = data.status;
     this.word = data.word;
-    this.words = data.words;
+    this.selection = data.selection;
   }
 }
 
