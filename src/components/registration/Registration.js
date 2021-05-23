@@ -86,7 +86,12 @@ class Registration extends React.Component {
         <FormContainer>
           <Legend>Registration</Legend>
           <Label>Username</Label>
-          <InputField placeholder="Please enter here.." onChange={e => { this.handleInputChange('username', e.target.value); }} />
+          <InputField placeholder="Please enter here.." onChange={e => {
+            if (e.target.value.length-1 >= 12){
+              alert("Name can be only 12 characters long")
+              e.target.value = ""
+            }
+            this.handleInputChange('username', e.target.value); }} />
           <Label>Password</Label>
           <InputField placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} />
           <HR/>

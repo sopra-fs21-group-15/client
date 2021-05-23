@@ -29,8 +29,8 @@ export const ButtonLobbies = styled.button`
   }
 
   padding: 6px;
-  padding-left: 30px;
-  padding-right: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
   font-weight: 700;
   text-transform: uppercase;
   font-size: 13px;
@@ -61,7 +61,9 @@ const Lobby = ({ lobby, f_onClick }) => {
     return (
     <Container>
       <LobbyName>{lobby.lobbyname}{lobby.password === "" ? "" : " 🔒"}</LobbyName>
-      {f_onClick && lobby.status === "OPEN" ? <ButtonLobbies onClick={f_onClick}>Join Lobby</ButtonLobbies> : ""}
+      {f_onClick && lobby.status === "OPEN" ? <ButtonLobbies
+          width={"30%"}
+          onClick={f_onClick}>join</ButtonLobbies> : ""}
       {lobby.status !== "OPEN" ? "⛔" : ""}
     </Container>
   );

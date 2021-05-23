@@ -142,7 +142,7 @@ class ProfilePage extends React.Component {
       const response = await api.put(url,requestBody);
       const myUser = new User(response.data)
       this.setState({myUser:myUser})
-      await this.checkIfFriend()
+      this.checkIfFriend()
 
   }
     // method to remove friends
@@ -154,13 +154,13 @@ class ProfilePage extends React.Component {
       const response = await api.put(url,requestBody);
       const myUser = new User(response.data)
       this.setState({myUser:myUser})
-      await this.checkIfFriend()
+      this.checkIfFriend()
   }
 
   displayFriends(){
-      for (let i = 0; i<this.state.myUser.friendsList.length; i++){
-          this.state.friends.push(this.state.myUser.friendsList[i])
-      }
+      this.state.myUser.friendsList.forEach(iter =>{
+          this.state.friends.push(iter)
+      })
   }
 
   //can be extended if I will go directly to my friends Profile from my Friendslist

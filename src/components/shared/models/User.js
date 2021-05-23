@@ -12,6 +12,7 @@ class User {
     this.birth_date = null; //added birth date
     this.creationDate = null; //added creation date
     this.friendsList = data.friendsList;
+    this.wins = null;
     Object.assign(this, data);
   }
 

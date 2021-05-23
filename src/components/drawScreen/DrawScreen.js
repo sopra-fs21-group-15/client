@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import { api, handleError } from '../../helpers/api';
-import Scores from '../../views/Scores';
+import Scores from '../../views/Score';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';

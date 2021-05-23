@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Prompt, { Redirect, Route } from "react-router-dom";
+import { Redirect, Route } from "react-router-dom";
 import Game from "../../mainScreen/MainScreen";
 import ProfilePage from "../../profilepage/ProfilePage";
 import EditProfile from "../../profilepage/EditProfile";

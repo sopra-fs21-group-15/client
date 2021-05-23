@@ -51,8 +51,6 @@ const Profile = ({ user }) => {
       <Ingrid>
         <Name>Birth Date: {user.birth_date ? user.birth_date: "-"} </Name>
       </Ingrid>
-
-
     </Gridcontainer>
   );
 };

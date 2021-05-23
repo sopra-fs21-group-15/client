@@ -73,7 +73,12 @@ class CreateLobby extends React.Component {
 
           <Label>Lobbyname</Label>
           <InputField id="form_name"
-              onChange={ e => {this.handleInputChange("lobbyName", e.target.value)}}/>
+              onChange={ e => {
+                if (e.target.value.length-1 >= 12){
+                  alert("Lobbyname can only have 12 characters")
+                  e.target.value = ""
+                }
+                else {this.handleInputChange("lobbyName", e.target.value)}}}/>
 
           <Label>Gamemode</Label>
           <SelectField id="form_gamemode" value={this.state.gameMode} onChange={e => this.handleInputChange("gameMode",e.target.value)}>

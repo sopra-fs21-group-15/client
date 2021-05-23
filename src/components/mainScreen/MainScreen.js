@@ -18,8 +18,9 @@ const FriendsListContainer = styled.div`
 const LobbylistContainer = styled.div`
   float: left;
   padding-right: 35px;
-  max-height: 550px;
+  max-height: 700px;
   overflow: hidden;
+ 
 `;
 
 const ListsContainer = styled.div`
@@ -31,7 +32,7 @@ const Users = styled.ul`
   list-style: none;
   padding-left: 0;
   padding-bottom: 10px;
-  max-height: 250px;
+  max-height: 279px;
   overflow-y: auto;
 `;
 
@@ -46,7 +47,7 @@ const Lobbies = styled.ul`
   list-style: none;
   padding-left: 0;
   padding-bottom: 1px;
-  max-height: 380px;
+  max-height: 417px;
   overflow-y: auto;
 `;
 
@@ -103,6 +104,10 @@ class MainScreen extends React.Component {
   }
 
   async componentDidMount() {
+    for (let i = 0; i<1; i++){
+      const randomWord = require("random-words");
+      console.log(randomWord({exactly:50}))}
+
     // Get specific user
     this.getUser()
 
@@ -178,7 +183,7 @@ class MainScreen extends React.Component {
             <h2>Hello {this.state.user.username}</h2>
 
             <Button
-                style={{marginTop:38+"px"}}
+                style={{marginTop:10+"px"}}
                 onClick={() => {this.go_to_profile(this.state.user)}}
             >View Profile</Button>
 
@@ -194,7 +199,9 @@ class MainScreen extends React.Component {
                 );
               })}
             </Users>
-            <Button onClick={() => { this.logout(); }} > Logout </Button>
+            <Button
+                width={"45%"}
+                onClick={() => { this.logout(); }} > Logout </Button>
             </FriendsListContainer> )}
       </ListsContainer>
       </BaseContainer>
