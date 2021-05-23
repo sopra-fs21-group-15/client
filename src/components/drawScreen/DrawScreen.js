@@ -179,6 +179,7 @@ class DrawScreen extends React.Component {
       hint: "Loading...", // Shows hint for guessers, shows word for drawer
       username: localStorage.getItem('username'),
       users: "",
+      drawInstructionBuffer: [], // Buffer of drawInstructions that will be sent to the backend
 
       // Draw + Canvas related
       canvas_width: 854,
@@ -216,7 +217,7 @@ class DrawScreen extends React.Component {
     ctx.fillStyle = this.state.draw_colour;
     ctx.fillRect(0, 0, this.state.canvas_width, this.state.canvas_height);
 
-    if(this.state.game && this.state.drawer)
+    if(this.state.round && this.state.drawer)
       this.sendDrawInstruction(-1, -1, -1, this.state.draw_colour);
   }
 
@@ -258,6 +259,8 @@ class DrawScreen extends React.Component {
 
     // Send draw instruction to the backend
     this.sendDrawInstruction(x, y, ctx.lineWidth, ctx.strokeStyle);
+    // Add the drawInstruction to the send-buffer
+    // let buffer = this.state.drawInstructionBuffer.push({x: x, y: y, size: ctx.lineWidth, colour: ctx.strokeStyle});
 
     ctx.lineTo(x, y);
     ctx.stroke();
@@ -289,19 +292,8 @@ class DrawScreen extends React.Component {
   }
 
   async sendDrawInstruction(x, y, size, colour) {
-    try {
-      const requestBody = JSON.stringify({
-        // username: this.state.username,
-        x: Math.round(x),
-        y: Math.round(y),
-        // timeString: this.getCurrentDateString(),
-        size: size,
-        colour: colour
-      });
-      await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
-    } catch (error) {
-      this.errorInChat(`Something went wrong while sending the draw-Instruction: \n${handleError(error)}`);
-    }
+      // await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
+    this.state.drawInstructionBuffer.push( {"x": Math.round(x), "y": Math.round(y), "timeStamp": this.getCurrentDateString(), "size": size, "colour": colour} );
   }
 
   canvas_onMouseDown(button) {
@@ -353,7 +345,9 @@ class DrawScreen extends React.Component {
         if(this.state.username === this.state.round.drawerName)
           this.setState({ drawer: true, hint: round.word });
         else
-          this.setState({ drawer: false, hint: "_".repeat(round.word.length) });
+          this.setState({ drawer: false });
+          if(round.word)
+            this.setState({ hint: "_".repeat(round.word.length) });
       } catch (error) {
         this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
@@ -401,6 +395,23 @@ class DrawScreen extends React.Component {
     }, 2000);
     this.setState({ intervalChat });
 
+
+    // Regularly send buffer of draw instructions (drawer mode)
+    let intervalSendDrawInstructionBuffer = setInterval(async () => {
+      // Send the buffer of draw instructions (drawer mode)
+      if(!this.state.drawer || this.state.drawInstructionBuffer.length == 0)
+        return;
+      try {
+        console.log("DrawInstructionSEND", this.state.drawInstructionBuffer);
+        await api.put('/games/' + this.state.game_id +'/drawing', this.state.drawInstructionBuffer);
+
+        this.setState({ drawInstructionBuffer: [] });
+      } catch(error) {
+        this.errorInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
+      }
+    }, 1000);
+    this.setState({ intervalSendDrawInstructionBuffer });
+
     // Regularly pull draw instructions (guesser mode)
     let interval_draw_instructions = setInterval(async () => {
       // Poll draw instructions (guesser mode)
@@ -447,6 +458,7 @@ class DrawScreen extends React.Component {
     clearInterval(this.state.interval_countdown);
     clearInterval(this.state.intervalChat);
     clearInterval(this.state.interval_draw_instructions);
+    clearInterval(this.state.intervalSendDrawInstructionBuffer);
     clearInterval(this.state.intervalRoundInfo);
     clearInterval(this.state.intervalScoreboard);
   }
