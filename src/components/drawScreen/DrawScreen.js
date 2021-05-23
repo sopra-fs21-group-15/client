@@ -399,7 +399,7 @@ class DrawScreen extends React.Component {
     // Regularly send buffer of draw instructions (drawer mode)
     let intervalSendDrawInstructionBuffer = setInterval(async () => {
       // Send the buffer of draw instructions (drawer mode)
-      if(!this.state.drawer || this.state.drawInstructionBuffer === [])
+      if(!this.state.drawer || this.state.drawInstructionBuffer.length == 0)
         return;
       try {
         console.log("DrawInstructionSEND", this.state.drawInstructionBuffer);
