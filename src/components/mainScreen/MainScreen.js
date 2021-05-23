@@ -108,7 +108,6 @@ class MainScreen extends React.Component {
     // Get specific user
     this.getUser()
 
-
     try {
       const response = await api.get('/users');
       this.setState({ users: response.data });
@@ -119,6 +118,23 @@ class MainScreen extends React.Component {
     } catch (error) {
       alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
     }
+
+    let intervaleLobbylist = setInterval(async () => {
+      try {
+        const response = await api.get('/users');
+        this.setState({ users: response.data });
+        const responseLobby = await api.get('/lobbies');
+        this.setState({lobbies: responseLobby.data});
+      } catch (error) {
+        alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
+      }
+    }, 1000);
+    this.setState({ intervaleLobbylist });
+  }
+
+  componentWillUnmount() {
+    // Clear all intervals
+    clearInterval(this.state.intervaleLobbylist);
   }
 
   async join_lobby(lobby) {
