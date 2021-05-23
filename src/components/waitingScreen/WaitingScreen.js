@@ -13,10 +13,9 @@ import { Legend } from '../../views/design/Legend.js';
 import { InputField } from '../../views/design/InputField.js';
 import { OneLineBlock } from '../../views/design/OneLineBlock.js';
 import { SelectField } from '../../views/design/SelectField.js';
-import Player from '../../views/Player';
-import { Chatbox } from '../../views/design/Chatbox.js';
-import { Messages } from '../../views/design/Messages.js';
-import Message from '../../views/Message';
+import Message from "../../views/Message";
+import {Chatbox} from "../../views/design/Chatbox";
+import {Messages} from "../../views/design/Messages";
 
 
 const PlayerUl = styled.ul`
@@ -44,7 +43,7 @@ const FloatRight = styled.div`
   width: 50%;
 `;
 
-class waitingScreen extends React.Component {
+class WaitingScreen extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -52,7 +51,6 @@ class waitingScreen extends React.Component {
       loginId: localStorage.getItem('loginId'),
       username: localStorage.getItem('username'), // own username
       lobby: null,
-      gamemode: "Classic",
       owner: false,
 
       // Chat
@@ -76,14 +74,8 @@ class waitingScreen extends React.Component {
 
       // Check if lobby is started, then go to draw screen
       if(this.state.lobby.status === "PLAYING") {
-        try {
-          const response = await api.get('/games/' + this.state.lobbyId + '/convert');
-          const game = new Game(response.data);
-          localStorage.setItem("gameId", game.id)
-          this.props.history.push(`/draw`)
-        } catch (error) {
-          alert(`Something went wrong during the redirection to the started game: \n${handleError(error)}`);
-        }
+        localStorage.setItem("gameId", this.state.lobbyId);
+        this.props.history.push(`/draw`)
       }
 
       /// Find out who is the owner of the Lobby
@@ -169,12 +161,10 @@ class waitingScreen extends React.Component {
     if (milliseconds < 100) milliseconds = "0" + milliseconds;
     if (milliseconds < 10) milliseconds = "0" + milliseconds;
 
-    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
-
-    return dateString;
+    return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
   }
 
-  async send_message() {
+  async sendMessage() {
     let timeStamp = this.getCurrentDateString();
 
     try {
@@ -186,7 +176,7 @@ class waitingScreen extends React.Component {
 
       /** await the confirmation of the backend **/
       const url = '/lobbies/' + this.state.lobbyId +'/chats';
-      const response = await api.put(url, requestBody);
+      await api.put(url, requestBody);
       this.setState({ chat_message: "" });
     } catch (error) {
       this.state.messages.push({"sender": "SYSTEM", "timestamp": "TODO", message: `Something went wrong while sending the chat message: \n${handleError(error)}`});
@@ -205,21 +195,9 @@ class waitingScreen extends React.Component {
     } catch(error) {
       alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
     }
-    this.props.history.push(`/game`);
+    this.props.history.push(`/mainScreen`);
 
   }
-
-  remove_player(user){
-    var a = user.id;
-    var users = this.state.lobby.members;
-    for (var i=0; i<users.length;i++){
-      if (a===users[i].id){
-        var kick = users[i]; // send this user to the backend
-        // Api-Call to the backend to kick the user
-      }
-    }
-  }
-
 
   handleInputChange(key, value) {
     // Example: if the key is username, this statement is the equivalent to the following one:
@@ -255,9 +233,9 @@ class waitingScreen extends React.Component {
 
             <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
             { this.state.chat_message === "" ?
-              <Button disabled onClick={() => {this.send_message()}} >Send</Button>
+              <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
               :
-              <Button onClick={() => {this.send_message()}} >Send</Button>
+              <Button onClick={() => {this.sendMessage()}} >Send</Button>
             }
           </Chatbox>
           </FloatLeft>
@@ -267,16 +245,14 @@ class waitingScreen extends React.Component {
           <Label>Lobbyname</Label>
           <h2>{this.state.lobby.lobbyname} (#{this.state.lobbyId})</h2>
           <Label>Gamemode</Label>
-            <SelectField id="form_gamemode" disabled={this.state.disabled} onChange={e => {this.handleInputChange("gamemode", e.target.value);}}>
-              <option value={this.state.gamemode}>{this.state.gamemode}</option>
+            <SelectField id="form_gamemode" value={this.state.lobby.gamemode} disabled={!this.state.owner} onChange={e => {this.handleInputChange("gamemode", e.target.value);}}>
               <option value="Classic">Classic</option>
               <option value="Pokemon">Pokemon</option>
             </SelectField>
-            <h2>{this.state.gamemode}</h2>
+            <h2>{this.state.lobby.gamemode}</h2>
 
           <Label>Max. Players</Label>
-            <SelectField id="from_player" disabled={this.state.disabled} onChange={e => {this.handleInputChange("max_players", e.target.value);}}>
-              <option value={this.state.lobby.size}>{this.state.lobby.size}</option>
+            <SelectField id="from_player" value={this.state.lobby.size} disabled={!this.state.owner} onChange={e => {this.handleInputChange("max_players", e.target.value);}}>
               <option value="4">4</option>
               <option value="5">5</option>
               <option value="6">6</option>
@@ -288,7 +264,7 @@ class waitingScreen extends React.Component {
             <h2>{this.state.lobby.size}</h2>
 
           <Label>Rounds</Label>
-            <SelectField id="from_rounds" disabled={this.state.disabled} onChange={e => {this.handleInputChange("rounds", e.target.value);}}>
+            <SelectField id="from_rounds" value={this.state.lobby.rounds} disabled={!this.state.owner} onChange={e => {this.handleInputChange("rounds", e.target.value);}}>
               <option value={this.state.lobby.rounds}>{this.state.lobby.rounds}</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -302,10 +278,10 @@ class waitingScreen extends React.Component {
 
           <Label>Private</Label>
           <OneLineBlock>
-          <InputField id="form_private" type="checkbox" disabled={!this.state.owner} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
-          {this.state.private ? (
-              <div><Label>Password: {this.state.lobby.password}</Label>
-              <InputField id="form_password" placeholder="Password"  onChange={e => {this.handleInputChange('password', e.target.value);}}/>
+          <InputField id="form_private" type="checkbox" checked={this.state.lobby.password !== ""} disabled={!this.state.owner} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
+          {this.state.lobby.password !== "" ? (
+              <div>
+                <InputField id="form_password" value={this.state.lobby.password} disabled={!this.state.owner} onChange={e => {this.handleInputChange('password', e.target.value);}}/>
               </div>
           ) : ""  }
           </OneLineBlock>
@@ -321,5 +297,5 @@ class waitingScreen extends React.Component {
     );
   }
 }
-export default withRouter(waitingScreen);
+export default withRouter(WaitingScreen);
 

@@ -1,15 +1,15 @@
 import React from "react";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import { GameGuard } from "../routeProtectors/GameGuard";
-import GameRouter from "./GameRouter";
 import { LoginGuard } from "../routeProtectors/LoginGuard";
-import { LobbyGuard } from "../routeProtectors/LobbyGuard";
+import { GameGuard } from "../routeProtectors/GameGuard";
 import Login from "../../login/Login";
-//import { RegistrationGuard } from "../routeProtectors/LoginGuard"; // is this needed?
 import Registration from "../../registration/Registration";
 import CreateLobby from "../../createLobby/CreateLobby";
 import DrawScreen from "../../drawScreen/DrawScreen";
 import WaitingScreen from "../../waitingScreen/WaitingScreen";
+import MainScreen from "../../mainScreen/MainScreen";
+import ProfilePage from "../../profilepage/ProfilePage";
+import EditProfile from "../../profilepage/EditProfile";
 
 /**
  * Main router of your application.
@@ -26,62 +26,59 @@ class AppRouter extends React.Component {
       <BrowserRouter>
         <Switch>
           <div>
-            <Route
-              path="/game"
-              render={() => (
-                <GameGuard>
-                  <GameRouter base={"/game"} />
-                </GameGuard>
-              )}
-            />
-            <Route
-              path="/login"
-              exact
-              render={() => (
-                <LoginGuard>
-                  <Login />
-                </LoginGuard>
-              )}
-            />
-              <Route
-                path="/registration"
-                exact
-                render={() => (
-                    <Registration />
-                )}
-            />
-            <Route
-              path="/createLobby"
-              exact
-              render={() => (
-                  <CreateLobby />
-              )}
-            />
-            <Route
-                path="/waitingRoom"
-                exact
-                render={() => (
-                    <WaitingScreen />
-                )}
-            />
-            <Route
-              path="/draw"
-              exact
-              render={() => (
-                  <DrawScreen />
-              )}
-            />
-            <Route path="/" exact render={() => <Redirect to={"/game"} />}/>
+            <Route path="/login" exact render={() => (
+              <LoginGuard>
+                <Login />
+              </LoginGuard>
+            )}/>
 
-            <Route path="/waitingScreen" exact render={() => (<WaitingScreen/>)}/>
+            <Route path="/registration" exact render={() => (
+              <LoginGuard>
+                <Registration />
+              </LoginGuard>
+            )} />
 
+            <Route path="/mainScreen" exact render={() => (
+              <GameGuard>
+                <MainScreen/>
+              </GameGuard>
+            )}/>
+
+            <Route path="/createLobby" exact render={() => (
+              <GameGuard>
+                <CreateLobby />
+              </GameGuard>
+            )} />
+
+            <Route path="/draw" exact render={() => (
+              <GameGuard>
+                <DrawScreen />
+              </GameGuard>
+            )} />
+
+            <Route path="/waitingScreen" exact render={() => (
+              <GameGuard>
+                <WaitingScreen />
+              </GameGuard>
+            )}/>
+
+            <Route path="/profilePage" exact render={() => (
+              <GameGuard>
+                <ProfilePage />
+              </GameGuard>
+            )}/>
+
+            <Route path="/editProfile" exact render={() => (
+              <GameGuard>
+                <EditProfile />
+              </GameGuard>
+            )}/>
+
+            <Route path="/" exact render={() => <Redirect to={"/mainScreen"} />} />
           </div>
         </Switch>
       </BrowserRouter>
     );
   }
 }
-/*
-* Don't forget to export your component!
- */
 export default AppRouter;

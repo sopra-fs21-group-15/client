@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
 import User from '../shared/models/User';
@@ -61,7 +60,7 @@ class Login extends React.Component {
       localStorage.setItem('token', user.token);
 
       // Login successfully worked --> navigate to the route /game in the GameRouter
-      this.props.history.push(`/game`);
+      this.props.history.push(`/mainScreen`);
     } catch (error) {
       alert(`Something went wrong during the login: \n${handleError(error)}`);
       this.props.history.push(`/login`); //redirect user to login page

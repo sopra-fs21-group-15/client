@@ -1,13 +1,11 @@
 import styled from 'styled-components';
 import React from 'react';
 import { api, handleError } from '../../helpers/api';
-import Scores from '../../views/Scores';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import Colour from '../../views/Colour';
 import Message from '../../views/Message';
-import Game from "../shared/models/Game";
 import Round from "../shared/models/Round";
 import { HR } from '../../views/design/HR.js';
 import { Label } from '../../views/design/Label.js';
@@ -25,7 +23,7 @@ const Canvas = styled.canvas`
   position: absolute;
   // Place not in the middle of the whole screen but in middle of what is left
   // when you substract the sidebar-width.
-  left: calc(57.5% - 256px / 2);
+  left: calc(55.5% - 256px / 2);
   transform: translateX(-50%);
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
@@ -72,72 +70,53 @@ const ColoursContainer = styled.div`
 
 const Timer = styled.div`
   position: absolute;
-  //min-width: 100px;
   background: rgba(50, 50, 50, 0.9);;
   color: white;
   text-align: center;
-  font-size: 48px;
+  font-size: 40px;
   font-variant: small-caps;
   font-weight: 900;
-  padding: 10px;
+  padding: 7px;
 
-  // Place not in the middle of the whole screen but in middle of what is left
-  // when you substract the sidebar-width.
-  left: calc(80% - 256px / 2);
-  bottom: 100px;
-  transform: translateX(-50%);
+  // Place bottom-right corner of div with 20px distance to bottom of viewport
+  // and sidebar
+  left: calc(100vw - 256px - 20px);
+  transform: translateX(-100%);
+  bottom: 20px;
+
+  box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+`;
+
+const Hint = styled.div`
+  position: absolute;
+  background: rgba(50, 50, 50, 0.9);;
+  color: white;
+  text-align: center;
+  font-size: 40px;
+  font-variant: small-caps;
+  font-weight: 900;
+  padding: 7px;
+  letter-spacing: 7px;
+
+  left: 20px;
+  bottom: 20px;
 
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
 `;
 
 const Scoreboard = styled.div`
-    position: absolute;
-    width:190px ;
-    background: rgba(50, 50, 50, 0.9);
-    color: white;
-    text-align: center;
-    font-color: white;
-    left: calc(14% - 190px / 2);
-    top: 100px;
-    transform: translateX(-50%);
-    box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
-    border-radius: 8px;
-
-
-`;
-
-const Scoreboardlabel = styled.label`
-    font-size: 25px;
-    font-variant: small-caps;
-    padding-top: 15px;
-
-`;
-
-const PlayerContainer = styled.li`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Hint = styled.div`
   position: absolute;
-  //min-width: 100px;
-  background: rgba(50, 50, 50, 0.9);;
+  background: rgba(50, 50, 50, 0.9);
   color: white;
   text-align: center;
-  font-size: 48px;
-  font-variant: small-caps;
-  font-weight: 900;
-  padding: 10px;
-  letter-spacing: 7px;
+  font-color: white;
+  min-width: 128px;
+  min-height: 128px;
 
-  // Place not in the middle of the whole screen but in middle of what is left
-  // when you substract the sidebar-width.
-  left: calc(20% - 256px / 2);
-  bottom: 100px;
-  transform: translateX(-50%);
+  left: 20px;
+  top: 20px;
 
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
@@ -155,27 +134,6 @@ const Wordbox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const ScoreBox = styled.div`
-  position fixed;
-  left: 0;
-  top: 0;
-  background: rgba(50, 50, 50, 0.95);
-  box-shadow: rgba(0, 0, 0, 0.9) 0px -4px 4px;
-  width: 100vw;
-  height: 100vh;
-  color: white;
-  display: column;
-  justify-content: center;
-  align-items: center;
-
-`;
-const Endscreenlable = styled.h1`
-padding-top: 5%;
-padding-left: 35%;
-font-size: 250%;
-font-variant: small-caps;
 `;
 
 
@@ -210,22 +168,17 @@ class DrawScreen extends React.Component {
       "#ffffff"
       ];
 
-    let messages = [ {"writerName": "niklassc", "timeStamp": "2021-04-25T16:24:24+02:00", message: "Hello World"}, {"writerName": "example_user", "timeStamp": "2021-04-25T16:24:30+02:00", message: "Hello"}, {"writerName": "niklassc", "timeStamp": "2021-04-25T16:24:59+02:00", message: "test"} ];
-
     this.state = {
       game_id: localStorage.getItem('gameId'),
-      game: null, // Game object, regularly fetched from backend
-      round: null, // Round object, regularly fetched from backend # TODO
+      round: null, // Round object, regularly fetched from backend
+      scoreboard: null, // Scoreboard, regularly fetched from backend
       drawer: false, // If false, you're guesser
       timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
       loginId: localStorage.getItem('loginId'),
-      hint: "A__b_c_", // Shows hint for guessers, shows word for drawer
+      hint: "Loading...", // Shows hint for guessers, shows word for drawer
       username: localStorage.getItem('username'),
       users: "",
-      word_options: null, // Options of words to choose from (empty if not in the word-choosing-phase)
-      word: "", // Word that has to be drawn (Drawer mode)
-      roundend: false,
       drawInstructionBuffer: [], // Buffer of drawInstructions that will be sent to the backend
 
       // Draw + Canvas related
@@ -240,7 +193,7 @@ class DrawScreen extends React.Component {
 
       // Chat
       chat_message: "", // Value of the chat input field
-      messages, // JSON of all chat messages
+      messages: [], // JSON of all chat messages
       timestamp_last_message: "1900-01-01 00:00:00:000", // Time of the last message that was received
     };
   }
@@ -249,11 +202,11 @@ class DrawScreen extends React.Component {
     this.setState({ [key]: value });
   }
 
-  resetCanvas() {
+  async resetCanvas() {
     let draw_colour = this.state.draw_colour;
-    this.setState({ draw_colour: "#FFFFFF" }); // FIXME for some reason state cant be set here
+    await this.setState({ draw_colour: "#FFFFFF" });
     this.fillCanvas();
-    this.setState({ draw_colour });
+    await this.setState({ draw_colour });
   }
 
   fillCanvas() {
@@ -335,9 +288,7 @@ class DrawScreen extends React.Component {
     if (milliseconds < 100) milliseconds = "0" + milliseconds;
     if (milliseconds < 10) milliseconds = "0" + milliseconds;
 
-    let dateString = date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
-
-    return dateString;
+    return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
   }
 
   async sendDrawInstruction(x, y, size, colour) {
@@ -365,7 +316,7 @@ class DrawScreen extends React.Component {
       let ctx = this.mainCanvas.current.getContext('2d');
       this.setState({ mouse_down: true });
       ctx.beginPath();
-      if(this.state.game && this.state.drawer)
+      if(this.state.round && this.state.drawer)
         this.sendDrawInstruction(-2, -2, -2, "#FF0000");
     }
   }
@@ -375,27 +326,9 @@ class DrawScreen extends React.Component {
       this.setState({ mouse_down: false });
   }
 
-  async getRound() {
-    try {
-      const response = await api.get('/games/' + this.state.game_id + "/update");
-      console.log("ROUND", response.data);
-
-      let round = new Round(response.data);
-      this.setState({ round });
-
-    } catch (error) {
-      this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
-    }
-  }
-
   componentDidMount() {
     this.resetCanvas();
     this.updateBrushPreview();
-
-    this.getRound();
-
-    // Words
-    this.setState({ word_options: ["Apfel", "Mond", "Pikachu"] })
 
     // Regularly update the time left
     let interval_countdown = setInterval(async () => {
@@ -406,67 +339,70 @@ class DrawScreen extends React.Component {
     }, 1000);
     this.setState({ interval_countdown });
 
-    // Regularly fetch game info # TODO mabye not needed any more
-    let interval_game_info = setInterval(async () => {
-      try {
-        const response = await api.get('/games/' + this.state.game_id);
-        let game = new Game(response.data);
-        this.setState({ game });
-
-        // Set owner
-        if(this.state.username === this.state.game.members[0])
-          this.setState({ owner: true });
-        else
-          this.setState({ owner: false });
-      } catch (error) {
-        this.errorInChat(`Something went wrong while fetching the game-info: \n${handleError(error)}`);
-      }
-    }, 5000);
-    this.setState({ interval_game_info });
-
     // Regularly fetch round info
-    let intervaleRoundInfo = setInterval(async () => {
+    let intervalRoundInfo = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id + "/update");
         console.log("ROUND", response.data);
 
         let round = new Round(response.data);
+        // Clear canvas if drawer changed (by comparison to previous round object)
+        if (!this.state.round || this.state.round.drawerName !== round.drawerName || this.state.round.id !== round.id ) {
+          this.resetCanvas();
+        }
         this.setState({ round });
 
         // Set drawer
-        if(this.state.username === this.state.round.drawerName) {
+        if(this.state.username === this.state.round.drawerName)
           this.setState({ drawer: true, hint: round.word });
-        }
+        else
+          this.setState({ drawer: false, hint: "_".repeat(round.word.length) });
       } catch (error) {
         this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
     }, 5000);
-    this.setState({ intervaleRoundInfo });
+    this.setState({ intervalRoundInfo });
+
+
+    // Regularly fetch scoreboard
+    let intervalScoreboard = setInterval(async () => {
+      try {
+        const response = await api.get('/games/' + this.state.game_id + "/score");
+
+        // Rewrite format into one list of objects
+        let scoreboard = [];
+        for (let i = 0; i < response.data.players.length; i++)
+          scoreboard.push({ "username": response.data.players[i], "ranking": response.data.ranking[i], "score": response.data.score[i] });
+
+
+        this.setState({ scoreboard });
+      } catch (error) {
+        this.errorInChat(`Something went wrong while fetching the scoreboard: \n${handleError(error)}`);
+      }
+    }, 5000);
+    this.setState({ intervalScoreboard });
+
 
     // Regularly poll the chat
-    let interval_chat = setInterval(async () => {
+    let intervalChat = setInterval(async () => {
       try {
         const requestBody = JSON.stringify({
-          user_id: this.state.loginId,
-          game_id: this.state.game_id,
-          timestamp: this.state.timestamp_last_message
+          timeStamp: this.state.timestamp_last_message
         });
-
-        /** await the confirmation of the backend **/
-        const url = '/game/' + this.state.game_id + '/length'
-        const response = await api.get(url, requestBody);
+        const url = '/games/' + this.state.game_id + '/chats'
+        const response = await api.post(url, requestBody);
 
         // Set timestamp_last_message
-        let timestamp_last_message = response[response.lenght -1].timestamp;
-
-        // Add new messages to our chat
-        let messages = this.state.messages.concat(response);
+        if(response.data.messages.length === 0)
+          return;
+        let timestamp_last_message = response.data.messages[response.data.messages.length -1].timeStamp;
+        let messages = this.state.messages.concat(response.data.messages);
         this.setState({ timestamp_last_message, messages });
       } catch (error) {
         this.errorInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
-    }, 50000);
-    this.setState({ interval_chat });
+    }, 2000);
+    this.setState({ intervalChat });
 
 
     // Regularly pull draw instructions (guesser mode)
@@ -491,7 +427,7 @@ class DrawScreen extends React.Component {
     // Regularly pull draw instructions (guesser mode)
     let interval_draw_instructions = setInterval(async () => {
       // Poll draw instructions (guesser mode)
-      if(this.state.drawer || !this.state.game)
+      if(this.state.drawer || !this.state.round)
         return;
       try {
         const requestBody = JSON.stringify({
@@ -523,12 +459,6 @@ class DrawScreen extends React.Component {
       } catch(error) {
         this.errorInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
       }
-      this.setState({ interval_draw_instructions });
-
-      // End scoreboard
-      if (this.state.roundend){
-        setTimeout(this.setState({roundend:false}),5000)
-      }
     }, 5000);
     this.setState({ interval_draw_instructions });
 
@@ -538,26 +468,31 @@ class DrawScreen extends React.Component {
   componentWillUnmount() {
     // Clear all intervals
     clearInterval(this.state.interval_countdown);
-    clearInterval(this.state.interval_game_info);
-    clearInterval(this.state.interval_chat);
+    clearInterval(this.state.intervalChat);
     clearInterval(this.state.interval_draw_instructions);
-    clearInterval(this.state.intervaleRoundInfo);
     clearInterval(this.state.intervalSendDrawInstructionBuffer);
+    clearInterval(this.state.intervalRoundInfo);
+    clearInterval(this.state.intervalScoreboard);
   }
 
-  async send_message() {
+  async sendMessage() {
+    let timeStamp = this.getCurrentDateString();
     try {
       const requestBody = JSON.stringify({
-        user_id: this.state.loginId,
-        game_id: this.state.game_id,
-        message: this.state.chat_message
+        timeStamp: timeStamp,
+        message: this.state.chat_message,
+        writerName: this.state.username
       });
+
       /** await the confirmation of the backend **/
-      const url = '/game/' + this.state.game_id +'/guess';
+      const url = '/games/' + this.state.game_id +'/chats';
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
+
+      if(response.data)
+        alert("You guessed the word correctly!");
     } catch (error) {
-        this.errorInChat(`Something went wrong while sending the chat-message: \n${handleError(error)}`);
+      this.errorInChat(`Something went wrong while sending the chat message: \n${handleError(error)}`);
     }
   }
 
@@ -571,23 +506,11 @@ class DrawScreen extends React.Component {
     link.href = this.mainCanvas.current.toDataURL("image/png");
     link.click();
   }
-  async show_leaderboard(){
-    try{
-      const url = '/game/'+this.state.game_id+'/score'
-      const responseusers = await api.get(url);
-      this.setState({users: responseusers.data})
-    }catch(error){
-      alert(`Something went wrong while fetching the points: \n${handleError(error)}`)
-    }
-  }
 
   async chooseWord(word) {
-    this.setState({ word });
-
     try {
-      const url = '/games/' + this.state.game_id + '/choices/' + word;
-      await api.get(url);
-
+      const url = '/games/' + this.state.game_id + '/choices/' + this.state.username + '/' + this.state.words.indexOf(word); // TODO change this.state.words to field of actual words
+      await api.put(url);
     } catch(error) {
       alert(`Something went wrong while choosing the word: \n${handleError(error)}`)
     }
@@ -602,13 +525,13 @@ class DrawScreen extends React.Component {
         username: localStorage.getItem('username')
       });
 
-      // const url = '/lobbies/' + this.state.lobbyId +'/leavers';
-      // await api.put(url, requestBody);
+      const url = '/games/' + this.state.game_id +'/leavers';
+      await api.put(url, requestBody);
 
     } catch(error) {
       alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
     }
-    this.props.history.push(`/game`);
+    this.props.history.push(`/mainScreen`);
   }
 
   render() {
@@ -627,7 +550,7 @@ class DrawScreen extends React.Component {
                 return (
                   <Colour colour={colour} f_onClick={() => {this.changeColour(colour)}} />
                 );
-              })},
+              })}
           </ColoursContainer>,
           <Label>Size</Label>,
           <InputField value={this.state.draw_size} onChange={e => {this.changeSize(e.target.value);}} id="input_size" type="range" min="1" max="100" />,
@@ -650,23 +573,20 @@ class DrawScreen extends React.Component {
 
           <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
           { this.state.chat_message === "" ?
-            <Button disabled onClick={() => {this.send_message()}} >Send</Button>
+            <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
             :
-            <Button onClick={() => {this.send_message()}} >Send</Button>
+            <Button onClick={() => {this.sendMessage()}} >Send</Button>
           }
         </Chatbox>
         <Button onClick={() => {this.leaveGame()}}>Leave Game</Button>
       </Sidebar>,
       <Scoreboard>
-      <Scoreboardlabel>Scoreboard</Scoreboardlabel>
-      {!this.state.users ? (
+      {!this.state.scoreboard ? (
         <Spinner />
       ):(
         <Users>
-        {this.state.users.map(user =>{return(
-          <PlayerContainer key={user.id}>
-            <Scores user={user}/>
-          </PlayerContainer>
+        {this.state.scoreboard.map(entry =>{return(
+          <li>(#{entry.ranking}) {entry.username} - {entry.score}</li>
         );})}
         </Users>
       )}
@@ -681,19 +601,6 @@ class DrawScreen extends React.Component {
             })}
           </Wordbox>
         ): ""}
-      </div>,
-      //render the roundend score board
-      <div>
-        {this.state.roundend && this.state.users ? (
-          <ScoreBox>
-          <Endscreenlable>Round End Scoreboard</Endscreenlable>
-          {this.state.users.map(user =>{return(
-            <PlayerContainer key={user.id}>
-              <Scores user={user}/>
-            </PlayerContainer>
-          );})}
-          </ScoreBox>
-        ) : ""}
       </div>
     ]);
   }

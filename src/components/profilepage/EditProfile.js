@@ -79,7 +79,7 @@ class EditProfile extends React.Component {
   }
   catch (error) {
         alert(`Something went wrong during the edit: \n${handleError(error)}`);
-        this.props.history.push(`/game/dashboard/profilepage/editprofile`); //redirect user to edit page
+        this.props.history.push(`/mainScreen`); //redirect user to edit page
       }
   }
 
@@ -140,7 +140,7 @@ class EditProfile extends React.Component {
                         width="100%"
                         onClick={() => {
                           this.edit();
-                          this.props.history.push(`/game/dashboard/profilepage`);
+                          this.props.history.push(`/profilePage`);
                           /** save button **/
                         }}
                       >
@@ -152,7 +152,7 @@ class EditProfile extends React.Component {
                         <Button
                             width="100%"
                             onClick={() => {
-                                this.props.history.push(`/game/dashboard/profilepage`);
+                                this.props.history.push(`/profilePage`);
                             }}
                         >
                         Go back

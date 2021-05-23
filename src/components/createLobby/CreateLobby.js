@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
@@ -46,16 +45,16 @@ class CreateLobby extends React.Component {
 
       // set the lobbyID
       localStorage.setItem("lobbyId", lobby.id)
-      this.props.history.push(`/waitingRoom`)
+      this.props.history.push(`/waitingScreen`)
     }
     catch (error){
       alert(`Something went wrong during the lobby creation: \n${handleError(error)}`);
-      this.props.history.push(`/game/dashboard`);
+      this.props.history.push(`/mainScreen`);
     }
   }
 
   goback() {
-    this.props.history.push(`/game`);
+    this.props.history.push(`/mainScreen`);
   }
 
   handleInputChange(key, value) {
