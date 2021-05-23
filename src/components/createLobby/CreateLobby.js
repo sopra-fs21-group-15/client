@@ -22,7 +22,7 @@ class CreateLobby extends React.Component {
       rounds: 4,
       private: false,
       lobbyName: "",
-      gameMode: "Classic",
+      gameMode: "CLASSIC",
       password: ""
     };
   }
@@ -34,7 +34,8 @@ class CreateLobby extends React.Component {
         rounds: this.state.rounds,
         password: this.state.password,
         size: this.state.maxPlayers,
-        timer: 60
+        timer: 60,
+        gameMode: this.state.gameMode
       });
 
       // wait for making new Lobby
@@ -77,8 +78,8 @@ class CreateLobby extends React.Component {
 
           <Label>Gamemode</Label>
           <SelectField id="form_gamemode" value={this.state.gameMode} onChange={e => this.handleInputChange("gameMode",e.target.value)}>
-            <option value="classic">Classic</option>
-            <option value="pokemon">Pokemon</option>
+            <option value="CLASSIC">Classic</option>
+            <option value="SPEED">Speed</option>
           </SelectField>
 
           <Label>Max. Players</Label>
