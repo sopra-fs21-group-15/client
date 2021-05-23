@@ -7,12 +7,15 @@ import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
 
 const FormContainer = styled.div`
-  margin-top: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3em;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 300px;
   justify-content: center;
+  width: 380px;
 `;
 
 const Form = styled.div`
@@ -65,6 +68,7 @@ class EditProfile extends React.Component {
         birth_date: null,
         userId: localStorage.getItem("visited User"), /** get the ID of the profile --> unnecessary **/
         loggedInUser: localStorage.getItem("loginId"), /** get the ID of the logged in user **/
+        username: null,
     };
     this.getUser();
   }
@@ -110,7 +114,7 @@ class EditProfile extends React.Component {
 
     render() {
         return (
-        <BaseContainer>
+            <BaseContainer style={{height:550+"px"}}>
            <FormContainer>
                 <Form>
                     <div>
@@ -136,7 +140,7 @@ class EditProfile extends React.Component {
 
                     <ButtonContainer>
                       <Button
-                        disabled={((this.state.username == null) && (this.state.birth_date == null))}
+                        disabled={((this.state.username === null) && (this.state.birth_date === null))}
                         width="100%"
                         onClick={() => {
                           this.edit();
@@ -160,7 +164,7 @@ class EditProfile extends React.Component {
                     </ButtonContainer>
                   </Form>
                 </FormContainer>
-              </BaseContainer>
+            </BaseContainer>
             );}
 }
 

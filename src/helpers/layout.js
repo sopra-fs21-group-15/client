@@ -6,8 +6,10 @@ export const TABLETS_WIDTH = 750;
 export const SMALL_WIDTH = 768;
 
 export const BaseContainer = styled.div`
+ 
   margin-left: auto;
   margin-right: auto;
+  width: 800px;
   max-width: ${DESKTOP_WIDTH}px;
 
   justify-content: center;
@@ -16,5 +18,7 @@ export const BaseContainer = styled.div`
   text-align: center;
   background: rgba(50, 50, 50, 0.9);
   border-radius: 10px;
-  padding: 50px;
+  padding: 30px;
+  padding-left: 60px;
+  padding-right: 60px;
 `;

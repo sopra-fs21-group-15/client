@@ -200,7 +200,7 @@ class ProfilePage extends React.Component {
     render() {
         return (
             /** If they are the same, you can edit the page **/
-            <BaseContainer>
+            <BaseContainer style={{width:600+"px"}}>
                 <FormContainer>
                     <Form>
                         <center><h1><u>Profile Page</u></h1></center>
