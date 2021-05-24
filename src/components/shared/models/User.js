@@ -9,7 +9,7 @@ class User {
     this.username = null;
     this.token = null;
     this.status = null;
-    this.birth_date = null; //added birth date
+    this.birthDate = null; //added birth date
     this.creationDate = null; //added creation date
     this.friendsList = data.friendsList;
     this.wins = null;

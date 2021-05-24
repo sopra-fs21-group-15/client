@@ -65,7 +65,7 @@ class EditProfile extends React.Component {
   constructor() {
     super();
     this.state = {
-        birth_date: null,
+        birthDate: null,
         userId: localStorage.getItem("visited User"), /** get the ID of the profile --> unnecessary **/
         loggedInUser: localStorage.getItem("loginId"), /** get the ID of the logged in user **/
         username: null,
@@ -97,7 +97,7 @@ class EditProfile extends React.Component {
     try{
         const requestBody_2 = JSON.stringify({
             username: this.state.username,
-            birth_date: this.state.birth_date
+            birthDate: this.state.birthDate
         });
 
         const url = '/users/' + this.state.userId;
@@ -133,14 +133,14 @@ class EditProfile extends React.Component {
                     <InputField
                       placeholder="Please enter new Birth Date here.."
                       onChange={e => {
-                        this.handleInputChange('birth_date', e.target.value);
+                        this.handleInputChange('birthDate', e.target.value);
                         /** change birth date **/
                       }}
                     />
 
                     <ButtonContainer>
                       <Button
-                        disabled={((this.state.username === null) && (this.state.birth_date === null))}
+                        disabled={((this.state.username === null) && (this.state.birthDate === null))}
                         width="100%"
                         onClick={() => {
                           this.edit();

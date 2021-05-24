@@ -11,9 +11,7 @@ export const BaseContainer = styled.div`
   margin-right: auto;
   width: 800px;
   max-width: ${DESKTOP_WIDTH}px;
-
   justify-content: center;
-
   color: white;
   text-align: center;
   background: rgba(50, 50, 50, 0.9);
