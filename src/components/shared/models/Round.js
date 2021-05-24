@@ -15,6 +15,7 @@ class Round {
     this.status = data.status;
     this.word = data.word;
     this.selection = data.selection;
+    this.endsAt = Date.parse(data.endsAt);
   }
 }
 

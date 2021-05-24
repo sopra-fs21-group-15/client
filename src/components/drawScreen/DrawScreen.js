@@ -173,7 +173,6 @@ class DrawScreen extends React.Component {
       round: null, // Round object, regularly fetched from backend
       scoreboard: null, // Scoreboard, regularly fetched from backend
       drawer: false, // If false, you're guesser
-      timeout: new Date(), // Timestamp when the time is over
       time_left: Infinity, // in seconds
       loginId: localStorage.getItem('loginId'),
       hint: "Loading...", // Shows hint for guessers, shows word for drawer
@@ -321,9 +320,11 @@ class DrawScreen extends React.Component {
 
     // Regularly update the time left
     let interval_countdown = setInterval(async () => {
+      if(!this.state.round)
+        return;
       // Countdown the timer
       let date_now = new Date();
-      let time_left = Math.round((this.state.timeout - date_now) / 1000);
+      let time_left = Math.round((this.state.round.endsAt - date_now) / 1000);
       this.setState({ time_left });
     }, 1000);
     this.setState({ interval_countdown });
@@ -529,7 +530,6 @@ class DrawScreen extends React.Component {
       <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
       onMouseDown={(e) => { this.canvas_onMouseDown(e.button)}} onMouseUp={(e) => { this.canvas_onMouseUp(e.button)}}/>,
 
-      <Timer>{this.state.time_left}</Timer>,
       <Hint>{this.state.hint}</Hint>,
       <Sidebar>
         <H1>Tools #{this.state.game_id}</H1>
@@ -590,7 +590,8 @@ class DrawScreen extends React.Component {
             })}
           </Wordbox>
         ): ""}
-      </div>
+      </div>,
+      <Timer>{this.state.time_left}</Timer>
     ]);
   }
 }
