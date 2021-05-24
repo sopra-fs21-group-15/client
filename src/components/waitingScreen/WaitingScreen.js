@@ -207,7 +207,7 @@ class WaitingScreen extends React.Component {
 
   async sendInputChange(key, value) {
     try {
-      let requestBody = "{\"" + key + "\"" + ":\"" + value + "\"}";
+      let requestBody = "{\"" + key + "\":\"" + value + "\"}";
       await api.put('/lobbies/' + this.state.lobby.id, requestBody);
     }
     catch (error){
