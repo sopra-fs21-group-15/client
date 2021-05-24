@@ -207,19 +207,8 @@ class WaitingScreen extends React.Component {
 
   async sendInputChange(key, value) {
     try {
-      // const requestBody = JSON.stringify({
-      //   key: value
-      // });
       let requestBody = "{\"" + key + "\"" + ":\"" + value + "\"}";
-
-      console.log("Update lobby, requestBody", requestBody);
-
-      // wait for making new Lobby
-      const response = await api.put('/lobbies/' + this.state.lobby.id, requestBody);
-      console.log("Update lobby, response.data", response.data);
-
-      // // get new lobby and update the new Lobby Object
-      // const lobby = new Lobby(response.data);
+      await api.put('/lobbies/' + this.state.lobby.id, requestBody);
     }
     catch (error){
       alert(`Something went wrong during the lobby modification: \n${handleError(error)}`);
