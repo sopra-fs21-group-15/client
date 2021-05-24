@@ -405,7 +405,7 @@ class DrawScreen extends React.Component {
         return;
       try {
         console.log("DrawInstructionSEND", this.state.drawInstructionBuffer);
-        await api.put('/games/' + this.state.game_id +'/drawing', this.state.drawInstructionBuffer);
+        await api.put('/games/' + this.state.game_id +'/drawing', JSON.stringify(this.state.drawInstructionBuffer));
 
         await this.setState({ drawInstructionBuffer: [] });
       } catch(error) {
