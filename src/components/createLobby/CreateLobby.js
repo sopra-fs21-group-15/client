@@ -75,7 +75,7 @@ class CreateLobby extends React.Component {
           <InputField id="form_name"
               onChange={ e => {
                 if (e.target.value.length-1 >= 12){
-                  alert("Lobbyname can only have 12 characters")
+                  alert("LobbyName can only have 12 characters")
                   e.target.value = ""
                 }
                 else {this.handleInputChange("lobbyName", e.target.value)}}}/>

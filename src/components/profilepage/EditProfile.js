@@ -124,7 +124,11 @@ class EditProfile extends React.Component {
                     <InputField
                       placeholder="Please enter new Username here.."
                       onChange={e => {
-                        this.handleInputChange('username', e.target.value);
+                          if (e.target.value.length-1 >= 12){
+                              alert("name can only have 12 characters")
+                              e.target.value=""
+                          }
+                        else this.handleInputChange('username', e.target.value);
                           /** change username **/
                       }}
                     />
@@ -133,7 +137,11 @@ class EditProfile extends React.Component {
                     <InputField
                       placeholder="Please enter new Birth Date here.."
                       onChange={e => {
-                        this.handleInputChange('birthDate', e.target.value);
+                          if (e.target.value.length-1 >= 12){
+                              alert("Name can only have 12 characters")
+                              e.target.value=""
+                          }
+                          else this.handleInputChange('username', e.target.value);
                         /** change birth date **/
                       }}
                     />
