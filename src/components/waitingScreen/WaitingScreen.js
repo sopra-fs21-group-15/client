@@ -26,7 +26,7 @@ const PlayerLi = styled.li`
   border-radius: 7px;
   padding: 7px;
   margin-bottom: 12px;
-  width: 25%;
+  width: 30%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -209,7 +209,7 @@ class WaitingScreen extends React.Component {
   render() {
     return (
       // Lobby list
-      <BaseContainer>
+      <BaseContainer style={{width:1000+"px"}}>
           <Legend>Chill Area</Legend>
           {!this.state.lobby ? (
             <Spinner />

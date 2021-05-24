@@ -91,7 +91,7 @@ class Registration extends React.Component {
               alert("Name can only have 12 characters")
               e.target.value = ""
             }
-            this.handleInputChange('username', e.target.value); }} />
+            else this.handleInputChange('username', e.target.value); }} />
           <Label>Password</Label>
           <InputField size={40} placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} />
           <HR/>

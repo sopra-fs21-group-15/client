@@ -141,7 +141,7 @@ class EditProfile extends React.Component {
                               alert("Name can only have 12 characters")
                               e.target.value=""
                           }
-                          else this.handleInputChange('username', e.target.value);
+                          else this.handleInputChange('birthDate', e.target.value);
                         /** change birth date **/
                       }}
                     />
@@ -149,7 +149,7 @@ class EditProfile extends React.Component {
                     <ButtonContainer>
                       <Button
                         disabled={((this.state.username === null) && (this.state.birthDate === null))}
-                        width="100%"
+                        width="50%"
                         onClick={() => {
                           this.edit();
                           this.props.history.push(`/game/dashboard/profilepage`);
@@ -162,7 +162,7 @@ class EditProfile extends React.Component {
 
                     <ButtonContainer>
                         <Button
-                            width="100%"
+                            width="50%"
                             onClick={() => {
                                 this.props.history.push(`/game/dashboard/profilepage`);
                             }}

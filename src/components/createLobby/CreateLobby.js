@@ -106,7 +106,7 @@ class CreateLobby extends React.Component {
           </OneLineBlock>
           <HR/>
           <Button width="25%" onClick={() => {this.createLobby();}}>Create Lobby</Button>
-          <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
+          <Button style={{marginTop: 5+"px"}} width="25%" onClick={() => {this.goback();}}>Back</Button>
         </FormContainer>
       </BaseContainer>
     );
