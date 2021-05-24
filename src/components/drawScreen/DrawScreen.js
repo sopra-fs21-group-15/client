@@ -407,11 +407,11 @@ class DrawScreen extends React.Component {
         console.log("DrawInstructionSEND", this.state.drawInstructionBuffer);
         await api.put('/games/' + this.state.game_id +'/drawing', this.state.drawInstructionBuffer);
 
-        this.setState({ drawInstructionBuffer: [] });
+        await this.setState({ drawInstructionBuffer: [] });
       } catch(error) {
         this.errorInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
       }
-    }, 1000);
+    }, 3000);
     this.setState({ intervalSendDrawInstructionBuffer });
 
     // Regularly pull draw instructions (guesser mode)
