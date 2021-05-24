@@ -14,7 +14,8 @@ export const BaseContainer = styled.div`
 
   color: white;
   text-align: center;
-  background: rgba(50, 50, 50, 0.9);
+  background: rgba(50, 50, 50, 0.8);
+  backdrop-filter: blur(6px);
   border-radius: 10px;
   padding: 50px;
 `;

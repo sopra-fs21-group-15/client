@@ -32,7 +32,8 @@ const Canvas = styled.canvas`
 const Sidebar = styled.div`
   width: 256px;
   height: 100%;
-  background: rgba(50, 50, 50, 0.9);
+  background: rgba(50, 50, 50, 0.8);
+  backdrop-filter: blur(6px);
   box-shadow: rgba(0, 0, 0, 0.9) 0px -4px 4px;
 
   transition: width 1s;
@@ -60,17 +61,15 @@ const BrushPreview = styled.div`
 `;
 
 const ColoursContainer = styled.div`
-  // display: inline-block;
   display: grid;
   grid-gap: 10px;
   grid-template-columns: repeat(auto-fill, 32px);
-
-  // background: rgba(255, 0, 0, 0.3);
 `;
 
 const Timer = styled.div`
   position: absolute;
-  background: rgba(50, 50, 50, 0.9);;
+  background: rgba(50, 50, 50, 0.8);;
+  backdrop-filter: blur(6px);
   color: white;
   text-align: center;
   font-size: 40px;
@@ -90,7 +89,8 @@ const Timer = styled.div`
 
 const Hint = styled.div`
   position: absolute;
-  background: rgba(50, 50, 50, 0.9);;
+  background: rgba(50, 50, 50, 0.8);;
+  backdrop-filter: blur(6px);
   color: white;
   text-align: center;
   font-size: 40px;
@@ -108,7 +108,8 @@ const Hint = styled.div`
 
 const Scoreboard = styled.div`
   position: absolute;
-  background: rgba(50, 50, 50, 0.9);
+  background: rgba(50, 50, 50, 0.8);
+  backdrop-filter: blur(6px);
   color: white;
   text-align: center;
   font-color: white;
@@ -126,7 +127,8 @@ const Wordbox = styled.div`
   position fixed;
   left: 0;
   top: 0;
-  background: rgba(50, 50, 50, 0.9);
+  background: rgba(50, 50, 50, 0.8);
+  backdrop-filter: blur(6px);
   box-shadow: rgba(0, 0, 0, 0.9) 0px -4px 4px;
   width: 100vw;
   height: 100vh;
