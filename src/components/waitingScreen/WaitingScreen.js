@@ -205,6 +205,28 @@ class WaitingScreen extends React.Component {
     this.setState({ [key]: value });
   }
 
+  async sendInputChange(key, value) {
+    try {
+      // const requestBody = JSON.stringify({
+      //   key: value
+      // });
+      let requestBody = "{\"" + key + "\"" + ":\"" + value + "\"}";
+
+      console.log("Update lobby, requestBody", requestBody);
+
+      // wait for making new Lobby
+      const response = await api.put('/lobbies/' + this.state.lobby.id, requestBody);
+      console.log("Update lobby, response.data", response.data);
+
+      // // get new lobby and update the new Lobby Object
+      // const lobby = new Lobby(response.data);
+    }
+    catch (error){
+      alert(`Something went wrong during the lobby modification: \n${handleError(error)}`);
+    }
+
+  }
+
   render() {
     return (
       // Lobby list
@@ -245,14 +267,14 @@ class WaitingScreen extends React.Component {
           <Label>Lobbyname</Label>
           <h2>{this.state.lobby.lobbyname} (#{this.state.lobbyId})</h2>
           <Label>Gamemode</Label>
-            <SelectField id="form_gamemode" value={this.state.lobby.gameMode} disabled={!this.state.owner} onChange={e => {this.handleInputChange("gamemode", e.target.value);}}>
+            <SelectField id="form_gamemode" value={this.state.lobby.gameMode} disabled={!this.state.owner} onChange={e => {this.sendInputChange("gameMode", e.target.value);}}>
               <option value="CLASSIC">Classic</option>
               <option value="SPEED">Speed</option>
             </SelectField>
             <h2>{this.state.lobby.gamemode}</h2>
 
           <Label>Max. Players</Label>
-            <SelectField id="from_player" value={this.state.lobby.size} disabled={!this.state.owner} onChange={e => {this.handleInputChange("max_players", e.target.value);}}>
+            <SelectField id="from_player" value={this.state.lobby.size} disabled={!this.state.owner} onChange={e => {this.sendInputChange("size", e.target.value);}}>
               <option value="4">4</option>
               <option value="5">5</option>
               <option value="6">6</option>
@@ -264,7 +286,7 @@ class WaitingScreen extends React.Component {
             <h2>{this.state.lobby.size}</h2>
 
           <Label>Rounds</Label>
-            <SelectField id="from_rounds" value={this.state.lobby.rounds} disabled={!this.state.owner} onChange={e => {this.handleInputChange("rounds", e.target.value);}}>
+            <SelectField id="from_rounds" value={this.state.lobby.rounds} disabled={!this.state.owner} onChange={e => {this.sendInputChange("rounds", e.target.value);}}>
               <option value={this.state.lobby.rounds}>{this.state.lobby.rounds}</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -281,7 +303,7 @@ class WaitingScreen extends React.Component {
           <InputField id="form_private" type="checkbox" checked={this.state.lobby.password !== ""} disabled={!this.state.owner} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
           {this.state.lobby.password !== "" ? (
               <div>
-                <InputField id="form_password" value={this.state.lobby.password} disabled={!this.state.owner} onChange={e => {this.handleInputChange('password', e.target.value);}}/>
+                <InputField id="form_password" value={this.state.lobby.password} disabled={!this.state.owner} onChange={e => {this.sendInputChange('password', e.target.value);}}/>
               </div>
           ) : ""  }
           </OneLineBlock>
