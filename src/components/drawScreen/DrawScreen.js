@@ -121,6 +121,18 @@ const Scoreboard = styled.div`
 
   box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.7);
   border-radius: 8px;
+  font-variant: small-caps;
+  font-weight: 900;
+  text-shadow: 2px 2px black;
+`;
+
+const ScoreboardList = styled.ul`
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+`;
+
+const ScoreboardElement = styled.li`
 `;
 
 const Wordbox = styled.div`
@@ -365,6 +377,7 @@ class DrawScreen extends React.Component {
     let intervalScoreboard = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id + "/score");
+        console.log("Scoreboard", response.data);
 
         // Rewrite format into one list of objects
         let scoreboard = [];
@@ -531,6 +544,21 @@ class DrawScreen extends React.Component {
     this.props.history.push(`/mainScreen`);
   }
 
+  ordinalSuffix(i) {
+    var j = i % 10,
+      k = i % 100;
+    if (j == 1 && k != 11) {
+      return i + "st";
+    }
+    if (j == 2 && k != 12) {
+      return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+      return i + "rd";
+    }
+    return i + "th";
+  }
+
   render() {
     return ([
       // Lobby list
@@ -581,9 +609,11 @@ class DrawScreen extends React.Component {
         <Spinner />
       ):(
         <Users>
+        <ScoreboardList>
         {this.state.scoreboard.map(entry =>{return(
-          <li>(#{entry.ranking}) {entry.username} - {entry.score}</li>
+          <ScoreboardElement>{this.ordinalSuffix(entry.ranking)}: {entry.username} - {entry.score} Pts</ScoreboardElement>
         );})}
+        </ScoreboardList>
         </Users>
       )}
       </Scoreboard>,
