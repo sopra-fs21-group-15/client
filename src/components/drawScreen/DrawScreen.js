@@ -179,6 +179,7 @@ class DrawScreen extends React.Component {
       username: localStorage.getItem('username'),
       users: "",
       drawInstructionBuffer: [], // Buffer of drawInstructions that will be sent to the backend
+      guessed: false, // True when this client guessed to word in this phase
 
       // Draw + Canvas related
       canvas_width: 854,
@@ -339,6 +340,7 @@ class DrawScreen extends React.Component {
         // Clear canvas if drawer changed (by comparison to previous round object)
         if (!this.state.round || this.state.round.drawerName !== round.drawerName || this.state.round.id !== round.id ) {
           this.resetCanvas();
+          this.setState({ guessed: false });
         }
         this.setState({ round });
 
@@ -351,7 +353,7 @@ class DrawScreen extends React.Component {
             this.setState({ hint: "_".repeat(round.word.length) });
         }
       } catch (error) {
-        this.errorInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
+        this.systemMsgInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
     }, 5000);
     this.setState({ intervalRoundInfo });
@@ -370,7 +372,7 @@ class DrawScreen extends React.Component {
 
         this.setState({ scoreboard });
       } catch (error) {
-        this.errorInChat(`Something went wrong while fetching the scoreboard: \n${handleError(error)}`);
+        this.systemMsgInChat(`Something went wrong while fetching the scoreboard: \n${handleError(error)}`);
       }
     }, 5000);
     this.setState({ intervalScoreboard });
@@ -392,7 +394,7 @@ class DrawScreen extends React.Component {
         let messages = this.state.messages.concat(response.data.messages);
         this.setState({ timestamp_last_message, messages });
       } catch (error) {
-        this.errorInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
+        this.systemMsgInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
     }, 2000);
     this.setState({ intervalChat });
@@ -401,7 +403,7 @@ class DrawScreen extends React.Component {
     // Regularly send buffer of draw instructions (drawer mode)
     let intervalSendDrawInstructionBuffer = setInterval(async () => {
       // Send the buffer of draw instructions (drawer mode)
-      if(!this.state.drawer || this.state.drawInstructionBuffer.length == 0)
+      if(!this.state.drawer || this.state.drawInstructionBuffer.length === 0)
         return;
       try {
         console.log("DrawInstructionSEND", this.state.drawInstructionBuffer);
@@ -409,7 +411,7 @@ class DrawScreen extends React.Component {
 
         await this.setState({ drawInstructionBuffer: [] });
       } catch(error) {
-        this.errorInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
+        this.systemMsgInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
       }
     }, 3000);
     this.setState({ intervalSendDrawInstructionBuffer });
@@ -447,7 +449,7 @@ class DrawScreen extends React.Component {
         });
 
       } catch(error) {
-        this.errorInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
+        this.systemMsgInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
       }
     }, 5000);
     this.setState({ interval_draw_instructions });
@@ -479,14 +481,17 @@ class DrawScreen extends React.Component {
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
 
-      if(response.data)
+      if(response.data) {
         alert("You guessed the word correctly!");
+        this.systemMsgInChat("YOU GUESSED THE WORD!");
+        this.setState({ guessed: true });
+      }
     } catch (error) {
-      this.errorInChat(`Something went wrong while sending the chat message: \n${handleError(error)}`);
+      this.systemMsgInChat(`Something went wrong while sending the chat message: \n${handleError(error)}`);
     }
   }
 
-  errorInChat(errMsg) {
+  systemMsgInChat(errMsg) {
     this.state.messages.push({"writerName": "SYSTEM", "timeStamp": this.getCurrentDateString(), message: errMsg});
   }
 
@@ -560,7 +565,7 @@ class DrawScreen extends React.Component {
             })}
           </Messages>
 
-          <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+          <InputField disabled={this.state.drawer || this.state.guessed} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
           { this.state.chat_message === "" ?
             <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
             :
