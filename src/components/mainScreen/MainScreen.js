@@ -139,6 +139,14 @@ class MainScreen extends React.Component {
 
   async join_lobby(lobby) {
     let input_password = "";
+
+    // Spectate if game already started
+    if (lobby.status === "PLAYING") {
+      localStorage.setItem("lobbyId", lobby.id)
+      this.props.history.push("/waitingScreen")
+      return;
+    }
+
     if (lobby.password !== "")
       input_password = prompt("Please enter the Lobby password");
 
