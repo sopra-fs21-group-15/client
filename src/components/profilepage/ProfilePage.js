@@ -209,7 +209,6 @@ class ProfilePage extends React.Component {
                         {this.state.loggedInUser === this.state.userId ?
                             <h2><u>Friends</u></h2> : ("")}
                         {this.state.loggedInUser === this.state.userId ?(
-
                             <Users>
                         {this.state.friends.map(user => {
                             return (

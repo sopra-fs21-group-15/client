@@ -76,7 +76,7 @@ class CreateLobby extends React.Component {
               onChange={ e => {
                 if (e.target.value.length-1 >= 12){
                   alert("LobbyName can only have 12 characters")
-                  e.target.value = ""
+                  e.target.value = e.target.value.substring(0,12)
                 }
                 else {this.handleInputChange("lobbyName", e.target.value)}}}/>
 
@@ -105,7 +105,7 @@ class CreateLobby extends React.Component {
             {this.state.private === true ? <InputField id="form_password" value={this.state.password} onChange={e => {this.handleInputChange('password', e.target.value);}} placeholder="Password" /> : "" }
           </OneLineBlock>
           <HR/>
-          <Button width="25%" onClick={() => {this.createLobby();}}>Create Lobby</Button>
+          <Button disabled={this.state.lobbyName === ""} width="25%" onClick={() => {this.createLobby();}}>Create Lobby</Button>
           <Button style={{marginTop: 5+"px"}} width="25%" onClick={() => {this.goback();}}>Back</Button>
         </FormContainer>
       </BaseContainer>

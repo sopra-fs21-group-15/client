@@ -114,7 +114,7 @@ class EditProfile extends React.Component {
 
     render() {
         return (
-            <BaseContainer style={{height:550+"px"}}>
+            <BaseContainer style={{height:550+"px", width: 700+"px"}}>
            <FormContainer>
                 <Form>
                     <div>
@@ -126,7 +126,7 @@ class EditProfile extends React.Component {
                       onChange={e => {
                           if (e.target.value.length-1 >= 12){
                               alert("name can only have 12 characters")
-                              e.target.value=""
+                              e.target.value = e.target.value.substring(0,12)
                           }
                         else this.handleInputChange('username', e.target.value);
                           /** change username **/
@@ -139,7 +139,7 @@ class EditProfile extends React.Component {
                       onChange={e => {
                           if (e.target.value.length-1 >= 12){
                               alert("Name can only have 12 characters")
-                              e.target.value=""
+                              e.target.value = e.target.value.substring(0,12)
                           }
                           else this.handleInputChange('birthDate', e.target.value);
                         /** change birth date **/

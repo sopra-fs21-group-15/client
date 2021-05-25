@@ -89,7 +89,7 @@ class Registration extends React.Component {
           <InputField size={40} placeholder="Please enter here.." onChange={e => {
             if (e.target.value.length-1 >= 12){
               alert("Name can only have 12 characters")
-              e.target.value = ""
+              e.target.value = e.target.value.substring(0,12)
             }
             else this.handleInputChange('username', e.target.value); }} />
           <Label>Password</Label>
