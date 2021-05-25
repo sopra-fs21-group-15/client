@@ -7,27 +7,27 @@ const Container = styled.li`
   border: 1px solid #ffffff26;
   padding: 0;
   margin: 0;
-  border-bottom: 1px rgba(0,0,0,0.2) dashed;
+  border-bottom: 1px rgba(0,0,0,0.5) dashed;
 `;
 
 const Sender = styled.span`
   color: blue;
   font-weight: lighter;
-  font-size: 10px;
+  font-size: 15px;
   padding: 0;
   margin: 0;
 `;
 
 const Timestamp = styled.span`
   font-weight: lighter;
-  font-size: 10px;
+  font-size: 15px;
   color: rgba(0,0,0,0.5);
   padding: 0;
   margin: 0;
 `;
 
 const MessageBody = styled.p`
-  font-size: 12px;
+  font-size: 15px;
   padding: 0;
   margin: 0;
 `;
@@ -35,8 +35,8 @@ const MessageBody = styled.p`
 const Message = ({ message }) => {
   return (
     <Container>
-      <Sender>{message.writerName}</Sender>
-      <Timestamp>({message.timeStamp})</Timestamp>
+      <Sender>{message.writerName} </Sender>
+      <Timestamp> {message.timeStamp.substring(10,19)}</Timestamp>
       <MessageBody>{message.message}</MessageBody>
     </Container>
   );

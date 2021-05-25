@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { Button } from './design/Button';
 
 const Container = styled.div`
-  margin: 3px 0;
-  width: 280px;
+  margin: 6px 0;
+  width: 150px;
   padding: 10px;
   border-radius: 6px;
   display: flex;
@@ -14,12 +13,15 @@ const Container = styled.div`
 
 const UserName = styled.div`
   font-weight: lighter;
-  margin-left: 5px;
   font-size: 17px;
-  margin-right: auto;
+  text-align: center;
 `;
 
-
+const Points = styled.div`
+  font-weight: lighter;
+  font-size: 17px;
+  text-align: center;
+  `;
 /**
  * This is an example of a Functional and stateless component (View) in React. Functional components are not classes and thus don't handle internal state changes.
  * Conceptually, components are like JavaScript functions. They accept arbitrary inputs (called “props”) and return React elements describing what should appear on the screen.
@@ -29,15 +31,14 @@ const UserName = styled.div`
  * @FunctionalComponent
  */
 
-const Player = ({ user, f_onClick }) => {
+const Score = ({ user, f_onClick }) => {
   return (
     <Container>
-      <UserName>{user.username} {user.status==="ONLINE" ? "🟢" : user.status==="OFFLINE" ? "🔴": user.status === "CHILLING" ? "😴" : "" }</UserName>
-      {f_onClick ? <Button
-          width={"35%"}
-          onClick={f_onClick}>Profile</Button> : "" }
+      <UserName>{user.name}</UserName>
+      <Points>:  {user.points}</Points>
+
     </Container>
   );
 };
 
-export default Player;
+export default Score;

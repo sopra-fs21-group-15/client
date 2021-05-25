@@ -142,7 +142,7 @@ class ProfilePage extends React.Component {
       const response = await api.put(url,requestBody);
       const myUser = new User(response.data)
       this.setState({myUser:myUser})
-      await this.checkIfFriend()
+      this.checkIfFriend()
 
   }
     // method to remove friends
@@ -154,13 +154,13 @@ class ProfilePage extends React.Component {
       const response = await api.put(url,requestBody);
       const myUser = new User(response.data)
       this.setState({myUser:myUser})
-      await this.checkIfFriend()
+      this.checkIfFriend()
   }
 
   displayFriends(){
-      for (let i = 0; i<this.state.myUser.friendsList.length; i++){
-          this.state.friends.push(this.state.myUser.friendsList[i])
-      }
+      this.state.myUser.friendsList.forEach(iter =>{
+          this.state.friends.push(iter)
+      })
   }
 
   //can be extended if I will go directly to my friends Profile from my Friendslist
@@ -200,7 +200,7 @@ class ProfilePage extends React.Component {
     render() {
         return (
             /** If they are the same, you can edit the page **/
-            <BaseContainer>
+            <BaseContainer style={{width:600+"px"}}>
                 <FormContainer>
                     <Form>
                         <center><h1><u>Profile Page</u></h1></center>
@@ -209,7 +209,6 @@ class ProfilePage extends React.Component {
                         {this.state.loggedInUser === this.state.userId ?
                             <h2><u>Friends</u></h2> : ("")}
                         {this.state.loggedInUser === this.state.userId ?(
-
                             <Users>
                         {this.state.friends.map(user => {
                             return (

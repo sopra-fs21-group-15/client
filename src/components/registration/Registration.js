@@ -82,16 +82,21 @@ class Registration extends React.Component {
 
   render() {
     return (
-      <BaseContainer>
+      <BaseContainer style={{marginTop: 40+"px"}}>
         <FormContainer>
           <Legend>Registration</Legend>
           <Label>Username</Label>
-          <InputField placeholder="Please enter here.." onChange={e => { this.handleInputChange('username', e.target.value); }} />
+          <InputField size={40} placeholder="Please enter here.." onChange={e => {
+            if (e.target.value.length-1 >= 12){
+              alert("Name can only have 12 characters")
+              e.target.value = e.target.value.substring(0,12)
+            }
+            else this.handleInputChange('username', e.target.value); }} />
           <Label>Password</Label>
-          <InputField placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} />
+          <InputField size={40} placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} />
           <HR/>
-          <Button disabled={!this.state.username || !this.state.password} onClick={() => { this.register(); }} > Create user </Button>
-          <Button onClick={() => { this.props.history.push("/login"); }} > Back to Login </Button>
+          <Button width={"30%"} disabled={!this.state.username || !this.state.password} onClick={() => { this.register(); }} > Create user </Button>
+          <Button style={{marginTop:10+"px"}} width={"30%"} onClick={() => { this.props.history.push("/login"); }} > Back to Login </Button>
         </FormContainer>
       </BaseContainer>
     );

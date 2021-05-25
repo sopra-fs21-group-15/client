@@ -7,12 +7,15 @@ import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
 
 const FormContainer = styled.div`
-  margin-top: 2em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 3em;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 300px;
   justify-content: center;
+  width: 380px;
 `;
 
 const Form = styled.div`
@@ -62,9 +65,10 @@ class EditProfile extends React.Component {
   constructor() {
     super();
     this.state = {
-        birth_date: null,
+        birthDate: null,
         userId: localStorage.getItem("visited User"), /** get the ID of the profile --> unnecessary **/
         loggedInUser: localStorage.getItem("loginId"), /** get the ID of the logged in user **/
+        username: null,
     };
     this.getUser();
   }
@@ -93,7 +97,7 @@ class EditProfile extends React.Component {
     try{
         const requestBody_2 = JSON.stringify({
             username: this.state.username,
-            birth_date: this.state.birth_date
+            birthDate: this.state.birthDate
         });
 
         const url = '/users/' + this.state.userId;
@@ -110,7 +114,7 @@ class EditProfile extends React.Component {
 
     render() {
         return (
-        <BaseContainer>
+            <BaseContainer style={{height:550+"px", width: 700+"px"}}>
            <FormContainer>
                 <Form>
                     <div>
@@ -120,7 +124,11 @@ class EditProfile extends React.Component {
                     <InputField
                       placeholder="Please enter new Username here.."
                       onChange={e => {
-                        this.handleInputChange('username', e.target.value);
+                          if (e.target.value.length-1 >= 12){
+                              alert("name can only have 12 characters")
+                              e.target.value = e.target.value.substring(0,12)
+                          }
+                        else this.handleInputChange('username', e.target.value);
                           /** change username **/
                       }}
                     />
@@ -129,15 +137,19 @@ class EditProfile extends React.Component {
                     <InputField
                       placeholder="Please enter new Birth Date here.."
                       onChange={e => {
-                        this.handleInputChange('birth_date', e.target.value);
+                          if (e.target.value.length-1 >= 12){
+                              alert("Name can only have 12 characters")
+                              e.target.value = e.target.value.substring(0,12)
+                          }
+                          else this.handleInputChange('birthDate', e.target.value);
                         /** change birth date **/
                       }}
                     />
 
                     <ButtonContainer>
                       <Button
-                        disabled={((this.state.username == null) && (this.state.birth_date == null))}
-                        width="100%"
+                        disabled={((this.state.username === null) && (this.state.birthDate === null))}
+                        width="50%"
                         onClick={() => {
                           this.edit();
                           this.props.history.push(`/profilePage`);
@@ -150,7 +162,7 @@ class EditProfile extends React.Component {
 
                     <ButtonContainer>
                         <Button
-                            width="100%"
+                            width="50%"
                             onClick={() => {
                                 this.props.history.push(`/profilePage`);
                             }}
@@ -160,7 +172,7 @@ class EditProfile extends React.Component {
                     </ButtonContainer>
                   </Form>
                 </FormContainer>
-              </BaseContainer>
+            </BaseContainer>
             );}
 }
 
