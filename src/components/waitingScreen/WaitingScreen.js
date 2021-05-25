@@ -256,13 +256,17 @@ class WaitingScreen extends React.Component {
           <Label>Lobbyname</Label>
           <h2>{this.state.lobby.lobbyname} (#{this.state.lobbyId})</h2>
           <Label>Gamemode</Label>
+
+            { this.state.owner ?
             <SelectField id="form_gamemode" value={this.state.lobby.gameMode} disabled={!this.state.owner} onChange={e => {this.sendInputChange("gameMode", e.target.value);}}>
               <option value="CLASSIC">Classic</option>
               <option value="SPEED">Speed</option>
             </SelectField>
-            <h2>{this.state.lobby.gamemode}</h2>
+            : <h2>{this.state.lobby.gameMode}</h2> }
+
 
           <Label>Max. Players</Label>
+            { this.state.owner ?
             <SelectField id="from_player" value={this.state.lobby.size} disabled={!this.state.owner} onChange={e => {this.sendInputChange("size", e.target.value);}}>
               <option value="4">4</option>
               <option value="5">5</option>
@@ -272,9 +276,10 @@ class WaitingScreen extends React.Component {
               <option value="9">9</option>
               <option value="10">10</option>
             </SelectField>
-            <h2>{this.state.lobby.size}</h2>
+            : <h2>{this.state.lobby.size}</h2> }
 
           <Label>Rounds</Label>
+            { this.state.owner ?
             <SelectField id="from_rounds" value={this.state.lobby.rounds} disabled={!this.state.owner} onChange={e => {this.sendInputChange("rounds", e.target.value);}}>
               <option value={this.state.lobby.rounds}>{this.state.lobby.rounds}</option>
               <option value="2">2</option>
@@ -285,7 +290,7 @@ class WaitingScreen extends React.Component {
               <option value="7">7</option>
               <option value="8">8</option>
             </SelectField>
-            <h2>{this.state.lobby.rounds}</h2>
+            : <h2>{this.state.lobby.rounds}</h2> }
 
           <Label>Private</Label>
           <OneLineBlock>
