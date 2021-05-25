@@ -187,6 +187,7 @@ class DrawScreen extends React.Component {
       round: null, // Round object, regularly fetched from backend
       scoreboard: null, // Scoreboard, regularly fetched from backend
       drawer: false, // If false, you're guesser
+      spectator: true, // Stores if you're spectator
       time_left: Infinity, // in seconds
       loginId: localStorage.getItem('loginId'),
       hint: "Loading...", // Shows hint for guessers, shows word for drawer
@@ -366,6 +367,12 @@ class DrawScreen extends React.Component {
           if(round.word)
             this.setState({ hint: "_".repeat(round.word.length) });
         }
+
+        // Set spectator
+        if(!round.players.includes(this.state.username))
+          this.setState({ spectator: true });
+        else
+          this.setState({ spectator: false });
       } catch (error) {
         this.systemMsgInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
@@ -492,7 +499,7 @@ class DrawScreen extends React.Component {
       });
 
       /** await the confirmation of the backend **/
-      const url = '/games/' + this.state.game_id +'/chats';
+      const url = '/games/' + this.state.game_id +'/guess';
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
 
@@ -595,7 +602,7 @@ class DrawScreen extends React.Component {
             })}
           </Messages>
 
-          <InputField disabled={this.state.drawer || this.state.guessed} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+          <InputField disabled={this.state.drawer || this.state.guessed || this.state.spectator} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
           { this.state.chat_message === "" ?
             <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
             :
