@@ -53,6 +53,7 @@ class WaitingScreen extends React.Component {
       lobby: null,
       gamemode: "Classic",
       owner: false,
+      mem: [],
 
       // Chat
       chat_message: "", // Value of the chat input field
