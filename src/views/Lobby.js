@@ -62,7 +62,8 @@ const Lobby = ({ lobby, f_onClick }) => {
     <Container>
       <LobbyName>{lobby.lobbyname}{lobby.password === "" ? "" : " 🔒"}</LobbyName>
       {f_onClick && lobby.status === "OPEN" ? <ButtonLobbies onClick={f_onClick}>Join Lobby</ButtonLobbies> : ""}
-      {lobby.status !== "OPEN" ? "⛔" : ""}
+      {f_onClick && lobby.status === "PLAYING" ? <ButtonLobbies onClick={f_onClick}>Spectate Game</ButtonLobbies> : ""}
+      {lobby.status !== "OPEN" && lobby.status !== "PLAYING" ? "⛔" : ""}
     </Container>
   );
 };
