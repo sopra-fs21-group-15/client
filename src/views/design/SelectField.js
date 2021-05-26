@@ -22,5 +22,5 @@ export const SelectField = styled.select`
   color: black;
   transition: all 0.3s ease;
   margin: 12px;
-  width: 20%;
+  min-width: 30%;
 `;
