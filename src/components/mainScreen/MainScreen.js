@@ -124,7 +124,7 @@ class MainScreen extends React.Component {
         const responseLobby = await api.get('/lobbies');
         this.setState({lobbies: responseLobby.data});
       } catch (error) {
-        alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
+        console.log(`Something went wrong while fetching the users: \n${handleError(error)}`);
       }
     }, 1000);
     this.setState({ intervaleLobbylist });
