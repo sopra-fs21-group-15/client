@@ -211,6 +211,9 @@ class DrawScreen extends React.Component {
       chat_message: "", // Value of the chat input field
       messages: [], // JSON of all chat messages
       timestamp_last_message: "1900-01-01 00:00:00:000", // Time of the last message that was received
+
+
+      debugCounter: 0
     };
   }
 
@@ -357,6 +360,7 @@ class DrawScreen extends React.Component {
         if (!this.state.round || this.state.round.drawerName !== round.drawerName || this.state.round.id !== round.id ) {
           this.resetCanvas();
           this.setState({ guessed: false });
+          this.state.drawInstructionBuffer = [];
         }
         this.setState({ round });
 
@@ -430,9 +434,14 @@ class DrawScreen extends React.Component {
         return;
       try {
         console.log("DrawInstructionSEND", this.state.drawInstructionBuffer);
-        await api.put('/games/' + this.state.game_id +'/drawing', JSON.stringify(this.state.drawInstructionBuffer));
 
-        await this.setState({ drawInstructionBuffer: [] });
+        console.log("instruction #", this.state.debugCounter);
+
+        api.put('/games/' + this.state.game_id +'/drawing', JSON.stringify(this.state.drawInstructionBuffer.slice(0)));
+        this.state.drawInstructionBuffer = [];
+
+        this.state.debugCounter += this.state.drawInstructionBuffer.length;
+        //await this.setState({ drawInstructionBuffer: [] });
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
       }
