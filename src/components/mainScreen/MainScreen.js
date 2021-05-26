@@ -106,9 +106,6 @@ class MainScreen extends React.Component {
   }
 
   async componentDidMount() {
-    for (let i = 0; i<1; i++){
-      const randomWord = require("random-words");
-      console.log(randomWord({exactly:50}))}
 
     // Get specific user
     this.getUser()
