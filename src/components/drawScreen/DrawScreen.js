@@ -552,7 +552,7 @@ class DrawScreen extends React.Component {
         onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
         onMouseDown={(e) => { this.canvas_onMouseDown(e.button)}}
         onMouseUp={(e) => { this.canvas_onMouseUp(e.button)}}
-        onMouseEnter={() => { this.setState({ mouse_down: false }); }}
+        onMouseLeave={() => { this.setState({ mouse_down: false }); }}
       />,
 
       <Hint>{this.state.hint}</Hint>,
