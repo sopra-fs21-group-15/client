@@ -80,16 +80,16 @@ class Login extends React.Component {
 
   render() {
     return (
-      <BaseContainer style={{marginTop: 40+"px"}}>
+      <BaseContainer>
         <FormContainer>
           <Legend>Login</Legend>
           <Label>Username</Label>
-          <InputField size={40} placeholder="Please enter here.." onChange={e => { this.handleInputChange('username', e.target.value); }} />
+          <InputField size="40" placeholder="Please enter here.." onChange={e => { this.handleInputChange('username', e.target.value); }} />
           <Label>Password</Label>
-          <InputField size={40} placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} type="password" />
+          <InputField size="40" placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} type="password" />
           <HR/>
-          <Button width={"30%"} disabled={!this.state.username || !this.state.password} onClick={() => { this.login(); }}>Login</Button>
-          <Button style={{marginTop:10+"px"}} width={"30%"} onClick={() => {this.props.history.push("/registration");}}>Register</Button>
+          <Button disabled={!this.state.username || !this.state.password} onClick={() => { this.login(); }}>Login</Button>
+          <Button onClick={() => {this.props.history.push("/registration");}}>Register</Button>
         </FormContainer>
       </BaseContainer>
     );  }

@@ -46,6 +46,11 @@ class Registration extends React.Component {
         password: this.state.password
       });
 
+      if (this.state.username.length > 12) {
+        alert("Name can only have 12 characters");
+        return;
+      }
+
       //wait for making a new user
       const response = await api.post('/users', requestBody);
 
@@ -82,21 +87,17 @@ class Registration extends React.Component {
 
   render() {
     return (
-      <BaseContainer style={{marginTop: 40+"px"}}>
+      <BaseContainer>
         <FormContainer>
           <Legend>Registration</Legend>
           <Label>Username</Label>
           <InputField size={40} placeholder="Please enter here.." onChange={e => {
-            if (e.target.value.length-1 >= 12){
-              alert("Name can only have 12 characters")
-              e.target.value = e.target.value.substring(0,12)
-            }
-            else this.handleInputChange('username', e.target.value); }} />
+            this.handleInputChange('username', e.target.value); }} />
           <Label>Password</Label>
-          <InputField size={40} placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} />
+          <InputField size="40" placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} />
           <HR/>
-          <Button width={"30%"} disabled={!this.state.username || !this.state.password} onClick={() => { this.register(); }} > Create user </Button>
-          <Button style={{marginTop:10+"px"}} width={"30%"} onClick={() => { this.props.history.push("/login"); }} > Back to Login </Button>
+          <Button disabled={!this.state.username || !this.state.password} onClick={() => { this.register(); }} > Create user </Button>
+          <Button onClick={() => { this.props.history.push("/login"); }} > Back to Login </Button>
         </FormContainer>
       </BaseContainer>
     );

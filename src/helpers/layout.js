@@ -9,6 +9,7 @@ export const BaseContainer = styled.div`
  
   margin-left: auto;
   margin-right: auto;
+  margin-top: 40px;
   width: 800px;
   max-width: ${DESKTOP_WIDTH}px;
   justify-content: center;

@@ -38,6 +38,11 @@ class CreateLobby extends React.Component {
         gameMode: this.state.gameMode
       });
 
+      if (this.state.lobbyName.length > 12) {
+        alert("LobbyName can only have 12 characters")
+        return;
+      }
+
       // wait for making new Lobby
       const response = await api.post('/lobbies/' + this.state.loginId, requestBody);
 
@@ -74,12 +79,7 @@ class CreateLobby extends React.Component {
 
           <Label>Lobbyname</Label>
           <InputField id="form_name"
-              onChange={ e => {
-                if (e.target.value.length-1 >= 12){
-                  alert("LobbyName can only have 12 characters")
-                  e.target.value = e.target.value.substring(0,12)
-                }
-                else {this.handleInputChange("lobbyName", e.target.value)}}}/>
+              onChange={ e => {this.handleInputChange("lobbyName", e.target.value)}}/>
 
           <Label>Gamemode</Label>
           <SelectField id="form_gamemode" value={this.state.gameMode} onChange={e => this.handleInputChange("gameMode",e.target.value)}>
@@ -107,7 +107,7 @@ class CreateLobby extends React.Component {
           </OneLineBlock>
           <HR/>
           <Button disabled={this.state.lobbyName === ""} width="25%" onClick={() => {this.createLobby();}}>Create Lobby</Button>
-          <Button style={{marginTop: 5+"px"}} width="25%" onClick={() => {this.goback();}}>Back</Button>
+          <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
         </FormContainer>
       </BaseContainer>
     );

@@ -48,7 +48,7 @@ const Button = styled.button`
  * @FunctionalComponent
  */
 
-const Player = ({ user, f_onClick }) => {
+const waitingList = ({ user, f_onClick }) => {
   return (
     <Container>
       <UserName>{user.name}</UserName>
@@ -58,4 +58,4 @@ const Player = ({ user, f_onClick }) => {
   );
 };
 
-export default Player;
+export default waitingList;

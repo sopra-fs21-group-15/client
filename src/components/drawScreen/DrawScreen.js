@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import { api, handleError } from '../../helpers/api';
-import Scores from '../../views/Score';
+import { getCurrentDateString } from '../../helpers/getCurrentDateString';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
@@ -273,43 +273,15 @@ class DrawScreen extends React.Component {
     x -= rect.left;
     y -= rect.top;
 
-    // Send draw instruction to the backend
-    this.sendDrawInstruction(x, y, ctx.lineWidth, ctx.strokeStyle);
     // Add the drawInstruction to the send-buffer
-    // let buffer = this.state.drawInstructionBuffer.push({x: x, y: y, size: ctx.lineWidth, colour: ctx.strokeStyle});
+    this.sendDrawInstruction(x, y, ctx.lineWidth, ctx.strokeStyle);
 
     ctx.lineTo(x, y);
     ctx.stroke();
   }
 
-  getCurrentDateString() {
-    let date = new Date();
-
-    let day = date.getDate();
-    if (day < 10) day = "0" + day;
-
-    let month = date.getMonth() + 1;
-    if (month < 10) month = "0" + month;
-
-    let hours = date.getHours();
-    if (hours < 10) hours = "0" + hours;
-
-    let minutes = date.getMinutes();
-    if (minutes < 10) minutes = "0" + minutes;
-
-    let seconds = date.getSeconds();
-    if (seconds < 10) seconds = "0" + seconds;
-
-    let milliseconds = date.getMilliseconds();
-    if (milliseconds < 100) milliseconds = "0" + milliseconds;
-    if (milliseconds < 10) milliseconds = "0" + milliseconds;
-
-    return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
-  }
-
   async sendDrawInstruction(x, y, size, colour) {
-      // await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
-    this.state.drawInstructionBuffer.push( {"x": Math.round(x), "y": Math.round(y), "timeStamp": this.getCurrentDateString(), "size": size, "colour": colour} );
+    this.state.drawInstructionBuffer.push( {"x": Math.round(x), "y": Math.round(y), "timeStamp": getCurrentDateString(), "size": size, "colour": colour} );
   }
 
   canvas_onMouseDown(button) {
@@ -357,6 +329,7 @@ class DrawScreen extends React.Component {
         if (!this.state.round || this.state.round.drawerName !== round.drawerName || this.state.round.id !== round.id ) {
           this.resetCanvas();
           this.setState({ guessed: false });
+          this.state.drawInstructionBuffer = [];
         }
         this.setState({ round });
 
@@ -377,7 +350,7 @@ class DrawScreen extends React.Component {
       } catch (error) {
         this.systemMsgInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
-    }, 5000);
+    }, 1000);
     this.setState({ intervalRoundInfo });
 
 
@@ -419,7 +392,7 @@ class DrawScreen extends React.Component {
       } catch (error) {
         this.systemMsgInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
-    }, 2000);
+    }, 1000);
     this.setState({ intervalChat });
 
 
@@ -429,10 +402,9 @@ class DrawScreen extends React.Component {
       if(!this.state.drawer || this.state.drawInstructionBuffer.length === 0)
         return;
       try {
-        console.log("DrawInstructionSEND", this.state.drawInstructionBuffer);
-        await api.put('/games/' + this.state.game_id +'/drawing', JSON.stringify(this.state.drawInstructionBuffer));
-
-        await this.setState({ drawInstructionBuffer: [] });
+        // Number of instr we will send
+        let numberSent = this.state.drawInstructionBuffer.length;
+        await api.put('/games/' + this.state.game_id +'/drawing', JSON.stringify(this.state.drawInstructionBuffer.splice(0, numberSent)));
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
       }
@@ -474,7 +446,7 @@ class DrawScreen extends React.Component {
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
       }
-    }, 5000);
+    }, 3000);
     this.setState({ interval_draw_instructions });
 
     this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
@@ -491,7 +463,7 @@ class DrawScreen extends React.Component {
   }
 
   async sendMessage() {
-    let timeStamp = this.getCurrentDateString();
+    let timeStamp = getCurrentDateString();
     try {
       const requestBody = JSON.stringify({
         timeStamp: timeStamp,
@@ -515,7 +487,7 @@ class DrawScreen extends React.Component {
   }
 
   systemMsgInChat(errMsg) {
-    this.state.messages.push({"writerName": "SYSTEM", "timeStamp": this.getCurrentDateString(), message: errMsg});
+    this.state.messages.push({"writerName": "SYSTEM", "timeStamp": getCurrentDateString(), message: errMsg});
   }
 
   download_image() {
@@ -570,8 +542,12 @@ class DrawScreen extends React.Component {
   render() {
     return ([
       // Lobby list
-      <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
-      onMouseDown={(e) => { this.canvas_onMouseDown(e.button)}} onMouseUp={(e) => { this.canvas_onMouseUp(e.button)}}/>,
+      <Canvas id="mainCanvas" ref={this.mainCanvas}
+        onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
+        onMouseDown={(e) => { this.canvas_onMouseDown(e.button)}}
+        onMouseUp={(e) => { this.canvas_onMouseUp(e.button)}}
+        onMouseLeave={() => { this.setState({ mouse_down: false }); }}
+      />,
 
       <Hint>{this.state.hint}</Hint>,
       <Sidebar>

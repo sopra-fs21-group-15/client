@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
+import { getCurrentDateString } from '../../helpers/getCurrentDateString';
 import Lobby from "../shared/models/Lobby";
 import Game from "../shared/models/Game";
 import { Spinner } from '../../views/design/Spinner';
@@ -52,7 +53,6 @@ class WaitingScreen extends React.Component {
       username: localStorage.getItem('username'), // own username
       lobby: null,
       owner: false,
-      mem: [],
 
       // Chat
       chat_message: "", // Value of the chat input field
@@ -117,7 +117,7 @@ class WaitingScreen extends React.Component {
   }
 
   errorInChat(errMsg) {
-    this.state.messages.push({"writerName": "SYSTEM", "timeStamp": this.getCurrentDateString(), message: errMsg});
+    this.state.messages.push({"writerName": "SYSTEM", "timeStamp": getCurrentDateString(), message: errMsg});
   }
 
   componentWillUnmount() {
@@ -140,33 +140,8 @@ class WaitingScreen extends React.Component {
     }
   }
 
-  getCurrentDateString() {
-    let date = new Date();
-
-    let day = date.getDate();
-    if (day < 10) day = "0" + day;
-
-    let month = date.getMonth() + 1;
-    if (month < 10) month = "0" + month;
-
-    let hours = date.getHours();
-    if (hours < 10) hours = "0" + hours;
-
-    let minutes = date.getMinutes();
-    if (minutes < 10) minutes = "0" + minutes;
-
-    let seconds = date.getSeconds();
-    if (seconds < 10) seconds = "0" + seconds;
-
-    let milliseconds = date.getMilliseconds();
-    if (milliseconds < 100) milliseconds = "0" + milliseconds;
-    if (milliseconds < 10) milliseconds = "0" + milliseconds;
-
-    return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
-  }
-
   async sendMessage() {
-    let timeStamp = this.getCurrentDateString();
+    let timeStamp = getCurrentDateString();
 
     try {
       const requestBody = JSON.stringify({
@@ -220,7 +195,7 @@ class WaitingScreen extends React.Component {
   render() {
     return (
       // Lobby list
-      <BaseContainer style={{width:1000+"px"}}>
+      <BaseContainer>
           <Legend>Chill Area</Legend>
           {!this.state.lobby ? (
             <Spinner />

@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
@@ -19,9 +18,7 @@ const FriendsListContainer = styled.div`
 const LobbylistContainer = styled.div`
   float: left;
   padding-right: 35px;
-  max-height: 700px;
-  overflow: hidden;
- 
+  overflow: auto;
 `;
 
 const ListsContainer = styled.div`
@@ -117,7 +114,6 @@ class MainScreen extends React.Component {
       const response = await api.get('/users');
       this.setState({ users: response.data });
 
-
       const responseLobby = await api.get('/lobbies');
       this.setState({lobbies: responseLobby.data});
     } catch (error) {
@@ -131,7 +127,7 @@ class MainScreen extends React.Component {
         const responseLobby = await api.get('/lobbies');
         this.setState({lobbies: responseLobby.data});
       } catch (error) {
-        alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
+        console.log(`Something went wrong while fetching the users: \n${handleError(error)}`);
       }
     }, 1000);
     this.setState({ intervaleLobbylist });
@@ -211,7 +207,10 @@ class MainScreen extends React.Component {
           </LobbylistContainer>
         )}
           {!this.state.users || !this.state.user ? (
-            <Spinner />
+            <div>
+              <Spinner />
+              <Button onClick={() => { this.logout(); }} > Logout </Button>
+            </div>
           ):(
           // User and his FriendsList
           <FriendsListContainer>
@@ -241,7 +240,6 @@ class MainScreen extends React.Component {
               )
             })}
             </Users>
-
             <Button
                 width={"45%"}
                 onClick={() => { this.logout(); }} > Logout </Button>
@@ -249,7 +247,6 @@ class MainScreen extends React.Component {
             </FriendsListContainer> )}
       </ListsContainer>
       </BaseContainer>
-
     );
   }
 }
