@@ -195,7 +195,10 @@ class MainScreen extends React.Component {
           </LobbylistContainer>
         )}
           {!this.state.users || !this.state.user ? (
-            <Spinner />
+            <div>
+              <Spinner />
+              <Button onClick={() => { this.logout(); }} > Logout </Button>
+            </div>
           ):(
           // User and his FriendsList
           <FriendsListContainer>
@@ -212,8 +215,9 @@ class MainScreen extends React.Component {
                 );
               })}
             </Users>
-            </FriendsListContainer> )}
             <Button onClick={() => { this.logout(); }} > Logout </Button>
+            </FriendsListContainer>
+          )}
       </ListsContainer>
       </BaseContainer>
     );
