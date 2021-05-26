@@ -548,8 +548,12 @@ class DrawScreen extends React.Component {
   render() {
     return ([
       // Lobby list
-      <Canvas id="mainCanvas" ref={this.mainCanvas} onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
-      onMouseDown={(e) => { this.canvas_onMouseDown(e.button)}} onMouseUp={(e) => { this.canvas_onMouseUp(e.button)}}/>,
+      <Canvas id="mainCanvas" ref={this.mainCanvas}
+        onMouseMove={(e) => this.canvas_onMouseMove(e.clientX, e.clientY)}
+        onMouseDown={(e) => { this.canvas_onMouseDown(e.button)}}
+        onMouseUp={(e) => { this.canvas_onMouseUp(e.button)}}
+        onMouseLeave={() => { this.setState({ mouse_down: false }); }}
+      />,
 
       <Hint>{this.state.hint}</Hint>,
       <Sidebar>
