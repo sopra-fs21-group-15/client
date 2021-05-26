@@ -18,9 +18,7 @@ const FriendsListContainer = styled.div`
 const LobbylistContainer = styled.div`
   float: left;
   padding-right: 35px;
-  max-height: 700px;
-  overflow: hidden;
- 
+  overflow: auto;
 `;
 
 const ListsContainer = styled.div`
@@ -106,14 +104,12 @@ class MainScreen extends React.Component {
   }
 
   async componentDidMount() {
-
     // Get specific user
     this.getUser()
 
     try {
       const response = await api.get('/users');
       this.setState({ users: response.data });
-
 
       const responseLobby = await api.get('/lobbies');
       this.setState({lobbies: responseLobby.data});
@@ -204,13 +200,7 @@ class MainScreen extends React.Component {
           // User and his FriendsList
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
-
-            <Button
-                style={{marginTop:10+"px"}}
-                onClick={() => {this.go_to_profile(this.state.user)}}
-            >View Profile</Button>
-
-
+            <Button onClick={() => {this.go_to_profile(this.state.user)}} >View Profile</Button>
 
             <h2 style={{marginTop:"41px"}}>Registered Users</h2>
             <Users>
@@ -223,10 +213,9 @@ class MainScreen extends React.Component {
               })}
             </Users>
             </FriendsListContainer> )}
-            <Button width={"45%"} onClick={() => { this.logout(); }} > Logout </Button>
+            <Button onClick={() => { this.logout(); }} > Logout </Button>
       </ListsContainer>
       </BaseContainer>
-
     );
   }
 }

@@ -52,7 +52,6 @@ class WaitingScreen extends React.Component {
       username: localStorage.getItem('username'), // own username
       lobby: null,
       owner: false,
-      mem: [],
 
       // Chat
       chat_message: "", // Value of the chat input field
@@ -220,7 +219,7 @@ class WaitingScreen extends React.Component {
   render() {
     return (
       // Lobby list
-      <BaseContainer style={{width:1000+"px"}}>
+      <BaseContainer>
           <Legend>Chill Area</Legend>
           {!this.state.lobby ? (
             <Spinner />
