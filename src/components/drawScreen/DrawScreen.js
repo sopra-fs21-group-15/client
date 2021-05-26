@@ -210,9 +210,6 @@ class DrawScreen extends React.Component {
       chat_message: "", // Value of the chat input field
       messages: [], // JSON of all chat messages
       timestamp_last_message: "1900-01-01 00:00:00:000", // Time of the last message that was received
-
-
-      debugCounter: 0
     };
   }
 
@@ -380,7 +377,7 @@ class DrawScreen extends React.Component {
       } catch (error) {
         this.systemMsgInChat(`Something went wrong while fetching the round-info: \n${handleError(error)}`);
       }
-    }, 5000);
+    }, 1000);
     this.setState({ intervalRoundInfo });
 
 
@@ -422,7 +419,7 @@ class DrawScreen extends React.Component {
       } catch (error) {
         this.systemMsgInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
-    }, 2000);
+    }, 1000);
     this.setState({ intervalChat });
 
 
@@ -432,14 +429,11 @@ class DrawScreen extends React.Component {
       if(!this.state.drawer || this.state.drawInstructionBuffer.length === 0)
         return;
       try {
-        console.log("DrawInstructionSEND", this.state.drawInstructionBuffer);
+        // Number of instr we will send
+        let numberSent = this.state.drawInstructionBuffer.length;
+        await api.put('/games/' + this.state.game_id +'/drawing', JSON.stringify(this.state.drawInstructionBuffer.splice(0, numberSent)));
+        // this.state.drawInstructionBuffer = [];
 
-        console.log("instruction #", this.state.debugCounter);
-
-        api.put('/games/' + this.state.game_id +'/drawing', JSON.stringify(this.state.drawInstructionBuffer.slice(0)));
-        this.state.drawInstructionBuffer = [];
-
-        this.state.debugCounter += this.state.drawInstructionBuffer.length;
         //await this.setState({ drawInstructionBuffer: [] });
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
@@ -482,7 +476,7 @@ class DrawScreen extends React.Component {
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
       }
-    }, 5000);
+    }, 3000);
     this.setState({ interval_draw_instructions });
 
     this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
