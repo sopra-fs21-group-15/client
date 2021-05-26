@@ -225,11 +225,8 @@ class MainScreen extends React.Component {
                 );
               })}
             </Users>
-            <Button
-                width={"45%"}
-                onClick={() => { this.logout(); }} > Logout </Button>
-
             </FriendsListContainer> )}
+            <Button width={"45%"} onClick={() => { this.logout(); }} > Logout </Button>
       </ListsContainer>
       </BaseContainer>
 
