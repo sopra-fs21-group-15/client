@@ -273,17 +273,14 @@ class DrawScreen extends React.Component {
     x -= rect.left;
     y -= rect.top;
 
-    // Send draw instruction to the backend
-    this.sendDrawInstruction(x, y, ctx.lineWidth, ctx.strokeStyle);
     // Add the drawInstruction to the send-buffer
-    // let buffer = this.state.drawInstructionBuffer.push({x: x, y: y, size: ctx.lineWidth, colour: ctx.strokeStyle});
+    this.sendDrawInstruction(x, y, ctx.lineWidth, ctx.strokeStyle);
 
     ctx.lineTo(x, y);
     ctx.stroke();
   }
 
   async sendDrawInstruction(x, y, size, colour) {
-      // await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
     this.state.drawInstructionBuffer.push( {"x": Math.round(x), "y": Math.round(y), "timeStamp": getCurrentDateString(), "size": size, "colour": colour} );
   }
 
@@ -408,9 +405,6 @@ class DrawScreen extends React.Component {
         // Number of instr we will send
         let numberSent = this.state.drawInstructionBuffer.length;
         await api.put('/games/' + this.state.game_id +'/drawing', JSON.stringify(this.state.drawInstructionBuffer.splice(0, numberSent)));
-        // this.state.drawInstructionBuffer = [];
-
-        //await this.setState({ drawInstructionBuffer: [] });
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
       }
