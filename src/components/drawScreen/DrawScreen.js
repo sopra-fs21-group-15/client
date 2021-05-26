@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import { api, handleError } from '../../helpers/api';
+import { getCurrentDateString } from '../../helpers/getCurrentDateString';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
@@ -281,34 +282,9 @@ class DrawScreen extends React.Component {
     ctx.stroke();
   }
 
-  getCurrentDateString() {
-    let date = new Date();
-
-    let day = date.getDate();
-    if (day < 10) day = "0" + day;
-
-    let month = date.getMonth() + 1;
-    if (month < 10) month = "0" + month;
-
-    let hours = date.getHours();
-    if (hours < 10) hours = "0" + hours;
-
-    let minutes = date.getMinutes();
-    if (minutes < 10) minutes = "0" + minutes;
-
-    let seconds = date.getSeconds();
-    if (seconds < 10) seconds = "0" + seconds;
-
-    let milliseconds = date.getMilliseconds();
-    if (milliseconds < 100) milliseconds = "0" + milliseconds;
-    if (milliseconds < 10) milliseconds = "0" + milliseconds;
-
-    return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
-  }
-
   async sendDrawInstruction(x, y, size, colour) {
       // await api.put('/games/' + this.state.game_id +'/drawing', requestBody);
-    this.state.drawInstructionBuffer.push( {"x": Math.round(x), "y": Math.round(y), "timeStamp": this.getCurrentDateString(), "size": size, "colour": colour} );
+    this.state.drawInstructionBuffer.push( {"x": Math.round(x), "y": Math.round(y), "timeStamp": getCurrentDateString(), "size": size, "colour": colour} );
   }
 
   canvas_onMouseDown(button) {
@@ -493,7 +469,7 @@ class DrawScreen extends React.Component {
   }
 
   async sendMessage() {
-    let timeStamp = this.getCurrentDateString();
+    let timeStamp = getCurrentDateString();
     try {
       const requestBody = JSON.stringify({
         timeStamp: timeStamp,
@@ -517,7 +493,7 @@ class DrawScreen extends React.Component {
   }
 
   systemMsgInChat(errMsg) {
-    this.state.messages.push({"writerName": "SYSTEM", "timeStamp": this.getCurrentDateString(), message: errMsg});
+    this.state.messages.push({"writerName": "SYSTEM", "timeStamp": getCurrentDateString(), message: errMsg});
   }
 
   download_image() {
