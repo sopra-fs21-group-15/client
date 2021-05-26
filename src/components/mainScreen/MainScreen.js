@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
@@ -8,6 +7,7 @@ import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
 import { withRouter } from 'react-router-dom';
 import User from "../shared/models/User";
+import {InputField} from "../../views/design/InputField";
 
 
 const FriendsListContainer = styled.div`
@@ -28,7 +28,7 @@ const ListsContainer = styled.div`
 const Users = styled.ul`
   list-style: none;
   padding-left: 0;
-  padding-bottom: 10px;
+  padding-bottom: 1px;
   max-height: 279px;
   overflow-y: auto;
 `;
@@ -59,7 +59,9 @@ class MainScreen extends React.Component {
       lobby: null,
       lobbyId: localStorage.getItem("lobbyId"),
       loginId: localStorage.getItem('loginId'),
-      username: localStorage.getItem('username')
+      username: localStorage.getItem('username'),
+      searchTerm: "",
+      searchTermLobby:""
     };
   }
 
@@ -104,6 +106,7 @@ class MainScreen extends React.Component {
   }
 
   async componentDidMount() {
+
     // Get specific user
     this.getUser()
 
@@ -172,7 +175,9 @@ class MainScreen extends React.Component {
   }
 
 
+
   render() {
+
     return (
       // Lobby list
       <BaseContainer>
@@ -182,8 +187,15 @@ class MainScreen extends React.Component {
         ):(
           <LobbylistContainer>
             <h2>Lobbies</h2>
+            <InputField style={{marginTop:"-20px"}} type={"text"} placeholder={"Search.."} onChange={e => {this.state.searchTermLobby = e.target.value}}/>
             <Lobbies>
-              {this.state.lobbies.map(lobby => {
+              {this.state.lobbies.filter(val => {
+                if (this.state.searchTermLobby ===""){
+                  return val
+                }else if (val.lobbyname.toLowerCase().includes(this.state.searchTermLobby.toLowerCase())){
+                  return val
+                }
+              }).map(lobby => {
                 return (
                     <Lobby lobby={lobby} f_onClick={() => this.join_lobby(lobby)}/>
                 );
@@ -203,21 +215,36 @@ class MainScreen extends React.Component {
           // User and his FriendsList
           <FriendsListContainer>
             <h2>Hello {this.state.user.username}</h2>
-            <Button onClick={() => {this.go_to_profile(this.state.user)}} >View Profile</Button>
 
-            <h2 style={{marginTop:"41px"}}>Registered Users</h2>
+            <Button
+                style={{marginTop:-20+"px"}}
+                onClick={() => {this.go_to_profile(this.state.user)}}
+            >View Profile</Button>
+
+            <h2 style={{marginTop:"21px"}}>Registered Users</h2>
+            <InputField style={{marginTop:"-20px"}} type={"text"} placeholder={"Search.."} onChange={e => {this.state.searchTerm = e.target.value}}/>
             <Users>
-              {this.state.users.map(user => {
-                return (
-                    <PlayerContainer>
-                      <Player user={user} f_onClick={() => this.go_to_profile(user)}/>
-                    </PlayerContainer>
-                );
-              })}
+            {this.state.users.filter(val => {
+              if(this.state.searchTerm === ""){
+                return val
+              }else if (val.username.toLowerCase().includes(this.state.searchTerm.toLowerCase())){
+                return val
+              }
+            }).map((user) => {
+              return (
+
+                  <PlayerContainer>
+                    <Player user={user} f_onClick={() => this.go_to_profile(user)}/>
+                  </PlayerContainer>
+
+              )
+            })}
             </Users>
-            <Button onClick={() => { this.logout(); }} > Logout </Button>
-            </FriendsListContainer>
-          )}
+            <Button
+                width={"45%"}
+                onClick={() => { this.logout(); }} > Logout </Button>
+
+            </FriendsListContainer> )}
       </ListsContainer>
       </BaseContainer>
     );
