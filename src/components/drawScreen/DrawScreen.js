@@ -408,7 +408,7 @@ class DrawScreen extends React.Component {
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
       }
-    }, 3000);
+    }, 1000);
     this.setState({ intervalSendDrawInstructionBuffer });
 
     // Regularly pull draw instructions (guesser mode)
@@ -446,7 +446,7 @@ class DrawScreen extends React.Component {
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
       }
-    }, 3000);
+    }, 1000);
     this.setState({ interval_draw_instructions });
 
     this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
