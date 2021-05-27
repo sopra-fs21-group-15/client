@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
