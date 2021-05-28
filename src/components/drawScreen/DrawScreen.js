@@ -295,12 +295,6 @@ class DrawScreen extends React.Component {
 
     // Regularly update the time left
     let interval_countdown = setInterval(async () => {
-
-      let ctx = this.mainCanvas.current.getContext('2d');
-      console.log(this.state.draw_size, ctx.lineWidth);
-
-
-
       if(!this.state.round)
         return;
       // Countdown the timer
