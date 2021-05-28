@@ -111,7 +111,7 @@ class WaitingScreen extends React.Component {
       } catch (error) {
         this.errorInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
-    }, 2000);
+    }, 1000);
     this.setState({ intervalChat });
 
   }

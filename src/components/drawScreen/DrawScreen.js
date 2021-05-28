@@ -148,6 +148,21 @@ const Wordbox = styled.div`
   align-items: center;
 `;
 
+const Endoverlay = styled.div`
+  position fixed;
+  left: 0;
+  top: 0;
+  background: rgba(60, 30, 30, 0.9);
+  backdrop-filter: blur(6px);
+  box-shadow: rgba(0, 0, 0, 0.9) 0px -4px 4px;
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 
 class DrawScreen extends React.Component {
   constructor() {
@@ -349,7 +364,7 @@ class DrawScreen extends React.Component {
         // Rewrite format into one list of objects
         let scoreboard = [];
         for (let i = 0; i < response.data.players.length; i++)
-          scoreboard.push({ "username": response.data.players[i], "ranking": response.data.ranking[i], "score": response.data.score[i] + 1 });
+          scoreboard.push({ "username": response.data.players[i], "ranking": response.data.ranking[i] + 1, "score": response.data.score[i] });
 
 
         this.setState({ scoreboard });
@@ -460,7 +475,7 @@ class DrawScreen extends React.Component {
       });
 
       /** await the confirmation of the backend **/
-      const url = '/games/' + this.state.game_id +'/guess';
+      const url = '/games/' + this.state.game_id + '/chats';
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
 
@@ -512,6 +527,20 @@ class DrawScreen extends React.Component {
     this.props.history.push(`/mainScreen`);
   }
 
+  async returnToLobby() {
+    try {
+      const requestBody = JSON.stringify({
+        username: localStorage.getItem('username')
+      });
+
+      const url = '/lobbies/' + this.state.game_id +'/return';
+      await api.put(url, requestBody);
+      this.props.history.push(`/waitingScreen`);
+    } catch(error) {
+      alert(`Something went wrong returning to the lobby, you might have been too slow and they started without you: \n${handleError(error)}`)
+    }
+  }
+
   ordinalSuffix(i) {
     var j = i % 10,
       k = i % 100;
@@ -556,8 +585,11 @@ class DrawScreen extends React.Component {
 
         <Button onClick={() => {this.download_image()}}>Download image</Button>
         <HR/>
-        <BrushPreview style={{ "background": this.state.draw_colour, "width": this.state.draw_size + "px", "height": this.state.draw_size + "px" }} />
+
+        {this.state.drawer ? ([
+        <BrushPreview style={{ "background": this.state.draw_colour, "width": this.state.draw_size + "px", "height": this.state.draw_size + "px" }} />,
         <HR/>
+        ]) : ""}
         <Chatbox>
           <Messages>
             {this.state.messages.slice(0).reverse().map(message => {
@@ -576,6 +608,14 @@ class DrawScreen extends React.Component {
         </Chatbox>
         <Button onClick={() => {this.leaveGame()}}>Leave Game</Button>
       </Sidebar>,
+      <div>
+        {this.state.round && this.state.round.status === "DONE" ? (
+          <Endoverlay>
+            <Button onClick={() => {this.returnToLobby()}}>Continue with this group</Button>
+            <Button onClick={() => {this.leaveGame()}}>Leave Game</Button>
+          </Endoverlay>
+        ): ""}
+      </div>,
       <Scoreboard>
       {!this.state.scoreboard ? (
         <Spinner />
