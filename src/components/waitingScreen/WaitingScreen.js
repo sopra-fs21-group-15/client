@@ -120,7 +120,7 @@ class WaitingScreen extends React.Component {
       } catch (error) {
         this.errorInChat(`Something went wrong while polling the chat: \n${handleError(error)}`);
       }
-    }, 2000);
+    }, 1000);
     this.setState({ intervalChat });
 
   }
@@ -202,7 +202,9 @@ class WaitingScreen extends React.Component {
   async sendInputChange(key, value) {
     try {
       let requestBody = "{\"" + key + "\":\"" + value + "\"}";
-      await api.put('/lobbies/' + this.state.lobby.id, requestBody);
+      const response = await api.put('/lobbies/' + this.state.lobby.id, requestBody);
+      let lobby = new Lobby(response.data);
+      this.setState({ lobby });
     }
     catch (error){
       alert(`Something went wrong during the lobby modification: \n${handleError(error)}`);
@@ -293,6 +295,35 @@ class WaitingScreen extends React.Component {
               <option value="8">8</option>
             </SelectField>
             : <h2>{this.state.lobby.rounds}</h2> }
+
+          <Label>Round time</Label>
+            { this.state.owner ?
+            <SelectField id="from_timer" value={this.state.lobby.timer} disabled={!this.state.owner} onChange={e => {this.sendInputChange("timer", e.target.value);}}>
+              <option value={this.state.lobby.timer}>{this.state.lobby.timer}</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="40">40</option>
+              <option value="50">50</option>
+              <option value="60">60</option>
+              <option value="70">70</option>
+              <option value="80">80</option>
+              <option value="90">90</option>
+              <option value="100">100</option>
+              <option value="110">110</option>
+              <option value="120">120</option>
+              <option value="130">130</option>
+              <option value="140">140</option>
+              <option value="150">150</option>
+              <option value="160">160</option>
+              <option value="170">170</option>
+              <option value="180">180</option>
+              <option value="190">190</option>
+              <option value="200">200</option>
+
+            </SelectField>
+            : <h2>{this.state.lobby.timer}</h2> }
+
 
           <Label>Private</Label>
           <OneLineBlock>

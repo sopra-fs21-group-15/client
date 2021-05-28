@@ -54,9 +54,6 @@ const H1 = styled.h1`
 `;
 
 const BrushPreview = styled.div`
-  width: 10px;
-  height: 10px;
-  background: red;
   border-radius: 50%;
   margin: 0 auto;
 `;
@@ -151,6 +148,21 @@ const Wordbox = styled.div`
   align-items: center;
 `;
 
+const Endoverlay = styled.div`
+  position fixed;
+  left: 0;
+  top: 0;
+  background: rgba(60, 30, 30, 0.9);
+  backdrop-filter: blur(6px);
+  box-shadow: rgba(0, 0, 0, 0.9) 0px -4px 4px;
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 
 class DrawScreen extends React.Component {
   constructor() {
@@ -200,7 +212,7 @@ class DrawScreen extends React.Component {
       // Draw + Canvas related
       canvas_width: 854,
       canvas_height: 480,
-      draw_colour: "#ffffff",
+      draw_colour: "#000000",
       draw_size: 5,
       mouse_down: false, // stores whether the LEFT mouse button is down
 
@@ -218,16 +230,14 @@ class DrawScreen extends React.Component {
     this.setState({ [key]: value });
   }
 
-  async resetCanvas() {
+  resetCanvas() {
     let draw_colour = this.state.draw_colour;
-    await this.setState({ draw_colour: "#FFFFFF" });
+    this.state.draw_colour = "#FFFFFF";
     this.fillCanvas();
-    await this.setState({ draw_colour });
+    this.changeColour(draw_colour);
   }
 
   fillCanvas() {
-    this.mainCanvas.current.width = this.state.canvas_width;
-    this.mainCanvas.current.height = this.state.canvas_height;
     let ctx = this.mainCanvas.current.getContext('2d');
 
     ctx.fillStyle = this.state.draw_colour;
@@ -237,33 +247,23 @@ class DrawScreen extends React.Component {
       this.sendDrawInstruction(-1, -1, -1, this.state.draw_colour);
   }
 
-  updateBrushPreview() {
-    this.brushPreview.current.style.width = this.state.draw_size + "px";
-    this.brushPreview.current.style.height = this.state.draw_size + "px";
-    this.brushPreview.current.style.background = this.state.draw_colour;
-  }
-
-  async changeColour(colour) {
-    await this.setState({ draw_colour: colour });
+  changeColour(colour) {
+    this.state.draw_colour = colour;
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.strokeStyle = colour;
-
-    this.updateBrushPreview();
   }
 
-  async changeSize(size) {
-    await this.setState({ draw_size: size });
+  changeSize(size) {
+    this.setState({ draw_size: size });
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.lineWidth = size;
-
-    this.updateBrushPreview();
   }
 
   // Draws a line at the position x,y
   canvas_onMouseMove(x, y) {
-    if(!this.state.mouse_down)
+    if(!this.state.mouse_down || !this.state.drawer)
       return;
 
     let ctx = this.mainCanvas.current.getContext('2d');
@@ -304,8 +304,9 @@ class DrawScreen extends React.Component {
   }
 
   componentDidMount() {
+    this.mainCanvas.current.width = this.state.canvas_width;
+    this.mainCanvas.current.height = this.state.canvas_height;
     this.resetCanvas();
-    this.updateBrushPreview();
 
     // Regularly update the time left
     let interval_countdown = setInterval(async () => {
@@ -358,12 +359,12 @@ class DrawScreen extends React.Component {
     let intervalScoreboard = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id + "/score");
-        console.log("Scoreboard", response.data);
+        // console.log("Scoreboard", response.data);
 
         // Rewrite format into one list of objects
         let scoreboard = [];
         for (let i = 0; i < response.data.players.length; i++)
-          scoreboard.push({ "username": response.data.players[i], "ranking": response.data.ranking[i], "score": response.data.score[i] });
+          scoreboard.push({ "username": response.data.players[i], "ranking": response.data.ranking[i] + 1, "score": response.data.score[i] });
 
 
         this.setState({ scoreboard });
@@ -404,11 +405,12 @@ class DrawScreen extends React.Component {
       try {
         // Number of instr we will send
         let numberSent = this.state.drawInstructionBuffer.length;
+        console.log("SENT", numberSent, "DRAW INSTRUCTIONS");
         await api.put('/games/' + this.state.game_id +'/drawing', JSON.stringify(this.state.drawInstructionBuffer.splice(0, numberSent)));
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
       }
-    }, 3000);
+    }, 1000);
     this.setState({ intervalSendDrawInstructionBuffer });
 
     // Regularly pull draw instructions (guesser mode)
@@ -422,6 +424,7 @@ class DrawScreen extends React.Component {
         });
         const response = await api.post('/games/' + this.state.game_id +'/drawing', requestBody);
 
+        console.log("RECEIVED", response.data.length, "DRAW INSTRUCTIONS");
         let timestamp_last_draw_instruction;
         let ctx = this.mainCanvas.current.getContext('2d');
         response.data.forEach(instr => {
@@ -446,7 +449,7 @@ class DrawScreen extends React.Component {
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while polling the draw-instructions: \n${handleError(error)}`);
       }
-    }, 3000);
+    }, 1000);
     this.setState({ interval_draw_instructions });
 
     this.setState({users: [{"id":5 , "name": "Kilian", "points":"5000"}, {"id":2 , "name": "Nik", "points":"6000"}, {"id":3 , "name": "Josip", "points":"15000"}]});
@@ -472,7 +475,7 @@ class DrawScreen extends React.Component {
       });
 
       /** await the confirmation of the backend **/
-      const url = '/games/' + this.state.game_id +'/guess';
+      const url = '/games/' + this.state.game_id + '/chats';
       const response = await api.put(url, requestBody);
       this.setState({ chat_message: "" });
 
@@ -522,6 +525,20 @@ class DrawScreen extends React.Component {
       alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
     }
     this.props.history.push(`/mainScreen`);
+  }
+
+  async returnToLobby() {
+    try {
+      const requestBody = JSON.stringify({
+        username: localStorage.getItem('username')
+      });
+
+      const url = '/lobbies/' + this.state.game_id +'/return';
+      await api.put(url, requestBody);
+      this.props.history.push(`/waitingScreen`);
+    } catch(error) {
+      alert(`Something went wrong returning to the lobby, you might have been too slow and they started without you: \n${handleError(error)}`)
+    }
   }
 
   ordinalSuffix(i) {
@@ -577,8 +594,11 @@ class DrawScreen extends React.Component {
 
         <Button onClick={() => {this.download_image()}}>Download image</Button>
         <HR/>
-        <BrushPreview ref={this.brushPreview}/>
+
+        {this.state.drawer ? ([
+        <BrushPreview style={{ "background": this.state.draw_colour, "width": this.state.draw_size + "px", "height": this.state.draw_size + "px" }} />,
         <HR/>
+        ]) : ""}
         <Chatbox>
           <Messages>
             {this.state.messages.slice(0).reverse().map(message => {
@@ -600,6 +620,14 @@ class DrawScreen extends React.Component {
         </Chatbox>
         <Button onClick={() => {this.leaveGame()}}>Leave Game</Button>
       </Sidebar>,
+      <div>
+        {this.state.round && this.state.round.status === "DONE" ? (
+          <Endoverlay>
+            <Button onClick={() => {this.returnToLobby()}}>Continue with this group</Button>
+            <Button onClick={() => {this.leaveGame()}}>Leave Game</Button>
+          </Endoverlay>
+        ): ""}
+      </div>,
       <Scoreboard>
       {!this.state.scoreboard ? (
         <Spinner />
