@@ -23,7 +23,8 @@ class CreateLobby extends React.Component {
       private: false,
       lobbyName: "",
       gameMode: "CLASSIC",
-      password: ""
+      password: "",
+      timer: 60
     };
   }
 
@@ -93,11 +94,16 @@ class CreateLobby extends React.Component {
             <InputField type="text" id="form_max_players_display" value={this.state.maxPlayers} />
           </OneLineBlock>
 
-
           <Label>Rounds</Label>
           <OneLineBlock>
             <InputField value={this.state.rounds} onChange={e => {this.handleInputChange('rounds', e.target.value);}} id="form_rounds" type="range" min="1" max="10" />
             <InputField type="text" id="form_rounds_display" value={this.state.rounds} />
+          </OneLineBlock>
+
+          <Label>Round time</Label>
+          <OneLineBlock>
+            <InputField value={this.state.timer} onChange={e => {this.handleInputChange('timer', e.target.value);}} id="form_timer" type="range" min="10" max="200" />
+            <InputField type="text" id="form_rounds_timer" value={this.state.timer} />
           </OneLineBlock>
 
           <Label>Private</Label>
@@ -106,8 +112,8 @@ class CreateLobby extends React.Component {
             {this.state.private === true ? <InputField id="form_password" value={this.state.password} onChange={e => {this.handleInputChange('password', e.target.value);}} placeholder="Password" /> : "" }
           </OneLineBlock>
           <HR/>
-          <Button disabled={this.state.lobbyName === ""} width="25%" onClick={() => {this.createLobby();}}>Create Lobby</Button>
-          <Button width="25%" onClick={() => {this.goback();}}>Back</Button>
+          <Button disabled={this.state.lobbyName === ""} onClick={() => {this.createLobby();}}>Create Lobby</Button>
+          <Button onClick={() => {this.goback();}}>Back</Button>
         </FormContainer>
       </BaseContainer>
     );
