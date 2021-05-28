@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import React from "react";
 import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
 import Player from '../../views/Player';

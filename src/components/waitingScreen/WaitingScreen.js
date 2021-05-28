@@ -209,7 +209,6 @@ class WaitingScreen extends React.Component {
     catch (error){
       alert(`Something went wrong during the lobby modification: \n${handleError(error)}`);
     }
-
   }
 
   render() {
@@ -243,10 +242,7 @@ class WaitingScreen extends React.Component {
 
             <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message}
                         onKeyDown={(e)=>this.onKeyDown(e)}
-                        onChange={ e => {
-                          if (e.target.value.length-1 >= 40){
-                            e.target.value = e.target.value.substring(0,40)}
-                          else {this.handleInputChange("chat_message", e.target.value)}}} id="input_chat_message" />
+                        onChange={e => {this.handleInputChange("chat_message", e.target.value)}} id="input_chat_message" />
             { this.state.chat_message === "" ?
               <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
               :
@@ -258,7 +254,7 @@ class WaitingScreen extends React.Component {
           <FloatRight>
           <FormContainer>
           <Label>Lobbyname</Label>
-          <h2>{this.state.lobby.lobbyname} (#{this.state.lobbyId})</h2>
+          <h2 style={{marginTop: "5px"}}>{this.state.lobby.lobbyname}</h2>
           <Label>Gamemode</Label>
 
             { this.state.owner ?
