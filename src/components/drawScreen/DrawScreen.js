@@ -54,9 +54,6 @@ const H1 = styled.h1`
 `;
 
 const BrushPreview = styled.div`
-  width: 10px;
-  height: 10px;
-  background: red;
   border-radius: 50%;
   margin: 0 auto;
 `;
@@ -200,7 +197,7 @@ class DrawScreen extends React.Component {
       // Draw + Canvas related
       canvas_width: 854,
       canvas_height: 480,
-      draw_colour: "#ffffff",
+      draw_colour: "#000000",
       draw_size: 5,
       mouse_down: false, // stores whether the LEFT mouse button is down
 
@@ -218,16 +215,14 @@ class DrawScreen extends React.Component {
     this.setState({ [key]: value });
   }
 
-  async resetCanvas() {
+  resetCanvas() {
     let draw_colour = this.state.draw_colour;
-    await this.setState({ draw_colour: "#FFFFFF" });
+    this.state.draw_colour = "#FFFFFF";
     this.fillCanvas();
-    await this.setState({ draw_colour });
+    this.changeColour(draw_colour);
   }
 
   fillCanvas() {
-    this.mainCanvas.current.width = this.state.canvas_width;
-    this.mainCanvas.current.height = this.state.canvas_height;
     let ctx = this.mainCanvas.current.getContext('2d');
 
     ctx.fillStyle = this.state.draw_colour;
@@ -237,28 +232,18 @@ class DrawScreen extends React.Component {
       this.sendDrawInstruction(-1, -1, -1, this.state.draw_colour);
   }
 
-  updateBrushPreview() {
-    this.brushPreview.current.style.width = this.state.draw_size + "px";
-    this.brushPreview.current.style.height = this.state.draw_size + "px";
-    this.brushPreview.current.style.background = this.state.draw_colour;
-  }
-
-  async changeColour(colour) {
-    await this.setState({ draw_colour: colour });
+  changeColour(colour) {
+    this.state.draw_colour = colour;
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.strokeStyle = colour;
-
-    this.updateBrushPreview();
   }
 
-  async changeSize(size) {
-    await this.setState({ draw_size: size });
+  changeSize(size) {
+    this.setState({ draw_size: size });
 
     let ctx = this.mainCanvas.current.getContext('2d');
     ctx.lineWidth = size;
-
-    this.updateBrushPreview();
   }
 
   // Draws a line at the position x,y
@@ -304,11 +289,18 @@ class DrawScreen extends React.Component {
   }
 
   componentDidMount() {
+    this.mainCanvas.current.width = this.state.canvas_width;
+    this.mainCanvas.current.height = this.state.canvas_height;
     this.resetCanvas();
-    this.updateBrushPreview();
 
     // Regularly update the time left
     let interval_countdown = setInterval(async () => {
+
+      let ctx = this.mainCanvas.current.getContext('2d');
+      console.log(this.state.draw_size, ctx.lineWidth);
+
+
+
       if(!this.state.round)
         return;
       // Countdown the timer
@@ -322,7 +314,7 @@ class DrawScreen extends React.Component {
     let intervalRoundInfo = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id + "/update");
-        // console.log("ROUND", response.data);
+        console.log("ROUND", response.data);
 
         let round = new Round(response.data);
         // Clear canvas if drawer changed (by comparison to previous round object)
@@ -363,7 +355,7 @@ class DrawScreen extends React.Component {
         // Rewrite format into one list of objects
         let scoreboard = [];
         for (let i = 0; i < response.data.players.length; i++)
-          scoreboard.push({ "username": response.data.players[i], "ranking": response.data.ranking[i], "score": response.data.score[i] });
+          scoreboard.push({ "username": response.data.players[i], "ranking": response.data.ranking[i], "score": response.data.score[i] + 1 });
 
 
         this.setState({ scoreboard });
@@ -570,7 +562,7 @@ class DrawScreen extends React.Component {
 
         <Button onClick={() => {this.download_image()}}>Download image</Button>
         <HR/>
-        <BrushPreview ref={this.brushPreview}/>
+        <BrushPreview style={{ "background": this.state.draw_colour, "width": this.state.draw_size + "px", "height": this.state.draw_size + "px" }} />
         <HR/>
         <Chatbox>
           <Messages>
