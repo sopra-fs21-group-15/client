@@ -233,18 +233,15 @@ class MainScreen extends React.Component {
               }
             }).map((user) => {
               return (
-
                   <PlayerContainer>
                     <Player user={user} f_onClick={() => this.go_to_profile(user)}/>
                   </PlayerContainer>
-
               )
             })}
             </Users>
             <Button
                 width={"45%"}
                 onClick={() => { this.logout(); }} > Logout </Button>
-
             </FriendsListContainer> )}
       </ListsContainer>
       </BaseContainer>

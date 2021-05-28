@@ -103,10 +103,18 @@ class Registration extends React.Component {
         <FormContainer>
           <Legend>Registration</Legend>
           <Label>Username</Label>
-          <InputField size={40} placeholder="Please enter here.." onChange={e => {
-            this.handleInputChange('username', e.target.value); }} />
+          <InputField size={40} placeholder="Please enter here.."
+                      onChange={ e => {
+                        if (e.target.value.length-1 >= 12){
+                          alert("Username can only have 12 characters")
+                          e.target.value = e.target.value.substring(0,12)}
+                        else {this.handleInputChange("username", e.target.value)}}} />
           <Label>Password</Label>
-          <InputField onKeyDown={(e) => this.onKeyDown(e)} size="40" placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }}/>
+          <InputField onKeyDown={(e) => this.onKeyDown(e)} size="40" placeholder="Please enter here.." onChange={ e => {
+            if (e.target.value.length-1 >= 12){
+              alert("Password can only have 12 characters")
+              e.target.value = e.target.value.substring(0,12)}
+            else {this.handleInputChange("password", e.target.value)}}}/>
           <HR/>
           <Button disabled={!this.state.username || !this.state.password} onClick={() => { this.register(); }} > Create user </Button>
           <Button onClick={() => { this.props.history.push("/login"); }} > Back to Login </Button>

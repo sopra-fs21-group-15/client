@@ -11,7 +11,7 @@ const Container = styled.li`
 `;
 
 const Sender = styled.span`
-  color: blue;
+  color: SteelBlue;
   font-weight: lighter;
   font-size: 15px;
   padding: 0;
@@ -21,7 +21,7 @@ const Sender = styled.span`
 const Timestamp = styled.span`
   font-weight: lighter;
   font-size: 15px;
-  color: rgba(0,0,0,0.5);
+  color: SteelBlue;
   padding: 0;
   margin: 0;
 `;

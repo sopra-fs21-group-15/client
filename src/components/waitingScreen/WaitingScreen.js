@@ -20,18 +20,27 @@ import {Messages} from "../../views/design/Messages";
 
 
 const PlayerUl = styled.ul`
+  align-item: center;
 `;
 
 const PlayerLi = styled.li`
   border: 1px solid grey;
   border-radius: 7px;
   padding: 7px;
-  margin-bottom: 12px;
-  width: 30%;
+  margin-bottom: 5px;
+  width: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+const Users = styled.ul`
+  list-style: none;
+  padding-left: 0;
+  padding-bottom: 1px;
+  max-height: 200px;
+  overflow-y: auto;
 `;
 
 const FloatLeft = styled.div`
@@ -204,13 +213,14 @@ class WaitingScreen extends React.Component {
   render() {
     return (
       // Lobby list
-      <BaseContainer>
+      <BaseContainer style={{marginTop: "-10px"}}>
           <Legend>Chill Area</Legend>
           {!this.state.lobby ? (
             <Spinner />
           ):(
             <div style={{overflow: "auto"}} >
             <FloatLeft>
+              <Users>
             {this.state.lobby.members.map(user => {
               return(
                 <PlayerUl>
@@ -218,6 +228,8 @@ class WaitingScreen extends React.Component {
                 </PlayerUl>
               );
             })}
+              </Users>
+
           <Chatbox>
             <Messages>
               {this.state.messages.slice(0).reverse().map(message => {
@@ -229,7 +241,10 @@ class WaitingScreen extends React.Component {
 
             <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message}
                         onKeyDown={(e)=>this.onKeyDown(e)}
-                        onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+                        onChange={ e => {
+                          if (e.target.value.length-1 >= 40){
+                            e.target.value = e.target.value.substring(0,40)}
+                          else {this.handleInputChange("chat_message", e.target.value)}}} id="input_chat_message" />
             { this.state.chat_message === "" ?
               <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
               :
