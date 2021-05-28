@@ -263,7 +263,7 @@ class DrawScreen extends React.Component {
 
   // Draws a line at the position x,y
   canvas_onMouseMove(x, y) {
-    if(!this.state.mouse_down)
+    if(!this.state.mouse_down || !this.state.drawer)
       return;
 
     let ctx = this.mainCanvas.current.getContext('2d');
