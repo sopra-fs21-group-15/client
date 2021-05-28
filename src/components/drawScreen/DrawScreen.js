@@ -323,7 +323,7 @@ class DrawScreen extends React.Component {
     let intervalRoundInfo = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id + "/update");
-        console.log("ROUND", response.data);
+        //console.log("ROUND", response.data);
 
         let round = new Round(response.data);
         // Clear canvas if drawer changed (by comparison to previous round object)
@@ -359,12 +359,17 @@ class DrawScreen extends React.Component {
     let intervalScoreboard = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id + "/score");
-        // console.log("Scoreboard", response.data);
+        //console.log("Scoreboard", response.data);
 
         // Rewrite format into one list of objects
         let scoreboard = [];
         for (let i = 0; i < response.data.players.length; i++)
           scoreboard.push({ "username": response.data.players[i], "ranking": response.data.ranking[i] + 1, "score": response.data.score[i] });
+
+        // Set guessed users
+        if(this.state.round && this.state.round.hasGuessed.length === scoreboard.length)
+          for (let i = 0; i < scoreboard.length; i++)
+            scoreboard[i].hasGuessed = this.state.round.hasGuessed[i];
 
 
         this.setState({ scoreboard });
@@ -623,7 +628,7 @@ class DrawScreen extends React.Component {
         <Users>
         <ScoreboardList>
         {this.state.scoreboard.map(entry =>{return(
-          <ScoreboardElement>{this.ordinalSuffix(entry.ranking)}: {entry.username} - {entry.score} Pts</ScoreboardElement>
+          <ScoreboardElement>{this.ordinalSuffix(entry.ranking)}: {entry.username} - {entry.score} Pts{entry.hasGuessed ? " ✅" : ""}</ScoreboardElement>
         );})}
         </ScoreboardList>
         </Users>
