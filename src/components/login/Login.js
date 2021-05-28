@@ -78,6 +78,15 @@ class Login extends React.Component {
     this.setState({ [key]: value });
   }
 
+  onKeyDown(event){
+    // 'keypress' event misbehaves on mobile so we track 'Enter' key via 'keydown' event
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.login();
+    }
+  }
+
   render() {
     return (
       <BaseContainer>
@@ -86,7 +95,7 @@ class Login extends React.Component {
           <Label>Username</Label>
           <InputField size="40" placeholder="Please enter here.." onChange={e => { this.handleInputChange('username', e.target.value); }} />
           <Label>Password</Label>
-          <InputField size="40" placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} type="password" />
+          <InputField onKeyDown={(e) => this.onKeyDown(e)} size="40" placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} type="password" />
           <HR/>
           <Button disabled={!this.state.username || !this.state.password} onClick={() => { this.login(); }}>Login</Button>
           <Button onClick={() => {this.props.history.push("/registration");}}>Register</Button>

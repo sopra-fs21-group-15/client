@@ -181,6 +181,15 @@ class WaitingScreen extends React.Component {
     this.setState({ [key]: value });
   }
 
+  onKeyDown(event){
+    // 'keypress' event misbehaves on mobile so we track 'Enter' key via 'keydown' event
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.sendMessage();
+    }
+  }
+
   async sendInputChange(key, value) {
     try {
       let requestBody = "{\"" + key + "\":\"" + value + "\"}";
@@ -218,7 +227,9 @@ class WaitingScreen extends React.Component {
               })}
             </Messages>
 
-            <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+            <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message}
+                        onKeyDown={(e)=>this.onKeyDown(e)}
+                        onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
             { this.state.chat_message === "" ?
               <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
               :

@@ -539,6 +539,15 @@ class DrawScreen extends React.Component {
     return i + "th";
   }
 
+  onKeyDown(event){
+    // 'keypress' event misbehaves on mobile so we track 'Enter' key via 'keydown' event
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.sendMessage();
+    }
+  }
+
   render() {
     return ([
       // Lobby list
@@ -579,7 +588,10 @@ class DrawScreen extends React.Component {
             })}
           </Messages>
 
-          <InputField disabled={this.state.drawer || this.state.guessed || this.state.spectator} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+          <InputField disabled={this.state.drawer || this.state.guessed || this.state.spectator}
+                      placeholder="Type here" value={this.state.chat_message}
+                      onKeyDown={(e) => this.onKeyDown(e)}
+                      onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
           { this.state.chat_message === "" ?
             <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
             :

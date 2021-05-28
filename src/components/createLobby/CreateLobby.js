@@ -69,6 +69,16 @@ class CreateLobby extends React.Component {
     this.setState({ [key]: value });
   }
 
+  onKeyDown(event){
+    // 'keypress' event misbehaves on mobile so we track 'Enter' key via 'keydown' event
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.createLobby();
+    }
+  }
+
+
   render() {
     return (
       // Lobby list
@@ -79,7 +89,8 @@ class CreateLobby extends React.Component {
 
           <Label>Lobbyname</Label>
           <InputField id="form_name"
-              onChange={ e => {this.handleInputChange("lobbyName", e.target.value)}}/>
+              onChange={ e => {this.handleInputChange("lobbyName", e.target.value)}}
+              onKeyDown={(e)=>this.onKeyDown(e)}/>
 
           <Label>Gamemode</Label>
           <SelectField id="form_gamemode" value={this.state.gameMode} onChange={e => this.handleInputChange("gameMode",e.target.value)}>

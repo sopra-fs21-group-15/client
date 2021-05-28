@@ -31,7 +31,7 @@ class Registration extends React.Component {
     super();
     this.state = {
       password: null,
-      username: null
+      username: null,
     };
   }
   /**
@@ -85,6 +85,18 @@ class Registration extends React.Component {
     this.setState({ [key]: value });
   }
 
+
+  onKeyDown(event){
+    // 'keypress' event misbehaves on mobile so we track 'Enter' key via 'keydown' event
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.register();
+    }
+  }
+
+
+
   render() {
     return (
       <BaseContainer>
@@ -94,7 +106,7 @@ class Registration extends React.Component {
           <InputField size={40} placeholder="Please enter here.." onChange={e => {
             this.handleInputChange('username', e.target.value); }} />
           <Label>Password</Label>
-          <InputField size="40" placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} />
+          <InputField onKeyDown={(e) => this.onKeyDown(e)} size="40" placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }}/>
           <HR/>
           <Button disabled={!this.state.username || !this.state.password} onClick={() => { this.register(); }} > Create user </Button>
           <Button onClick={() => { this.props.history.push("/login"); }} > Back to Login </Button>
