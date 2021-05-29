@@ -8,12 +8,13 @@ const Gridcontainer = styled.div`
   grid-gap: 10px;
   background-color: linear-gradient(rgb(27, 124, 186), rgb(2, 46, 101));
   padding: 10px;
+  margin-top: -50px;
 `;
 
 const Ingrid = styled.div`
   background-color: linear-gradient(rgb(27, 124, 186), rgb(2, 46, 101));
   text-align: left;
-  padding: 5px;
+  padding: 8px;
   font-size: 20px;
 `;
 
@@ -21,7 +22,7 @@ const Ingrid = styled.div`
 const Name = styled.div`
   font-weight: bold;
   margin-right: auto;
-  color: black;
+  color: white;
 `;
 
 
@@ -46,11 +47,14 @@ const Profile = ({ user }) => {
         <Name> Online Status: {user.status}</Name>
       </Ingrid>
       <Ingrid>
-        <Name> Creation Date: {user.creationDate}</Name>
+        <Name> Creation Date: {user.creationDate.substring(0,16)}</Name>
       </Ingrid>
       <Ingrid>
         <Name>Birth Date: {user.birthDate ? user.birthDate: "-"} </Name>
       </Ingrid>
+        <Ingrid>
+            <Name>#Tag: {user.userTag ? user.userTag : "-"} </Name>
+        </Ingrid>
     </Gridcontainer>
   );
 };

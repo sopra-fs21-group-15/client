@@ -11,8 +11,10 @@ class User {
     this.status = null;
     this.birthDate = null; //added birth date
     this.creationDate = null; //added creation date
-    this.friendsList = data.friendsList;
+    this.friendsList = null;
     this.wins = null;
+    this.userTag = null;
+    this.friendRequestList = null;
     Object.assign(this, data);
   }
 

@@ -29,8 +29,8 @@ const Form = styled.div`
   padding-left: 37px;
   padding-right: 37px;
   border-radius: 5px;
-  background: linear-gradient(rgb(255,255,255), rgb(180, 190, 200));
-  color: black;
+  background: none;
+  color: white;
 `;
 
 const InputField = styled.input`
@@ -48,7 +48,7 @@ const InputField = styled.input`
 `;
 
 const Label = styled.label`
-  color: black;
+  color: white;
   margin-bottom: 10px;
   text-transform: uppercase;
   
@@ -69,6 +69,7 @@ class EditProfile extends React.Component {
         userId: localStorage.getItem("visited User"), /** get the ID of the profile --> unnecessary **/
         loggedInUser: localStorage.getItem("loginId"), /** get the ID of the logged in user **/
         username: null,
+        userTag: null,
     };
     this.getUser();
   }
@@ -97,7 +98,8 @@ class EditProfile extends React.Component {
     try{
         const requestBody_2 = JSON.stringify({
             username: this.state.username,
-            birthDate: this.state.birthDate
+            birthDate: this.state.birthDate,
+            userTag: this.state.userTag
         });
 
         const url = '/users/' + this.state.userId;
@@ -116,7 +118,7 @@ class EditProfile extends React.Component {
         return (
             <BaseContainer style={{height:550+"px", width: 700+"px"}}>
            <FormContainer>
-                <Form>
+                <Form style={{height:500+"px", marginTop: "-50px"}}>
                     <div>
                     <h1> Edit your Profile! </h1>
                     </div>
@@ -146,9 +148,22 @@ class EditProfile extends React.Component {
                       }}
                     />
 
+                    <Label>Change #Tag</Label>
+                    <InputField
+                        placeholder="Please enter new #Tag here.."
+                        onChange={e => {
+                            if (e.target.value.length-1 >= 20){
+                                alert("Tag can only have 20 characters")
+                                e.target.value = e.target.value.substring(0,20)
+                            }
+                            else this.handleInputChange('userTag', e.target.value);
+                            /** change username **/
+                        }}
+                    />
+
                     <ButtonContainer>
                       <Button
-                        disabled={((this.state.username === null) && (this.state.birthDate === null))}
+                        disabled={((this.state.username === null) && (this.state.birthDate === null) && (this.state.userTag === null))}
                         width="50%"
                         onClick={() => {
                           this.edit();
