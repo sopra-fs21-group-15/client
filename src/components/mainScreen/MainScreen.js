@@ -181,7 +181,7 @@ class MainScreen extends React.Component {
 
     return (
       // Lobby list
-      <BaseContainer style={{marginTop:"-2px"}}>
+      <BaseContainer>
           <ListsContainer>
         {!this.state.lobbies ? (
           <Spinner />

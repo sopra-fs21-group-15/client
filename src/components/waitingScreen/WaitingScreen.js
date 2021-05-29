@@ -214,7 +214,7 @@ class WaitingScreen extends React.Component {
   render() {
     return (
       // Lobby list
-      <BaseContainer style={{marginTop: "-10px"}}>
+      <BaseContainer>
           <Legend>Chill Area</Legend>
           {!this.state.lobby ? (
             <Spinner />
