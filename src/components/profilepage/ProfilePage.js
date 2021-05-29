@@ -221,6 +221,7 @@ class ProfilePage extends React.Component {
         localStorage.setItem("visited User", user.id);
         // go to profile page
         this.props.history.push("/profilePage");
+        this.refreshPage()
     }
 
   // method to check if user is in my friendsList
