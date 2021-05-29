@@ -100,7 +100,7 @@ class CreateLobby extends React.Component {
           <Label>Gamemode</Label>
           <SelectField id="form_gamemode" value={this.state.gameMode} onChange={e => this.handleInputChange("gameMode",e.target.value)}>
             <option value="CLASSIC">Classic</option>
-            <option value="SPEED">Speed</option>
+            <option value="POKEMON">Pokemon</option>
           </SelectField>
 
           <Label>Max. Players</Label>

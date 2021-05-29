@@ -284,7 +284,7 @@ class WaitingScreen extends React.Component {
             { this.state.owner ?
             <SelectField id="form_gamemode" value={this.state.lobby.gameMode} disabled={!this.state.owner} onChange={e => {this.sendInputChange("gameMode", e.target.value);}}>
               <option value="CLASSIC">Classic</option>
-              <option value="SPEED">Speed</option>
+              <option value="POKEMON">Pokemon</option>
             </SelectField>
             : <h2>{this.state.lobby.gameMode}</h2> }
 
