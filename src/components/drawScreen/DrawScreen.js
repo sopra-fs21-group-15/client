@@ -399,11 +399,11 @@ class DrawScreen extends React.Component {
         let ownScore;
         let sumScore = 0;
         // Find own score and sum of all scores
-        for (let i = 0; i < scoreboard.length; i++) {
-          if (scoreboard.[i].username === this.state.username)
-            ownScore = scoreboard[i].score;
-          sumScore += scoreboard[i].score;
-        }
+        scoreboard.forEach(element => {
+          if (element.username === this.state.username)
+            ownScore = element.score;
+          sumScore += element.score;
+        });
         let avgScore = sumScore / scoreboard.length;
         if(ownScore >= 20 + 1.5 * avgScore) {
           if(!this.state.handicap)
