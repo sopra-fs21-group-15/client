@@ -258,7 +258,7 @@ class ProfilePage extends React.Component {
                     <Form>
                         <center><h1><u>Profile Page</u></h1></center>
                         {this.state.loggedInUser === this.state.userId?
-                        <OneLineBlock>
+                        <OneLineBlock style={{height:"400px", marginTop:"-10px"}}>
                             <div style={{height:"250px"}}>
                                 <h2 style={{marginBottom:"50px",marginTop:"-50px",marginLeft: "auto", marginRight: "auto"}}>User Stats</h2>
                         {this.state.user?
@@ -293,7 +293,7 @@ class ProfilePage extends React.Component {
                                     </div>
                             </div>
                         </OneLineBlock>:
-                            <OneLineBlock>
+                            <OneLineBlock style={{height:"400px", marginTop:"-10px"}}>
                                 <div style={{height:"250px",marginLeft: "auto", marginRight: "auto"}}>
                                     <h2 style={{marginBottom:"50px",marginTop:"-50px",marginLeft: "auto", marginRight: "auto"}}>User Stats</h2>
                                     {this.state.user?

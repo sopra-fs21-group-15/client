@@ -83,7 +83,7 @@ class CreateLobby extends React.Component {
   render() {
     return (
       // Lobby list
-      <BaseContainer>
+      <BaseContainer style={{marginTop:"-10px", height:"710px"}}>
         <FormContainer>
           <Legend>Create a Lobby</Legend>
           <HR/>
