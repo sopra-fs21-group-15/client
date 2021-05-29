@@ -13,7 +13,7 @@ export const BaseContainer = styled.div`
   justify-content: center;
   color: white;
   text-align: center;
-  background: rgba(50, 50, 50, 0.8);
+  background: rgba(50, 50, 50, 0.9);
   backdrop-filter: blur(6px);
   border-radius: 10px;
   padding: 30px;

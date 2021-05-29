@@ -13,21 +13,21 @@ const Container = styled.li`
 const Sender = styled.span`
   color: SteelBlue;
   font-weight: lighter;
-  font-size: 15px;
+  font-size: 14px;
   padding: 0;
   margin: 0;
 `;
 
 const Timestamp = styled.span`
   font-weight: lighter;
-  font-size: 15px;
+  font-size: 14px;
   color: SteelBlue;
   padding: 0;
   margin: 0;
 `;
 
 const MessageBody = styled.p`
-  font-size: 15px;
+  font-size: 14px;
   padding: 0;
   margin: 0;
 `;

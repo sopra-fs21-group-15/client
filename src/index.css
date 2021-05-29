@@ -7,11 +7,12 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Open Sans", sans-serif;
-  background-image: url("views/SkribbleBg1.jpg");
+  background-image: radial-gradient(#e66465, #9198e5);
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  height: 100vh;
 }
 
 input,
