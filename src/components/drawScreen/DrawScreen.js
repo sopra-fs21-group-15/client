@@ -310,7 +310,6 @@ class DrawScreen extends React.Component {
 
     // Regularly update the time left
     let interval_countdown = setInterval(async () => {
-      console.log(this.state.guessed);
       if(!this.state.round)
         return;
       // Countdown the timer
