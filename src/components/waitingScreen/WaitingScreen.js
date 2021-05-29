@@ -85,7 +85,7 @@ class WaitingScreen extends React.Component {
         this.setState({ lobby });
 
         // Check if you were kicked
-        if(!this.state.lobby.status === "PLAYING" && !lobby.members.includes(this.state.username)) {
+        if(lobby.status !== "PLAYING" && !lobby.members.includes(this.state.username)) {
           alert("You have been kicked from the lobby");
           this.props.history.push(`/mainScreen`)
         }
