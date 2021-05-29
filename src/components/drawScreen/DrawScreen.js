@@ -564,17 +564,18 @@ class DrawScreen extends React.Component {
     if(!window.confirm("Are you sure you want to leave the game?"))
       return;
 
-    try {
-      const requestBody = JSON.stringify({
-        username: localStorage.getItem('username')
-      });
+    if(!this.state.spectator)
+      try {
+        const requestBody = JSON.stringify({
+          username: localStorage.getItem('username')
+        });
 
-      const url = '/games/' + this.state.game_id +'/leavers';
-      await api.put(url, requestBody);
+        const url = '/games/' + this.state.game_id +'/leavers';
+        await api.put(url, requestBody);
 
-    } catch(error) {
-      alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
-    }
+      } catch(error) {
+        alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
+      }
     this.props.history.push(`/mainScreen`);
   }
 
