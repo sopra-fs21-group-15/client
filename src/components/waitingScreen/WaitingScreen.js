@@ -33,6 +33,11 @@ const PlayerLi = styled.li`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const Users = styled.ul`
@@ -78,6 +83,12 @@ class WaitingScreen extends React.Component {
         const response = await api.get(url);
         let lobby = new Lobby(response.data);
         this.setState({ lobby });
+
+        // Check if you were kicked
+        if(!lobby.members.includes(this.state.username)) {
+          alert("You have been kicked from the lobby");
+          this.props.history.push(`/mainScreen`)
+        }
       } catch(error) {
         alert(`Something went wrong while fetching the lobby: \n${handleError(error)}`);
       }
@@ -181,7 +192,20 @@ class WaitingScreen extends React.Component {
       alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
     }
     this.props.history.push(`/mainScreen`);
+  }
 
+  async kickUser(user) {
+    try {
+      const requestBody = JSON.stringify({
+        username: user
+      });
+
+      const url = '/lobbies/' + this.state.lobbyId +'/leavers';
+      await api.put(url, requestBody);
+
+    } catch(error) {
+      alert(`Something went wrong during the removing of a player: \n${handleError(error)}`)
+    }
   }
 
   handleInputChange(key, value) {
@@ -225,7 +249,7 @@ class WaitingScreen extends React.Component {
             {this.state.lobby.members.map(user => {
               return(
                 <PlayerUl>
-                  <PlayerLi>{user}</PlayerLi>
+                  <PlayerLi>{user}{this.state.owner && user !== this.state.username ? <Button onClick={() => this.kickUser(user)} style={{"margin-left": "6px"}}>❌</Button> : ""}</PlayerLi>
                 </PlayerUl>
               );
             })}
@@ -334,7 +358,6 @@ class WaitingScreen extends React.Component {
             </FloatRight>
             </div>
           )}
-        
 
           <Button disabled={ !this.state.owner || (this.state.lobby && this.state.lobby.members.length < 2) } onClick={() => {this.startgame();}}>Start the Game</Button>
           <Button onClick={() => {this.goback();}}>Back</Button>
