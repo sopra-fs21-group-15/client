@@ -195,6 +195,26 @@ class DrawScreen extends React.Component {
       "#ffffff"
       ];
 
+    this.colourHandicap = [
+      "#000000",
+      "#111111",
+      "#222222",
+      "#333333",
+      "#444444",
+      "#555555",
+      "#666666",
+      "#777777",
+      "#888888",
+      "#999999",
+      "#AAAAAA",
+      "#BBBBBB",
+      "#CCCCCC",
+      "#DDDDDD",
+      "#EEEEEE",
+      "#FFFFFF",
+    ];
+
+
     this.state = {
       game_id: localStorage.getItem('gameId'),
       round: null, // Round object, regularly fetched from backend
@@ -208,6 +228,8 @@ class DrawScreen extends React.Component {
       users: "",
       drawInstructionBuffer: [], // Buffer of drawInstructions that will be sent to the backend
       guessed: false, // True when this client guessed to word in this phase
+      handicap: false, // Stores whether handicap mode is enabled
+      colours: this.colours,
 
       // Draw + Canvas related
       canvas_width: 854,
@@ -366,17 +388,37 @@ class DrawScreen extends React.Component {
         for (let i = 0; i < response.data.players.length; i++)
           scoreboard.push({ "username": response.data.players[i], "ranking": response.data.ranking[i] + 1, "score": response.data.score[i] });
 
+        this.setState({ scoreboard });
+
         // Set guessed users
         if(this.state.round && this.state.round.hasGuessed.length === scoreboard.length)
           for (let i = 0; i < scoreboard.length; i++)
             scoreboard[i].hasGuessed = this.state.round.hasGuessed[i];
 
+        // Check if handicap mode should be enabled
+        let ownScore;
+        let sumScore = 0;
+        // Find own score and sum of all scores
+        for (let i = 0; i < scoreboard.length; i++) {
+          if (scoreboard.[i].username === this.state.username)
+            ownScore = scoreboard[i].score;
+          sumScore += scoreboard[i].score;
+        }
+        let avgScore = sumScore / scoreboard.length;
+        if(ownScore >= 20 + 1.5 * avgScore) {
+          if(!this.state.handicap)
+            this.systemMsgInChat("You have to many points, handicap mode has been enabled for you");
+          this.setState({ handicap: true, colours: this.colourHandicap });
+        } else {
+          if(this.state.handicap)
+            this.systemMsgInChat("Handicap mode has been disabled again.");
+          this.setState({ handicap: false, colour: this.colours });
+        }
 
-        this.setState({ scoreboard });
       } catch (error) {
         this.systemMsgInChat(`Something went wrong while fetching the scoreboard: \n${handleError(error)}`);
       }
-    }, 5000);
+    }, 2000);
     this.setState({ intervalScoreboard });
 
 
@@ -505,6 +547,11 @@ class DrawScreen extends React.Component {
   }
 
   async chooseWord(word) {
+    if(this.state.handicap) {
+      alert("Handicap mode has been enabled for you, because you have to many points. You can't choose your word");
+      return;
+    }
+
     try {
       const url = '/games/' + this.state.game_id + '/choices/' + this.state.username + '/' + this.state.round.selection.indexOf(word);
       await api.put(url);
@@ -581,10 +628,11 @@ class DrawScreen extends React.Component {
 
       <Hint>{this.state.hint}</Hint>,
       <Sidebar>
-        <H1>Tools #{this.state.game_id}</H1>
+        <H1>Tools</H1>
+        {this.state.handicap ? <p style={{"color": "#FFAAAA"}}>Handicap enabled, you can only paint in grey and cannot choose your word</p> : ""}
         {this.state.drawer ? ([
           <ColoursContainer>
-              {this.colours.map(colour => {
+              {this.state.colours.map(colour => {
                 return (
                   <Colour colour={colour} f_onClick={() => {this.changeColour(colour)}} />
                 );
@@ -639,7 +687,7 @@ class DrawScreen extends React.Component {
         <Users>
         <ScoreboardList>
         {this.state.scoreboard.map(entry =>{return(
-          <ScoreboardElement>{this.ordinalSuffix(entry.ranking)}: {entry.username} - {entry.score} Pts{entry.hasGuessed ? " ✅" : ""}{this.state.round && entry.username === this.state.round.drawerName ? "🎨" : ""}</ScoreboardElement>
+          <ScoreboardElement>{this.ordinalSuffix(entry.ranking)}: {entry.username} - {entry.score} Pts{entry.hasGuessed ? " ✅" : ""}{this.state.round && entry.username === this.state.round.drawerName ? " 🎨" : ""}</ScoreboardElement>
         );})}
         </ScoreboardList>
         </Users>
