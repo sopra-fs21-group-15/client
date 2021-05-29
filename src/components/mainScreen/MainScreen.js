@@ -181,7 +181,7 @@ class MainScreen extends React.Component {
 
     return (
       // Lobby list
-      <BaseContainer>
+      <BaseContainer style={{marginTop:"-2px"}}>
           <ListsContainer>
         {!this.state.lobbies ? (
           <Spinner />
@@ -202,7 +202,9 @@ class MainScreen extends React.Component {
                 );
               })}
             </Lobbies>
-            <Button onClick={() => {this.createLobby();}}>
+            <Button
+                style={{paddingLeft:"20px",paddingRight:"20px"}}
+                onClick={() => {this.createLobby();}}>
               Create Lobby
             </Button>
           </LobbylistContainer>
@@ -218,7 +220,7 @@ class MainScreen extends React.Component {
             <h2>Hello {this.state.user.username}</h2>
 
             <Button
-                style={{marginTop:-20+"px"}}
+                style={{marginTop:-20+"px",paddingLeft:"20px",paddingRight:"20px"}}
                 onClick={() => {this.go_to_profile(this.state.user)}}
             >View Profile</Button>
 
@@ -233,18 +235,15 @@ class MainScreen extends React.Component {
               }
             }).map((user) => {
               return (
-
                   <PlayerContainer>
                     <Player user={user} f_onClick={() => this.go_to_profile(user)}/>
                   </PlayerContainer>
-
               )
             })}
             </Users>
             <Button
                 width={"45%"}
                 onClick={() => { this.logout(); }} > Logout </Button>
-
             </FriendsListContainer> )}
       </ListsContainer>
       </BaseContainer>
