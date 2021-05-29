@@ -345,14 +345,10 @@ class WaitingScreen extends React.Component {
             : <h2>{this.state.lobby.timer}</h2> }
 
 
-          <Label>Private</Label>
+          <Label>Password</Label>
           <OneLineBlock>
-          <InputField id="form_private" type="checkbox" checked={this.state.lobby.password !== ""} disabled={!this.state.owner} onChange={e => {this.handleInputChange('private', e.target.checked);}} />
-          {this.state.lobby.password !== "" ? (
-              <div>
-                <InputField id="form_password" value={this.state.lobby.password} disabled={!this.state.owner} onChange={e => {this.sendInputChange('password', e.target.value);}}/>
-              </div>
-          ) : ""  }
+          <InputField id="form_private" type="checkbox" checked={this.state.lobby.password !== ""} disabled={!this.state.owner} />
+          <InputField id="form_password" value={this.state.lobby.password} disabled={!this.state.owner} onChange={e => {this.sendInputChange('password', e.target.value);}}/>
           </OneLineBlock>
             </FormContainer>
             </FloatRight>
