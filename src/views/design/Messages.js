@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const Messages = styled.ul`
-  background: white;
+  background: rgba(255,255,255,0.9);
   color: black;
   height: 250px;
   list-style-type: none;
@@ -13,5 +13,4 @@ export const Messages = styled.ul`
 
   display: flex;
   flex-direction: column-reverse;
-
 `;
