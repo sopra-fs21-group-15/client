@@ -323,7 +323,7 @@ class DrawScreen extends React.Component {
     let intervalRoundInfo = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id + "/update");
-        //console.log("ROUND", response.data);
+        // console.log("ROUND", response.data);
 
         let round = new Round(response.data);
         // Clear canvas if drawer changed (by comparison to previous round object)
@@ -486,7 +486,6 @@ class DrawScreen extends React.Component {
 
       if(response.data) {
         alert("You guessed the word correctly!");
-        this.systemMsgInChat("YOU GUESSED THE WORD!");
         this.setState({ guessed: true });
       }
     } catch (error) {
@@ -628,7 +627,7 @@ class DrawScreen extends React.Component {
         <Users>
         <ScoreboardList>
         {this.state.scoreboard.map(entry =>{return(
-          <ScoreboardElement>{this.ordinalSuffix(entry.ranking)}: {entry.username} - {entry.score} Pts{entry.hasGuessed ? " ✅" : ""}</ScoreboardElement>
+          <ScoreboardElement>{this.ordinalSuffix(entry.ranking)}: {entry.username} - {entry.score} Pts{entry.hasGuessed ? " ✅" : ""}{this.state.round && entry.username === this.state.round.drawerName ? "🎨" : ""}</ScoreboardElement>
         );})}
         </ScoreboardList>
         </Users>
