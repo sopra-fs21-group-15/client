@@ -418,7 +418,7 @@ class DrawScreen extends React.Component {
       } catch (error) {
         this.systemMsgInChat(`Something went wrong while fetching the scoreboard: \n${handleError(error)}`);
       }
-    }, 2000);
+    }, 3000);
     this.setState({ intervalScoreboard });
 
 
