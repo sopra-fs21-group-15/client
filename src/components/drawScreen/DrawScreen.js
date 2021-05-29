@@ -636,11 +636,13 @@ class DrawScreen extends React.Component {
       <div>
         {this.state.round && this.state.drawer && this.state.round.status === "SELECTING" ? (
           <Wordbox>
-            {this.state.round.selection.map(word => {
+            {!this.state.round.word ? this.state.round.selection.map(word => {
               return (
                 <Button onClick={() => this.chooseWord(word)}>{word}</Button>
               );
-            })}
+            }) : (
+              <H1>{this.state.round.word}</H1>
+            )}
           </Wordbox>
         ): ""}
       </div>,
