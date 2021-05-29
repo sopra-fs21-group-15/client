@@ -10,8 +10,8 @@ export const Button = styled.button`
   }
 
   padding: 6px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: auto;
+  padding-right: auto;
   margin-top: 4px;
   font-weight: 700;
   text-transform: uppercase;

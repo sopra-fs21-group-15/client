@@ -70,17 +70,32 @@ class CreateLobby extends React.Component {
     this.setState({ [key]: value });
   }
 
+  onKeyDown(event){
+    // 'keypress' event misbehaves on mobile so we track 'Enter' key via 'keydown' event
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.createLobby();
+    }
+  }
+
+
   render() {
     return (
       // Lobby list
-      <BaseContainer>
+      <BaseContainer style={{marginTop:"-10px", height:"710px"}}>
         <FormContainer>
           <Legend>Create a Lobby</Legend>
           <HR/>
 
           <Label>Lobbyname</Label>
           <InputField id="form_name"
-              onChange={ e => {this.handleInputChange("lobbyName", e.target.value)}}/>
+                      onChange={ e => {
+                        if (e.target.value.length-1 >= 12){
+                          alert("Lobby Name can only have 12 characters")
+                          e.target.value = e.target.value.substring(0,12)}
+                        else {this.handleInputChange("lobbyName", e.target.value)}}}
+              onKeyDown={(e)=>this.onKeyDown(e)}/>
 
           <Label>Gamemode</Label>
           <SelectField id="form_gamemode" value={this.state.gameMode} onChange={e => this.handleInputChange("gameMode",e.target.value)}>

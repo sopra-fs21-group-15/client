@@ -20,18 +20,27 @@ import {Messages} from "../../views/design/Messages";
 
 
 const PlayerUl = styled.ul`
+  align-item: center;
 `;
 
 const PlayerLi = styled.li`
   border: 1px solid grey;
   border-radius: 7px;
   padding: 7px;
-  margin-bottom: 12px;
-  width: 30%;
+  margin-bottom: 5px;
+  width: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+const Users = styled.ul`
+  list-style: none;
+  padding-left: 0;
+  padding-bottom: 1px;
+  max-height: 200px;
+  overflow-y: auto;
 `;
 
 const FloatLeft = styled.div`
@@ -181,6 +190,15 @@ class WaitingScreen extends React.Component {
     this.setState({ [key]: value });
   }
 
+  onKeyDown(event){
+    // 'keypress' event misbehaves on mobile so we track 'Enter' key via 'keydown' event
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.sendMessage();
+    }
+  }
+
   async sendInputChange(key, value) {
     try {
       let requestBody = "{\"" + key + "\":\"" + value + "\"}";
@@ -191,19 +209,19 @@ class WaitingScreen extends React.Component {
     catch (error){
       alert(`Something went wrong during the lobby modification: \n${handleError(error)}`);
     }
-
   }
 
   render() {
     return (
       // Lobby list
-      <BaseContainer>
+      <BaseContainer style={{marginTop: "-10px"}}>
           <Legend>Chill Area</Legend>
           {!this.state.lobby ? (
             <Spinner />
           ):(
             <div style={{overflow: "auto"}} >
             <FloatLeft>
+              <Users>
             {this.state.lobby.members.map(user => {
               return(
                 <PlayerUl>
@@ -211,6 +229,8 @@ class WaitingScreen extends React.Component {
                 </PlayerUl>
               );
             })}
+              </Users>
+
           <Chatbox>
             <Messages>
               {this.state.messages.slice(0).reverse().map(message => {
@@ -220,7 +240,9 @@ class WaitingScreen extends React.Component {
               })}
             </Messages>
 
-            <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message} onChange={e => {this.handleInputChange("chat_message", e.target.value);}} id="input_chat_message" />
+            <InputField disabled={this.state.drawer} placeholder="Type here" value={this.state.chat_message}
+                        onKeyDown={(e)=>this.onKeyDown(e)}
+                        onChange={e => {this.handleInputChange("chat_message", e.target.value)}} id="input_chat_message" />
             { this.state.chat_message === "" ?
               <Button disabled onClick={() => {this.sendMessage()}} >Send</Button>
               :
@@ -232,7 +254,7 @@ class WaitingScreen extends React.Component {
           <FloatRight>
           <FormContainer>
           <Label>Lobbyname</Label>
-          <h2>{this.state.lobby.lobbyname} (#{this.state.lobbyId})</h2>
+          <h2 style={{marginTop: "5px"}}>{this.state.lobby.lobbyname}</h2>
           <Label>Gamemode</Label>
 
             { this.state.owner ?

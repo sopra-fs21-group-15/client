@@ -31,7 +31,7 @@ class Registration extends React.Component {
     super();
     this.state = {
       password: null,
-      username: null
+      username: null,
     };
   }
   /**
@@ -85,16 +85,36 @@ class Registration extends React.Component {
     this.setState({ [key]: value });
   }
 
+
+  onKeyDown(event){
+    // 'keypress' event misbehaves on mobile so we track 'Enter' key via 'keydown' event
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.register();
+    }
+  }
+
+
+
   render() {
     return (
       <BaseContainer>
         <FormContainer>
           <Legend>Registration</Legend>
           <Label>Username</Label>
-          <InputField size={40} placeholder="Please enter here.." onChange={e => {
-            this.handleInputChange('username', e.target.value); }} />
+          <InputField size={40} placeholder="Please enter here.."
+                      onChange={ e => {
+                        if (e.target.value.length-1 >= 12){
+                          alert("Username can only have 12 characters")
+                          e.target.value = e.target.value.substring(0,12)}
+                        else {this.handleInputChange("username", e.target.value)}}} />
           <Label>Password</Label>
-          <InputField size="40" placeholder="Please enter here.." onChange={e => { this.handleInputChange('password', e.target.value); }} />
+          <InputField onKeyDown={(e) => this.onKeyDown(e)} size="40" placeholder="Please enter here.." onChange={ e => {
+            if (e.target.value.length-1 >= 12){
+              alert("Password can only have 12 characters")
+              e.target.value = e.target.value.substring(0,12)}
+            else {this.handleInputChange("password", e.target.value)}}}/>
           <HR/>
           <Button disabled={!this.state.username || !this.state.password} onClick={() => { this.register(); }} > Create user </Button>
           <Button onClick={() => { this.props.history.push("/login"); }} > Back to Login </Button>
