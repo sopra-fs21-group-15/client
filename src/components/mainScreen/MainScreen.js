@@ -178,7 +178,6 @@ class MainScreen extends React.Component {
 
 
   render() {
-
     return (
       // Lobby list
       <BaseContainer>
@@ -191,11 +190,8 @@ class MainScreen extends React.Component {
             <InputField style={{marginTop:"-20px"}} type={"text"} placeholder={"Search.."} onChange={e => {this.state.searchTermLobby = e.target.value}}/>
             <Lobbies>
               {this.state.lobbies.filter(val => {
-                if (this.state.searchTermLobby ===""){
+                if (this.state.searchTermLobby ==="" || val.lobbyname.toLowerCase().includes(this.state.searchTermLobby.toLowerCase()))
                   return val
-                }else if (val.lobbyname.toLowerCase().includes(this.state.searchTermLobby.toLowerCase())){
-                  return val
-                }
               }).map(lobby => {
                 return (
                     <Lobby lobby={lobby} f_onClick={() => this.join_lobby(lobby)}/>
@@ -228,11 +224,8 @@ class MainScreen extends React.Component {
             <InputField style={{marginTop:"-20px"}} type={"text"} placeholder={"Search.."} onChange={e => {this.state.searchTerm = e.target.value}}/>
             <Users>
             {this.state.users.filter(val => {
-              if(this.state.searchTerm === ""){
+              if(this.state.searchTerm === "" || val.username.toLowerCase().includes(this.state.searchTerm.toLowerCase()))
                 return val
-              }else if (val.username.toLowerCase().includes(this.state.searchTerm.toLowerCase())){
-                return val
-              }
             }).map((user) => {
               return (
                   <PlayerContainer>

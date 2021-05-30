@@ -348,7 +348,6 @@ class DrawScreen extends React.Component {
     let intervalRoundInfo = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id + "/update");
-        // console.log("ROUND", response.data);
 
         let round = new Round(response.data);
         // Clear canvas if drawer changed (by comparison to previous round object)
@@ -458,7 +457,6 @@ class DrawScreen extends React.Component {
       try {
         // Number of instr we will send
         let numberSent = this.state.drawInstructionBuffer.length;
-        console.log("SENT", numberSent, "DRAW INSTRUCTIONS");
         await api.put('/games/' + this.state.game_id +'/drawing', JSON.stringify(this.state.drawInstructionBuffer.splice(0, numberSent)));
       } catch(error) {
         this.systemMsgInChat(`Something went wrong while sending the draw-instructions: \n${handleError(error)}`);
@@ -477,7 +475,6 @@ class DrawScreen extends React.Component {
         });
         const response = await api.post('/games/' + this.state.game_id +'/drawing', requestBody);
 
-        console.log("RECEIVED", response.data.length, "DRAW INSTRUCTIONS");
         let timestamp_last_draw_instruction;
         let ctx = this.mainCanvas.current.getContext('2d');
         response.data.forEach(instr => {

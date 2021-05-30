@@ -187,15 +187,19 @@ class ProfilePage extends React.Component {
     }
 
   // method to check if friend is actually my friend or not
-  checkIfRequestSend(){
-              if (this.state.user.friendRequestList.includes(this.state.myUser.username)) {
-                  this.setState({sendRequest: true})}
-              else this.setState({sendRequest: false})};
+  checkIfRequestSend() {
+    if (this.state.user.friendRequestList.includes(this.state.myUser.username))
+      this.setState({sendRequest: true});
+    else
+      this.setState({sendRequest: false});
+  }
 
   checkIfAccepted(){
-      if (this.state.myUser.friendsList.includes(this.state.user.username)){
-          this.setState({actualFriend: true})}
-      else this.setState({actualFriend: false})};
+    if (this.state.myUser.friendsList.includes(this.state.user.username))
+      this.setState({actualFriend: true});
+    else
+      this.setState({actualFriend: false});
+  }
 
 
     //This method is required that the code is working
@@ -206,10 +210,10 @@ class ProfilePage extends React.Component {
   }
 
   displayFriends(){
-      this.state.myUser.friendsList.forEach(iter =>{
-          this.state.friendsList.push(String(iter))
-      })
-  };
+    this.state.myUser.friendsList.forEach(iter =>{
+      this.state.friendsList.push(String(iter));
+    });
+  }
 
   //refresh page after clicking on button
   refreshPage() {
@@ -238,8 +242,6 @@ class ProfilePage extends React.Component {
         } catch (error) {
             alert(`Something went wrong while fetching the users: \n${handleError(error)}`);
         }
-        //console.log(this.state.myUser)
-        //console.log(this.state.myUser.friendRequestList)
         this.checkIfAccepted()
         this.checkIfRequestSend()
         this.displayFriends();
