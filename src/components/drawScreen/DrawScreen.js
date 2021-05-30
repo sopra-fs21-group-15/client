@@ -149,7 +149,7 @@ const Wordbox = styled.div`
 `;
 
 const Endoverlay = styled.div`
-  position fixed;
+  position: fixed;
   left: 0;
   top: 0;
   background: rgba(60, 30, 30, 0.9);
@@ -230,6 +230,7 @@ class DrawScreen extends React.Component {
       guessed: false, // True when this client guessed to word in this phase
       handicap: false, // Stores whether handicap mode is enabled
       colours: this.colours,
+      winner: { "username": "<Loading>", "ranking": Infinity, "score": -1 }, // Stores username with most points, even during the game
 
       // Draw + Canvas related
       canvas_width: 854,
@@ -395,15 +396,19 @@ class DrawScreen extends React.Component {
           for (let i = 0; i < scoreboard.length; i++)
             scoreboard[i].hasGuessed = this.state.round.hasGuessed[i];
 
-        // Check if handicap mode should be enabled
+        // Check if handicap mode should be enabled and set winner
         let ownScore;
         let sumScore = 0;
+        let winner = { "username": "<Loading>", "ranking": Infinity, "score": -1 };
         // Find own score and sum of all scores
         scoreboard.forEach(element => {
           if (element.username === this.state.username)
             ownScore = element.score;
           sumScore += element.score;
+          if(element.score > winner.score)
+            winner = element;
         });
+        this.setState({ winner });
         let avgScore = sumScore / scoreboard.length;
         if(ownScore >= 20 + 1.5 * avgScore) {
           if(!this.state.handicap)
@@ -412,7 +417,7 @@ class DrawScreen extends React.Component {
         } else {
           if(this.state.handicap)
             this.systemMsgInChat("Handicap mode has been disabled again.");
-          this.setState({ handicap: false, colour: this.colours });
+          this.setState({ handicap: false, colours: this.colours });
         }
 
       } catch (error) {
@@ -676,6 +681,7 @@ class DrawScreen extends React.Component {
       <div>
         {this.state.round && this.state.round.status === "DONE" ? (
           <Endoverlay>
+            <H1>🎉 {this.state.winner.username} won! 🥳</H1>
             <Button onClick={() => {this.returnToLobby()}}>Continue with this group</Button>
             <Button onClick={() => {this.leaveGame()}}>Leave Game</Button>
           </Endoverlay>
