@@ -384,7 +384,6 @@ class DrawScreen extends React.Component {
     let intervalScoreboard = setInterval(async () => {
       try {
         const response = await api.get('/games/' + this.state.game_id + "/score");
-        //console.log("Scoreboard", response.data);
 
         // Rewrite format into one list of objects
         let scoreboard = [];
@@ -695,7 +694,7 @@ class DrawScreen extends React.Component {
       ):(
         <Users>
         <ScoreboardList>
-        {this.state.scoreboard.map(entry =>{return(
+        {this.state.scoreboard.concat().sort((a, b) => (a.score < b.score) ? 1 : -1).map(entry =>{return(
           <ScoreboardElement>{this.ordinalSuffix(entry.ranking)}: {entry.username} - {entry.score} Pts{entry.hasGuessed ? " ✅" : ""}{this.state.round && entry.username === this.state.round.drawerName ? " 🎨" : ""}</ScoreboardElement>
         );})}
         </ScoreboardList>
