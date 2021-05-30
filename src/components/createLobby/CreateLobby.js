@@ -35,7 +35,7 @@ class CreateLobby extends React.Component {
         rounds: this.state.rounds,
         password: this.state.password,
         size: this.state.maxPlayers,
-        timer: 60,
+        timer: this.state.timer,
         gameMode: this.state.gameMode
       });
 
@@ -117,7 +117,7 @@ class CreateLobby extends React.Component {
 
           <Label>Round time</Label>
           <OneLineBlock>
-            <InputField value={this.state.timer} onChange={e => {this.handleInputChange('timer', e.target.value);}} id="form_timer" type="range" min="10" max="200" />
+            <InputField value={this.state.timer} onChange={e => {this.handleInputChange('timer', e.target.value);}} id="form_timer" type="range" min="10" max="200" step="10" />
             <InputField type="text" id="form_rounds_timer" value={this.state.timer} />
           </OneLineBlock>
 
