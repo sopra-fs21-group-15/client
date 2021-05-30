@@ -255,7 +255,7 @@ class ProfilePage extends React.Component {
     render() {
         return (
             /** If they are the same, you can edit the page **/
-            <BaseContainer style={{width:80+"%", marginTop: "-10px"}}>
+            <BaseContainer style={{width:80+"%", marginTop: "-1px"}}>
                     <Form>
                         <center><h1><u>Profile Page</u></h1></center>
                         {this.state.loggedInUser === this.state.userId?

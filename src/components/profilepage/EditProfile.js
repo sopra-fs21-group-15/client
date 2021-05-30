@@ -152,9 +152,9 @@ class EditProfile extends React.Component {
                     <InputField
                         placeholder="Please enter new #Tag here.."
                         onChange={e => {
-                            if (e.target.value.length-1 >= 20){
-                                alert("Tag can only have 20 characters")
-                                e.target.value = e.target.value.substring(0,20)
+                            if (e.target.value.length-1 >= 25){
+                                alert("Tag can only have 25 characters")
+                                e.target.value = e.target.value.substring(0,25)
                             }
                             else this.handleInputChange('userTag', e.target.value);
                             /** change username **/
