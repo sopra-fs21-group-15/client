@@ -337,7 +337,9 @@ class DrawScreen extends React.Component {
         return;
       // Countdown the timer
       let date_now = new Date();
-      let time_left = Math.round((this.state.round.endsAt - date_now) / 1000);
+      let time_left = Math.round((this.state.round.endsAt - date_now) / 1000 - date_now.getTimezoneOffset() * 60);
+      if(time_left < 0)
+        time_left = 0;
       this.setState({ time_left });
     }, 1000);
     this.setState({ interval_countdown });
