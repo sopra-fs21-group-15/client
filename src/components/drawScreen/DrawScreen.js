@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import { api, handleError } from '../../helpers/api';
+import { apiPng, handleErrorPng } from '../../helpers/apiPng';
 import { getCurrentDateString } from '../../helpers/getCurrentDateString';
 import { Spinner } from '../../views/design/Spinner';
 import { Button } from '../../views/design/Button';
@@ -549,6 +550,19 @@ class DrawScreen extends React.Component {
     link.click();
   }
 
+  async sendImage() {
+    let link = document.createElement("a");
+    link.download = "canvas.png";
+    link.href = this.mainCanvas.current.toDataURL("image/png");
+    try {
+      const url = '/games/' + this.state.game_id +'/canvas';
+      await apiPng.put(url, link.href);
+
+    } catch(error) {
+      this.systemMsgInChat(`Something went wrong sending the canvas-image: \n${handleErrorPng(error)}`)
+    }
+  }
+
   async chooseWord(word) {
     if(this.state.handicap) {
       alert("Handicap mode has been enabled for you, because you have to many points. You can't choose your word");
@@ -649,6 +663,7 @@ class DrawScreen extends React.Component {
         ]) : ( "" )}
 
         <Button onClick={() => {this.download_image()}}>Download image</Button>
+        <Button onClick={() => {this.sendImage()}}>Send image</Button>
         <HR/>
 
         {this.state.drawer ? ([
